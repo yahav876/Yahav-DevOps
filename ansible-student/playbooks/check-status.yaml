@@ -1,0 +1,6 @@
+---
+ - hosts: webservers
+   become: true
+   tasks:
+   - name: check apache status
+     command: systemctl status apache2
