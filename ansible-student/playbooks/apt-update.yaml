@@ -1,0 +1,6 @@
+---
+ - hosts: all
+   become: true
+   tasks:
+   - name: update all the nodes with apt update.
+     apt: name=* state=latest
