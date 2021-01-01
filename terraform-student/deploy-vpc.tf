@@ -142,12 +142,12 @@ resource "aws_route_table" "internet_route" {
 
 
 
-## Overwrite the default route table of VPC(Master) with our route table.(when we create a VPC its creating a default route we need to change)
+## Overwrite the default route table of VPC(Master) with our route table.
 
 resource "aws_main_route_table_association" "set-master-default-rt-assoc" {
   provider       = aws.region-master
   vpc_id         = aws_vpc.vpc_master.id
-  route_table_id = aws_route_table.internet_route_oregon.id
+  route_table_id = aws_route_table.internet_route.id
 }
 
 
@@ -162,7 +162,7 @@ resource "aws_main_route_table_association" "set-master-default-rt-assoc" {
 
 
 
-# Create route table for us-west-2
+#Create route table for us-west-2
 
 resource "aws_route_table" "internet_route_oregon" {
   provider = aws.region-worker
@@ -185,7 +185,7 @@ resource "aws_route_table" "internet_route_oregon" {
 }
 
 
-# Overwrite the default route table of VPC(Worker) with our route table.
+#Overwrite the default route table of VPC(Worker) with our route table.
 
 resource "aws_main_route_table_association" "set-worker-default-rt-assoc" {
   provider       = aws.region-worker
