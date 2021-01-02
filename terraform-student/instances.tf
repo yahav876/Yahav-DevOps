@@ -15,14 +15,14 @@ data "aws_ssm_parameter" "linuxAmiOregon" {
 resource "aws_key_pair" "master-key" {
   provider   = aws.region-master
   key_name   = "jenkins"
-  public_key = file("./ec2-1.pub")
+  public_key = file("~/.ssh/ec2_ansible_terraform.pub")
 }
 
 #Create key-pair for logging into EC2 in us-west-2
 resource "aws_key_pair" "worker-key" {
   provider   = aws.region-worker
   key_name   = "jenkins"
-  public_key = file("./ec2-2.pub")
+  public_key = file("~/.ssh/ec2_ansible_terraform.pub")
 }
 
 
@@ -51,6 +51,13 @@ resource "aws_instance" "jenkins-master" {
   }
   depends_on = [aws_main_route_table_association.set-master-default-rt-assoc]
 
+  provisioner "local-exec" {
+    command = <<EOF
+aws --profile ${var.profile} ec2 wait instance-status-ok --region ${var.region-master} --instance-ids ${self.id}
+ansible-playbook --extra-vars 'passed_in_hosts=tag_Name_${self.tags.Name}' ansible-playbooks/jenkins-master-sample.yaml
+EOF
+  }
+
 }
 
 
@@ -61,7 +68,7 @@ resource "aws_instance" "jenkins-worker-oregon" {
   provider                    = aws.region-worker
   count                       = var.workers-count
   ami                         = data.aws_ssm_parameter.linuxAmiOregon.value
-  instance_type              = var.instance-type
+  instance_type               = var.instance-type
   key_name                    = aws_key_pair.worker-key.key_name
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.jenkins-sg-oregon.id]
@@ -71,6 +78,14 @@ resource "aws_instance" "jenkins-worker-oregon" {
     Name = join("_", ["jenkins_worker_tf", count.index + 1]) # the first name will be "jenkins_worker_tf_1"
   }
   depends_on = [aws_main_route_table_association.set-master-default-rt-assoc, aws_instance.jenkins-master]
+
+  provisioner "local-exec" {
+    command = <<EOF
+aws --profile ${var.profile} ec2 wait instance-status-ok --region ${var.region-worker} --instance-ids ${self.id}
+ansible-playbook --extra-vars 'passed_in_hosts=tag_Name_${self.tags.Name}' ansible-playbooks/jenkins-worker-sample.yaml
+EOF
+  }
+
 }
 
 

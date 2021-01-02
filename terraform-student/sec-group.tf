@@ -63,6 +63,9 @@ resource "aws_security_group" "jenkins-sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 #Create a SecGroup for Jenkins Worker allowing TCP/22 from your IP in us-west-2
@@ -89,5 +92,8 @@ resource "aws_security_group" "jenkins-sg-oregon" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }

@@ -10,4 +10,3 @@ provider "aws" {
   alias   = "region-worker"
 }
 
-
