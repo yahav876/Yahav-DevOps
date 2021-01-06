@@ -1,0 +1,27 @@
+---
+- hosts: "k8s-master, k8s-workers"
+  remote_user: yahav
+  become: true
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+
+  tasks:
+  - name: make sure swap is off
+    command: swapoff -a
+ 
+  - name: remove swap from /etc/fstab
+    lineinfile:
+     dest: /etc/fstab
+     regexp: swap
+     state: absent
+
+  - name: installing prerequisites
+    command: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - name: install repo of docker
+    command: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+                                      $(lsb_release -cs \
+                                      stable"
+
+  
