@@ -1,0 +1,8 @@
+---
+ - hosts: webservers
+   become: true
+   tasks:
+   - name: trying to add variable content
+     copy:
+      dest: /var/www/html/index.php
+      content: "{{ ansible_hostname  }}"
