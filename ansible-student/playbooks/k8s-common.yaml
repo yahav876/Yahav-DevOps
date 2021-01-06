@@ -85,11 +85,10 @@
    - name: hold packages - docker,kubelet,kubeadm,kubectl
      become: true
      dpkg_selections:
-       name:
-        - kubelet
-        - kubeadm
-        - kubectl
-        - docker-ce
+       name: docker-ce
+       name: kubelet
+       name: kubeadm
+       name: kubectl
        selection: hold
 
    - name: update sysctl.conf
