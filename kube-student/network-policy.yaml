@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+ name: net-policy
+ namespace: default
+spec:
+ podSelector:
+  matchLabels:
+   app: nginx
+ policyTypes:
+ - Ingress       ### if your are doing ingress and egress with no rules it will blocks everything.
+ - Egress
+ ingress:
+ - from:
+   - namespaceSelector:
+      matchLabels:
+       app: db        ## app: db = the namespace label we did earlier.
+   ports:
+   - protocol: TCP
+     port: 80  
