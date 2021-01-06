@@ -1,6 +1,0 @@
----
-- hosts: k8s-workers
-  become: true
-  tasks:
-   - name: reboot
-     command: /sbin/shutdown -r now

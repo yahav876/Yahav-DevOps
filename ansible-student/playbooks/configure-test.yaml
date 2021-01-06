@@ -1,5 +1,0 @@
----
- - hosts: webservers
-   tasks:
-   - name: configure ping
-     lineinfile: path=/home/yahav/test.cfg regexp='^port' line='port=80'
