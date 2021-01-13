@@ -1,6 +1,6 @@
 # Make s3 bucket to mount with your docker container using Nginx image.
 
-to mount s3 bucket we need to install a tool called s3fs
+To mount s3 bucket we need to install a tool called s3fs
 sudo apt install s3fs -y
 
 mkdir /mnt/container-mount
