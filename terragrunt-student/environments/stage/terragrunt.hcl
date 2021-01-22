@@ -22,7 +22,7 @@ remote_state {
   
   backend = "s3"
   disable_dependency_optimization = true
-  disable_init = tobool(get_env("TERRAGRUNT_DISABLE_INIT", "true"))
+  disable_init = tobool(get_env("TERRAGRUNT_DISABLE_INIT", "false"))
   generate = {
    path = "backend.tf"
    if_exists = "overwrite_terragrunt"
