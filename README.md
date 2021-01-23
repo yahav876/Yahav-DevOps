@@ -13,6 +13,8 @@ Here i will share with you some of my knowledge about Tools that i have learned.
 - OpenStack
 - Packer
 - Terraform
+- Terragrunt
+- Python
 
 # Licence
 
