@@ -162,3 +162,25 @@ resource "aws_main_route_table_association" "set-worker-default-rt-assoc" {
 }
 
 
+
+data "aws_s3_bucket" "yahav_bucket" {
+  bucket = "terragrunt-yahav"
+}
+
+
+resource "aws_flow_log" "logs_vpc_1" {
+  log_destination	= data.aws_s3_bucket.yahav_bucket.arn
+  log_destination_type = "s3"
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.vpc_master.id
+
+}
+
+
+resource "aws_athena_database" "first_athena" {
+  name 		= "first_athena"
+  bucket	= data.aws_s3_bucket.yahav_bucket.bucket
+}
+
+
+

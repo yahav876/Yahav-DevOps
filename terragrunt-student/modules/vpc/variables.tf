@@ -18,5 +18,7 @@ variable "rt-name-master" {}
 
 variable "rt-name-worker" {}
 
+variable "vpc-master-id" {}
 
+variable "vpc-worker-id" {}
 

@@ -1,6 +1,6 @@
 terraform {
 
-  source = "../../../modules/acm/"
+  source = "../../../modules/acm-dns-lb/"
 }
 
 

@@ -27,6 +27,8 @@ inputs = {
   rt-name-master  = "Master-region-RT"
   rt-name-worker  = "Worker-region-RT"
 
+  vpc-master-id   = "aws_vpc.vpc_master.id"
+  vpc-worker-id   = "aws_vpc.vpc_worker_oregon.id"
 
 }
 
