@@ -28,3 +28,6 @@ while True:
         bmi = calculate_bmi(height, weight, system)
         print(f"You bmi is: {bmi}")
         break
+    else:
+        print("Error , Unknown measurement")
+        break
