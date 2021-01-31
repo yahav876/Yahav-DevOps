@@ -8,4 +8,5 @@ if true:
     print('success')
 if flase:
     print('bad')
+    break
 
