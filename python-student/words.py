@@ -17,6 +17,7 @@ with open('/usr/share/dict/american-english') as f:
 #    if snippet in word.lower():
 #        matches.append(word)
 
-matches =  [word for word in words if snippet in word.lower()]
+# Other way to do whats above:
+print([word.strip() for word in words if snippet in word.lower()])
 
-print(matches)
+
