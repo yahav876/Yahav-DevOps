@@ -1,0 +1,27 @@
+---
+- hosts: "k8s-master"
+  become: true
+  gather_facts: yes
+  connection: ssh
+
+  tasks:
+   - name: Initialize the cluster
+     become: true
+     command: kubeadm init --pod-network-cidr=10.244.0.0/16
+
+   - name: Set up local kubeconfig
+     become: true
+     shell: |
+       mkdir -p $HOME/.kube
+       cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+       chown $(id -u):$(id -g) $HOME/.kube/config
+
+   - name: Apply Network in your cluster
+     become: true
+     command: kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+
+   - name: Print the join command
+     become: true
+     command: kubeadm token create --print-join-command
+     register: join
+   - debug: msg="{{ join.stdout }}"

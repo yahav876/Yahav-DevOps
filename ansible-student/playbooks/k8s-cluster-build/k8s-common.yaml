@@ -5,35 +5,35 @@
   connection: ssh
 
   tasks:
-          
+
    - name: make sure swap is off
      become: true
      command: swapoff -a
-   
+
    - name: remove swap from /etc/fstab
      become: true
      lineinfile:
       dest: /etc/fstab
       regexp: swap
       state: absent
-   
+
    - name: installing prerequisites
      become: true
-     apt: 
-      name: 
+     apt:
+      name:
       - apt-transport-https
       - ca-certificates
       - curl
       - gnupg-agent
       - vim
       - software-properties-common
-      state: present  
-    
+      state: present
+
    - name: Add Docker’s official GPG key
      apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
-   
+
    - name: Add Docker Repository
      apt_repository:
        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
@@ -44,13 +44,13 @@
    - name: update packages
      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
    - name: Install Docker Engine.
-     apt: 
+     apt:
        name:
          - docker-ce
        state: present
 
    - name: Enable service docker, and enable persistently
-     service: 
+     service:
        name: docker
        enabled: yes
 
@@ -61,7 +61,7 @@
 
    - name: Add Kubernetes Repository
      apt_repository:
-       repo: deb http://apt.kubernetes.io/ kubernetes-xenial main 
+       repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
        state: present
        filename: kubernetes
        mode: 0600
@@ -70,7 +70,7 @@
      apt:  update_cache=yes force_apt_get=yes cache_valid_time=3600
 
    - name: Installing Kubernetes Cluster Packages.
-     apt: 
+     apt:
        name:
          - kubeadm
          - kubectl
@@ -78,7 +78,7 @@
        state: present
 
    - name: Enable service kubelet, and enable persistently
-     service: 
+     service:
        name: kubelet
        enabled: yes
 
@@ -96,9 +96,8 @@
      shell: |
        echo "net.bridge.bridge-nf-call-iptables=1" | tee -a /etc/sysctl.conf
 
-   - name: enable iptables 
+   - name: enable iptables
      become: true
      command: sysctl -p
-... 
+...
 
-  
