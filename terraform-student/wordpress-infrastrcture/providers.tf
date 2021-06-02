@@ -5,7 +5,8 @@ terraform {
     profile = "default"
     key = "terraform-yahav-state"
     bucket = "terraform-yahav"
-       required_providers {
+
+    required_providers {
     aws = {
       version = ">= 3.29.1"
       source = "hashicorp/aws"
