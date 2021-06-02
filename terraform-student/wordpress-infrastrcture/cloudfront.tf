@@ -1,6 +1,7 @@
 
 data "aws_s3_bucket" "selected" {
   bucket = "media-yahav"
+  depends_on = [aws_s3_bucket.media-yahav]
 }
 
 resource "aws_cloudfront_distribution" "wp-cloudfront" {
