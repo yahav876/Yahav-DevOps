@@ -8,9 +8,11 @@ variable "region-master" {
   default = "us-east-1"
 }
 
-variable "external_ip" {
-  type    = string
-  default = "0.0.0.0/0"
+variable "buckets-num" {
+  1 {
+        bukcet = [""]
+}
+
 }
 
 variable "workers-count" {
