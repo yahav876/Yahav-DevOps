@@ -13,6 +13,7 @@ variable "buckets-num" {
     bukcet = [""]
    }
 }
+
 variable "bucket-name" {
   type    = list
   default = ["mdeia-yahav", "code-yahav" ]
