@@ -1,8 +1,8 @@
 
 terraform {
 
-   source = "github.com:yahav876/Yahav-Student.git/terragrunt-student/modules//vpc?ref=v0.0.1"
-#  source = "../../../modules/vpc"
+ #  source = "github.com:yahav876/Yahav-Student.git/terragrunt-student/modules//vpc?ref=v0.0.1"
+   source = "../../../modules/vpc"
 
 }
 
