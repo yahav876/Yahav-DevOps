@@ -10,7 +10,8 @@ variable "region-master" {
 
 variable "buckets-num" {
 1 = {
-    bukcet = [""]
+    bukcet =  [""]
+    bucket2 = [""]
    }
 }
 
