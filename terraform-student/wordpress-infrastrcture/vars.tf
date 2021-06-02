@@ -10,10 +10,10 @@ variable "region-master" {
 
 
 variable "buckets-num" {
-  type = map
+  type = map(any)
   default = {
 
-    bucket = [""]
+    bucket  = [""]
     bucket2 = [""]
   }
 }
