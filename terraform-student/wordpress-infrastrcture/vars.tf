@@ -9,15 +9,13 @@ variable "region-master" {
 }
 
 variable "buckets-num" {
-  1 {
-        bukcet = [""]
+1 = {
+    bukcet = [""]
+   }
 }
-
-}
-
-variable "workers-count" {
-  type    = number
-  default = 1
+variable "bucket-name" {
+  type    = list
+  default = ["mdeia-yahav", "code-yahav" ]
 }
 
 variable "instance-type" {
