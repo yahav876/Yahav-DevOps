@@ -17,3 +17,10 @@ variable "buckets-num" {
     bucket2 = [""]
   }
 }
+
+variable "cloudfront" {
+  type = map
+  default = {
+    cdn   = [""]
+  } cdn2  = [""]
+}
