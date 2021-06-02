@@ -8,9 +8,14 @@ variable "region-master" {
   default = "us-east-1"
 }
 
-variable "buckets-num" {
-1 = {
-    bukcet =  [""]
-    bucket2 = [""]
-   }
+subnets_cidrs = {
+  1 = {
+    bucket            = [""]               #list of IPs
+    bucket2           = [""] #list of IPs
+  }
+  2 = {
+    publicA            = [""]               #list of IPs
+    privateA           = [""] #list of IPs
+
+  }
 }
