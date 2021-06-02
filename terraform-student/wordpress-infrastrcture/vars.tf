@@ -12,7 +12,6 @@ variable "region-master" {
 variable "buckets-num" {
   type = map(any)
   default = {
-
     bucket  = [""]
     bucket2 = [""]
   }
@@ -43,5 +42,10 @@ variable "create-sg" {
     sg2   = [""]
   }
 }
-
+variable "create-rds" {
+  default = {
+    rds   = [""]
+    rds1  = [""]
+  }
+}
 
