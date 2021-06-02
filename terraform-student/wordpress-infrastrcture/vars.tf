@@ -21,6 +21,7 @@ variable "buckets-num" {
 variable "cloudfront" {
   type = map
   default = {
-    cdn   = [""]
-  } cdn2  = [""]
+    cdn   =  [""]
+    cdn2  = [""]
+  }
 }
