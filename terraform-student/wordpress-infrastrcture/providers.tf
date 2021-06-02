@@ -1,6 +1,9 @@
  terraform {
   required_version = ">=0.14.8"
   backend "s3" {
+    bucket = "terraform-yahav"
+    key = "cloudteam"
+    region = "us-east-1"
   }
    required_providers {
     aws = {
