@@ -8,7 +8,8 @@ variable "region-master" {
   default = "us-east-1"
 }
 
-subnets_cidrs = {
+
+buckets-num = {
   1 = {
     bucket            = [""]               #list of IPs
     bucket2           = [""] #list of IPs
