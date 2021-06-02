@@ -9,7 +9,7 @@ variable "region-master" {
 }
 
 
-buckets-num = {
+variable "buckets-num"  {
   1 = {
     bucket            = [""]               #list of IPs
     bucket2           = [""] #list of IPs
