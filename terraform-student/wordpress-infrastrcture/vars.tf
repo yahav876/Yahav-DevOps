@@ -9,14 +9,11 @@ variable "region-master" {
 }
 
 
-variable "buckets-num"  {
-  1 = {
-    bucket            = [""]               #list of IPs
-    bucket2           = [""] #list of IPs
-  }
-  2 = {
-    publicA            = [""]               #list of IPs
-    privateA           = [""] #list of IPs
+variable "buckets-num" {
+  type = map
+  default = {
 
+    bucket = [""]
+    bucket2 = [""]
   }
 }
