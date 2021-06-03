@@ -3,7 +3,8 @@ resource "aws_db_instance" "wp_rds" {
   allocated_storage    = 10
   engine               = "mysql"
   engine_version       = ">=5.7"
-  instance_class       = "t2.micro"
+  instance_class       = "db.t3.micro"
+  identifier           = "yahav-wp"
   name                 = "admin"
   username             = "admin"
   password             = "admin"

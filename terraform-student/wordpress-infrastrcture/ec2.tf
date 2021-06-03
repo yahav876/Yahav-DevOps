@@ -36,7 +36,7 @@ resource "aws_instance" "web" {
   iam_instance_profile = aws_iam_instance_profile.wp_profile.name
   depends_on = [aws_security_group.wp_sg]
   vpc_security_group_ids = [data.aws_security_group.secgroup.id]
-  user_data = data.template_file.userdata-wp
+  user_data = data.template_file.userdata-wp.rendered
   tags = {
     Name = "wordpress"
   }
