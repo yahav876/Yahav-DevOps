@@ -10,5 +10,6 @@ resource "aws_db_instance" "wp_rds" {
   password             = "admin"
   parameter_group_name = "default.mysql5.7"
   skip_final_snapshot  = true
+  publicly_accessible  = false
   multi_az = false
 }
