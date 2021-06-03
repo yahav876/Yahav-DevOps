@@ -1,7 +1,6 @@
 
 
 resource "aws_iam_role" "s3accessEC2" {
-  count =
   name = "S3accessforEC2"
   assume_role_policy = <<EOF
 {
