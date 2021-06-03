@@ -26,12 +26,17 @@ data "aws_security_group" "secgroup" {
           }
 }
 
+data "template_file" "userdata-wp" {
+  template = "./user-data.tpl"
+}
+
 resource "aws_instance" "web" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   iam_instance_profile = aws_iam_instance_profile.wp_profile.name
   depends_on = [aws_security_group.wp_sg]
   vpc_security_group_ids = [data.aws_security_group.secgroup.id]
+  user_data = data.template_file.userdata-wp
   tags = {
     Name = "wordpress"
   }
