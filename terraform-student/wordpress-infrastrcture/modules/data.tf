@@ -5,6 +5,6 @@ data  "template_file" "user-data" {
 
 data "aws_subnet"  "selected" {
   tags = {
-    Public  = yes
+    Public  = "yes"
   }
 }
