@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Install docker
 sudo apt-get update -y
 sudo apt-get install \
 apt-transport-https \
@@ -13,23 +14,28 @@ echo \
 "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
 $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update -y
-sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+sudo apt-get install docker-ce docker-ce-cli containerd.io hwinfo -y
 sudo systemctl enable docker
 sudo systemctl stop docker
-sudo mkfs -t ext4 /dev/xvdb
+
+
+
+# Format second disk to ext4 and configure Docker to save all data in that disk.
+hw=$(hwinfo --disk | grep 'Device File:' | cut -d ' ' -f5)
+disk=$(echo $hw | cut -d ' ' -f2)
+sudo mkfs -t ext4 $disk
 sudo mkdir  /mnt/neura
 sudo mount /dev/xvdb /mnt/neura
 sudo rsync -aP /var/lib/docker/ /mnt/neura
 sudo mv /var/lib/docker /var/lib/docker.old
-
 sudo touch /etc/docker/daemon.json
 sudo echo \
 "{
    \"data-root\": \"/mnt/neura\"
 }" > /etc/docker/daemon.json
-
 sudo systemctl restart docker
 
+# Run Grafana & Graphite containers
 sudo docker run -d -p 3000:3000 grafana/grafana
 sudo docker run -d \
  --name graphite \
