@@ -53,7 +53,7 @@
                         "allOf": [
                             {
                                 "field": "location",
-                                "equals": "northeurope"
+                                "equals": "East US"
                             },
                             {
                                 "field": "[concat('tags[', parameters('tagName'), ']')]",
