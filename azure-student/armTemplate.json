@@ -85,6 +85,8 @@
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2019-06-01",
             "name": "location-lock",
+            "location": "East US",
+            "identity": {"type": "SystemAssigned"},
             "dependsOn": [
                 "[parameters('policyName')]"
             ],
