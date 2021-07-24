@@ -1,6 +1,8 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
+
+
     "parameters": {
         "targetMG": {
             "type": "string",
@@ -40,6 +42,15 @@
                 "description": "Name of the tag, such as 'environment'"
             },
             "defaultValue": "tag resources within all management groups"
+        },
+        "policyParameters": {
+            "type": "object",
+            "metadata": {
+                "displayName": "Policy parameters",
+                "description": "Policy parameters as an object parameter type."
+            },
+            "defaultValue": {
+            }
         }
     },
     "variables": {
@@ -47,6 +58,7 @@
     },
     "resources": [
         {
+            
             "type": "Microsoft.Authorization/policyDefinitions",
             "name": "[parameters('policyName')]",
             "apiVersion": "2019-09-01",
@@ -55,6 +67,18 @@
                 "policyType": "Custom",
                 "description": "[parameters('policyDescription')]",
                 "parameters": {
+                    "effectType": {
+                        "type": "string",
+                        "defaultValue": "Deny",
+                        "allowedValues": [
+                            "Deny",
+                            "Disabled"
+                        ],
+                        "metadata": {
+                            "displayName": "Effect",
+                            "description": "Enable or disable the execution of the policy"
+                        }
+                    }
                 },
                 "policyRule": {
                     "if": {
@@ -86,13 +110,15 @@
             "apiVersion": "2019-06-01",
             "name": "location-lock",
             "location": "East US",
-            "identity": {"type": "SystemAssigned"},
+            "identity": { "type": "SystemAssigned" },
             "dependsOn": [
                 "[parameters('policyName')]"
             ],
             "properties": {
                 "scope": "[variables('mgScope')]",
-                "policyDefinitionId": "[concat(variables('mgScope'), '/providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyName'))]"
+                "policyDefinitionId": "[concat(variables('mgScope'), '/providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyName'))]",
+                "parameters": "[parameters('policyParameters')]"
+
             }
         }
 
