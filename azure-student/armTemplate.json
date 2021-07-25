@@ -1,10 +1,8 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-
-
     "parameters": {
-        "targetMG": {
+        "targetRG": {
             "type": "string",
             "metadata": {
                 "description": "Specify the name of the management group."
@@ -19,21 +17,13 @@
             },
             "defaultValue": "Env"
         },
-        "tagValue": {
-            "type": "String",
-            "metadata": {
-                "displayName": "Tag Value",
-                "description": "Value of the tag, such as 'production'"
-            },
-            "defaultValue": "Yahav"
-        },
         "policyName": {
             "type": "string",
             "metadata": {
                 "displayName": "Policy Name",
                 "description": "Name of you policy"
             },
-            "defaultValue": "Require a tag on management group"
+            "defaultValue": "Require a tag on management group Yahav"
         },
         "policyDescription": {
             "type": "string",
@@ -42,23 +32,14 @@
                 "description": "Name of the tag, such as 'environment'"
             },
             "defaultValue": "tag resources within all management groups"
-        },
-        "policyParameters": {
-            "type": "object",
-            "metadata": {
-                "displayName": "Policy parameters",
-                "description": "Policy parameters as an object parameter type."
-            },
-            "defaultValue": {
-            }
         }
     },
     "variables": {
-        "mgScope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('targetMG'))]"
+        "rGScope": "[concat('/providers/Microsoft.Resources/subscriptions/resourceGroups/', parameters('targetRG'))]"
     },
     "resources": [
         {
-         "type": "Microsoft.Authorization/policyDefinitions",
+            "type": "Microsoft.Authorization/policyDefinitions",
             "name": "[parameters('policyName')]",
             "apiVersion": "2019-09-01",
             "properties": {
@@ -66,67 +47,36 @@
                 "policyType": "Custom",
                 "description": "[parameters('policyDescription')]",
                 "parameters": {
-                    "effectType": {
-                        "type": "string",
-                        "defaultValue": "Deny",
-                        "allowedValues": [
-                            "Deny",
-                            "Disabled"
-                        ],
-                        "metadata": {
-                            "displayName": "Effect",
-                            "description": "Enable or disable the execution of the policy"
-                        }
-                    }
                 },
                 "policyRule": {
                     "if": {
                         "allOf": [
                             {
-                                "field": "[concat('tags[', parameters('tagName'), ']')]",
-                                "exists": "false"
+                                "field": "location",
+                                "equals": "East US"
                             },
                             {
-                                "value": "[resourceGroup().tags[parameters('tagName')]]",
-                                "notEquals": ""
+                                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                                "exists": "false"
                             }
                         ]
                     },
                     "then": {
-                        "effect": "modify",
-                        "details": {
-                            "roleDefinitionIds": [
-                                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-                            ],
-                            "operations": [
-                                {
-                                    "operation": "add",
-                                    "field": "[concat('tags[', parameters('tagName'), ']')]",
-                                    "value": "[resourceGroup().tags[parameters('tagName')]]"
-
-                                }
-                            ]
-                        }
-
+                        "effect": "deny"
                     }
                 }
             }
-
         },
         {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2019-06-01",
             "name": "location-lock",
-            "location": "East US",
-            "identity": { "type": "SystemAssigned" },
             "dependsOn": [
                 "[parameters('policyName')]"
             ],
             "properties": {
-                "scope": "[variables('mgScope')]",
-                "policyDefinitionId": "[concat(variables('mgScope'), '/providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyName'))]",
-                "parameters": "[parameters('policyParameters')]"
-
+                "scope": "[variables('rGScope')]",
+                "policyDefinitionId": "[concat(variables('rGScope'), '/providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyName'))]"
             }
         }
 
