@@ -58,8 +58,7 @@
     },
     "resources": [
         {
-            
-            "type": "Microsoft.Authorization/policyDefinitions",
+         "type": "Microsoft.Authorization/policyDefinitions",
             "name": "[parameters('policyName')]",
             "apiVersion": "2019-09-01",
             "properties": {
@@ -82,8 +81,16 @@
                 },
                 "policyRule": {
                     "if": {
-                        "field": "[concat('tags[', parameters('tagName'), ']')]",
-                        "exists": "false"
+                        "allOf": [
+                            {
+                                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                                "exists": "false"
+                            },
+                            {
+                                "value": "[resourceGroup().tags[parameters('tagName')]]",
+                                "notEquals": ""
+                            }
+                        ]
                     },
                     "then": {
                         "effect": "modify",
@@ -95,7 +102,7 @@
                                 {
                                     "operation": "add",
                                     "field": "[concat('tags[', parameters('tagName'), ']')]",
-                                    "value": "[parameters('tagValue')]"
+                                    "value": "[resourceGroup().tags[parameters('tagName')]]"
 
                                 }
                             ]
@@ -104,6 +111,7 @@
                     }
                 }
             }
+
         },
         {
             "type": "Microsoft.Authorization/policyAssignments",
