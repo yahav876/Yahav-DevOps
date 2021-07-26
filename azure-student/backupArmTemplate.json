@@ -1,16 +1,16 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
 
 
     "parameters": {
-        "targetRG": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the name of the management group."
+        "tagName": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Tag Name",
+                    "description": "Name of the tag, such as 'environment'"
+                }
             },
-            "defaultValue": "yahav-test"
-        },
         "policyAssignmentMode": {
             "type": "string",
             "metadata": {
@@ -22,27 +22,12 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
-        },
-        "tagValue": {
-            "type": "String",
-            "metadata": {
-                "displayName": "Tag Value",
-                "description": "Value of the tag, such as 'production'"
-            },
-            "defaultValue": "Yahav"
-        },
-        "policyName": {
-            "type": "string",
-            "metadata": {
-                "displayName": "Policy Name",
-                "description": "Name of you policy"
-            },
-            "defaultValue": "Require a tag on management group"
         }
     },
 
     "resources": [
         {
+
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2019-09-01",
             "name": "location-lock",
@@ -55,7 +40,7 @@
                 "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ea3f2387-9b95-492a-a190-fcdc54f7b070",
                 "parameters": {
                     "tagName": {
-                        "Value":  "Yahav"   
+                        "Value": "[resourceGroup().tags[parameters('tagName')]]"
                     }
                 }
             }
