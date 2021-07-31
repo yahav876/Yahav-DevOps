@@ -9,12 +9,22 @@
                 "description": "Name of you policy"
             },
             "defaultValue": "default_Tags"
+        },
+        "dateTime": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Policy Name",
+                "description": "Name of you policy"
+            },
+            "defaultValue": "[utcNow('D')]"
         }
+        
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyDefinitions",
             "name": "[parameters('policyName')]",
+            "location": "global",
             "apiVersion": "2019-09-01",
             "properties": {
                 "displayName": "[parameters('policyName')]",
@@ -61,7 +71,7 @@
                                 {
                                     "operation": "addOrReplace",
                                     "field": "tags['created_On_Date']",
-                                    "value": "[utcNow('D')]"
+                                    "value": "[parameters('dateTime')]"
                                 },
                                 {
                                     "operation": "addOrReplace",
