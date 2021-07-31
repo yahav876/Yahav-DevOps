@@ -1,0 +1,112 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "policyName": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Policy Name",
+                "description": "Name of you policy"
+            },
+            "defaultValue": "default_Tags"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "[parameters('policyName')]",
+            "apiVersion": "2019-09-01",
+            "properties": {
+                "displayName": "[parameters('policyName')]",
+                "policyType": "Custom",
+                "description": "tag resources within default tags",
+                "parameters": {
+                },
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "tags['created_On_Date']",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "tags['created_By']",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "tags['environment']",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "tags['owner']",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "tags['owner-email']",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "tags['finops-email']",
+                                "exists": "false"
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "modify",
+                        "details": {
+                            "roleDefinitionIds": [
+                                "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                            ],
+                            "operations": [
+                                {
+                                    "operation": "addOrReplace",
+                                    "field": "tags['created_On_Date']",
+                                    "value": "[utcNow('D')]"
+                                },
+                                {
+                                    "operation": "addOrReplace",
+                                    "field": "tags['created_By']",
+                                    "value": "None"
+                                },
+                                {
+                                    "operation": "addOrReplace",
+                                    "field": "tags['environment']",
+                                    "value": "None"
+                                },
+                                {
+                                    "operation": "addOrReplace",
+                                    "field": "tags['owner']",
+                                    "value": "None"
+                                },
+                                {
+                                    "operation": "addOrReplace",
+                                    "field": "tags['owner-email']",
+                                    "value": "None"
+                                },
+                                {
+                                    "operation": "addOrReplace",
+                                    "field": "tags['finops-email']",
+                                    "value": "None"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+
+    ]
+}
+
+// {
+//     "type": "Microsoft.Authorization/policyAssignments",
+//     "apiVersion": "2019-06-01",
+//     "name": "location-lock",
+//     "dependsOn": [
+//         "[parameters('policyName')]"
+//     ],
+//     "properties": {
+//         "scope": "[variables('rGScope')]",
+//         "policyDefinitionId": "[concat(variables('rGScope'), '/providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyName'))]"
+//     }
+// }
