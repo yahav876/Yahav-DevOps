@@ -1,38 +1,74 @@
 {
     "mode": "All",
     "policyRule": {
-      "if": {
-        "allOf": [
-          {
-            "field": "tags['CreatedOnDate']",
-            "exists": "false"
-          },
-          {
-            "field": "tags['CreatedBy']",
-            "exists": "false"
-          }
-        ]
-      },
-      "then": {
-        "effect": "modify",
-        "details": {
-          "roleDefinitionIds": [
-            "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-          ],
-          "operations": [
-            {
-              "operation": "addOrReplace",
-              "field": "tags['CreatedOnDate']",
-              "value": "[utcNow()]"
-            },
-            {
-              "operation": "addOrReplace",
-              "field": "tags['CreatedBy']",
-              "value": "['None']"
+        "if": {
+            "allOf": [
+                {
+                    "field": "tags['created_On_Date']",
+                    "exists": "false"
+                },
+                {
+                    "field": "tags['created_By']",
+                    "exists": "false"
+                },
+                {
+                    "field": "tags['environment']",
+                    "exists": "false"
+                },
+                {
+                    "field": "tags['owner']",
+                    "exists": "false"
+                },
+                {
+                    "field": "tags['owner-email']",
+                    "exists": "false"
+                },
+                {
+                    "field": "tags['finops-email']",
+                    "exists": "false"
+                }
+            ]
+        },
+        "then": {
+            "effect": "modify",
+            "details": {
+                "roleDefinitionIds": [
+                    "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                ],
+                "operations": [
+                    {
+                        "operation": "addOrReplace",
+                        "field": "tags['created_On_Date']",
+                        "value": "[utcNow(Day)]"
+                    },
+                    {
+                        "operation": "addOrReplace",
+                        "field": "tags['created_By']",
+                        "value": "['None']"
+                    },
+                    {
+                        "operation": "addOrReplace",
+                        "field": "tags['environment']",
+                        "value": "['None']"
+                    },
+                    {
+                        "operation": "addOrReplace",
+                        "field": "tags['owner']",
+                        "value": "['None']"
+                    },
+                    {
+                        "operation": "addOrReplace",
+                        "field": "tags['owner-email']",
+                        "value": "['None']"
+                    },
+                    {
+                        "operation": "addOrReplace",
+                        "field": "tags['finops-email']",
+                        "value": "['None']"
+                    }   
+                ]
             }
-          ]
         }
-      }
     },
     "parameters": {}
-  }
+}
