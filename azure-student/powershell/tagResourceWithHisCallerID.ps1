@@ -35,7 +35,7 @@ try {
         $null = Set-AzContext -SubscriptionObject $_ -Force
 
         # Get resources with specific Tag ( CreatedBy=None )
-        $resourceWithTag = Get-AzResource -Tag @{ CreatedBy = "None" } 
+        $resourceWithTag = Get-AzResource -Tag @{ created_By = "None" } 
         # Tag each resource with his CallerId
         foreach ($resource in $resourceWithTag) {
             $users = Get-AzLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-1) -EndTime (Get-Date) | Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
