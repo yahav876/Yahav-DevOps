@@ -1,73 +1,117 @@
 {
-   "properties": {
-     "displayName": "Inherit a tag from the resource group",
-     "policyType": "BuiltIn",
-     "mode": "Indexed",
-     "description": "Adds or replaces the specified tag and value from the parent resource group when any resource is created or updated. Existing resources can be remediated by triggering a remediation task.",
-     "metadata": {
-       "version": "1.0.0",
-       "category": "Tags"
-     },
-     "parameters": {
-       "tagName": {
-         "type": "String",
-         "metadata": {
-           "displayName": "Tag Name",
-           "description": "Name of the tag, such as 'environment'"
-         }
-       },
-       "tagName2": {
-         "type": "String",
-         "metadata": {
-           "displayName": "Tag Name",
-           "description": "Name of the tag, such as 'environment'"
-         }
-       }
-     },
-     "policyRule": {
-       "if": {
-         "allOf": [
-           {
-             "field": "[concat('tags[', parameters('tagName'), ']')]",
-             "notEquals": "[resourceGroup().tags[parameters('tagName')]]"
-           },
-           {
-             "value": "[resourceGroup().tags[parameters('tagName')]]",
-             "notEquals": ""
-           },
-           {
-            "field": "[concat('tags[', parameters('tagName2'), ']')]",
-            "notEquals": "[resourceGroup().tags[parameters('tagName2')]]"
-          },
-          {
-            "value": "[resourceGroup().tags[parameters('tagName2')]]",
-            "notEquals": ""
+  "properties": {
+    "displayName": "Inherit a tag from the resource group",
+    "policyType": "BuiltIn",
+    "mode": "Indexed",
+    "description": "Adds or replaces the specified tag and value from the parent resource group when any resource is created or updated. Existing resources can be remediated by triggering a remediation task.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Tags"
+    },
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "environment"
+      },
+      "tagName2": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "owner"
+      },
+      "tagName3": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "owner-email"
+      },
+      "tagName4": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "finops-email"
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "notEquals": "[resourceGroup().tags[parameters('tagName')]]"
+            },
+            {
+              "value": "[resourceGroup().tags[parameters('tagName')]]",
+              "notEquals": ""
+            },
+            {
+              "field": "[concat('tags[', parameters('tagName2'), ']')]",
+              "notEquals": "[resourceGroup().tags[parameters('tagName2')]]"
+            },
+            {
+              "value": "[resourceGroup().tags[parameters('tagName2')]]",
+              "notEquals": ""
+            },
+            {
+              "field": "[concat('tags[', parameters('tagName3'), ']')]",
+              "notEquals": "[resourceGroup().tags[parameters('tagName3')]]"
+            },
+            {
+              "value": "[resourceGroup().tags[parameters('tagName3')]]",
+              "notEquals": ""
+            },
+            {
+              "field": "[concat('tags[', parameters('tagName4'), ']')]",
+              "notEquals": "[resourceGroup().tags[parameters('tagName4')]]"
+            },
+            {
+              "value": "[resourceGroup().tags[parameters('tagName4')]]",
+              "notEquals": ""
+            }
+          ]
+        },
+        "then": {
+          "effect": "modify",
+          "details": {
+            "roleDefinitionIds": [
+              "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+            ],
+            "operations": [
+              {
+                "operation": "addOrReplace",
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "value": "[resourceGroup().tags[parameters('tagName')]]"
+              },
+              {
+                "operation": "addOrReplace",
+                "field": "[concat('tags[', parameters('tagName2'), ']')]",
+                "value": "[resourceGroup().tags[parameters('tagName2')]]"
+              },
+              {
+                "operation": "addOrReplace",
+                "field": "[concat('tags[', parameters('tagName3'), ']')]",
+                "value": "[resourceGroup().tags[parameters('tagName3')]]"
+              },
+              {
+                "operation": "addOrReplace",
+                "field": "[concat('tags[', parameters('tagName4'), ']')]",
+                "value": "[resourceGroup().tags[parameters('tagName4')]]"
+              }
+            ]
           }
-         ]
-       },
-       "then": {
-         "effect": "modify",
-         "details": {
-           "roleDefinitionIds": [
-             "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-           ],
-           "operations": [
-             {
-               "operation": "addOrReplace",
-               "field": "[concat('tags[', parameters('tagName'), ']')]",
-               "value": "[resourceGroup().tags[parameters('tagName')]]"
-             },
-             {
-             "operation": "addOrReplace",
-             "field": "[concat('tags[', parameters('tagName2'), ']')]",
-             "value": "[resourceGroup().tags[parameters('tagName2')]]"
-             }
-           ]
-         }
-       }
-     }
-   },
-   "id": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
-   "type": "Microsoft.Authorization/policyDefinitions",
-   "name": "cd3aa116-8754-49c9-a813-ad46512ece54"
- }
+        }
+      }
+    }
+  },
+  "id": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "cd3aa116-8754-49c9-a813-ad46512ece54"
+}
