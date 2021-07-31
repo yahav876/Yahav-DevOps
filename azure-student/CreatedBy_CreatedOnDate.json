@@ -39,7 +39,7 @@
                     {
                         "operation": "addOrReplace",
                         "field": "tags['created_On_Date']",
-                        "value": "[utcNow(Day)]"
+                        "value": "[utcNow('D')]"
                     },
                     {
                         "operation": "addOrReplace",
