@@ -9,14 +9,6 @@
                 "description": "Name of you policy"
             },
             "defaultValue": "default_Tags"
-        },
-        "dateTime": {
-            "type": "string",
-            "metadata": {
-                "displayName": "Policy Name",
-                "description": "Name of you policy"
-            },
-            "defaultValue": "[utcNow('D')]"
         }
         
     },
@@ -42,22 +34,6 @@
                             {
                                 "field": "tags['created_By']",
                                 "exists": "false"
-                            },
-                            {
-                                "field": "tags['environment']",
-                                "exists": "false"
-                            },
-                            {
-                                "field": "tags['owner']",
-                                "exists": "false"
-                            },
-                            {
-                                "field": "tags['owner-email']",
-                                "exists": "false"
-                            },
-                            {
-                                "field": "tags['finops-email']",
-                                "exists": "false"
                             }
                         ]
                     },
@@ -77,26 +53,6 @@
                                     "operation": "addOrReplace",
                                     "field": "tags['created_By']",
                                     "value": "None"
-                                },
-                                {
-                                    "operation": "addOrReplace",
-                                    "field": "tags['environment']",
-                                    "value": "None"
-                                },
-                                {
-                                    "operation": "addOrReplace",
-                                    "field": "tags['owner']",
-                                    "value": "None"
-                                },
-                                {
-                                    "operation": "addOrReplace",
-                                    "field": "tags['owner-email']",
-                                    "value": "None"
-                                },
-                                {
-                                    "operation": "addOrReplace",
-                                    "field": "tags['finops-email']",
-                                    "value": "None"
                                 }
                             ]
                         }
@@ -108,15 +64,3 @@
     ]
 }
 
-// {
-//     "type": "Microsoft.Authorization/policyAssignments",
-//     "apiVersion": "2019-06-01",
-//     "name": "location-lock",
-//     "dependsOn": [
-//         "[parameters('policyName')]"
-//     ],
-//     "properties": {
-//         "scope": "[variables('rGScope')]",
-//         "policyDefinitionId": "[concat(variables('rGScope'), '/providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyName'))]"
-//     }
-// }

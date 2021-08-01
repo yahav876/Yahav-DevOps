@@ -34,12 +34,17 @@ try {
         Write-Output ('Switching to subscription: {0}' -f $_.Name)
         $null = Set-AzContext -SubscriptionObject $_ -Force
 
-        # Get resources with specific Tag ( CreatedBy=None )
-        $resourceWithTag = Get-AzResource -Tag @{ created_By = "None" } 
-        # Tag each resource with his CallerId
+
+        $resourceWithTag = Get-AzResource -Tag @{ owner = "None" }
+        
+
+        # Tag resources with date created
+        # Tag each resource with tag name 'created_By = None' with his CallerID'
         foreach ($resource in $resourceWithTag) {
-            $users = Get-AzLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-1) -EndTime (Get-Date) | Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
-            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ Env = $users[0]} -Operation Merge
+            $logEntries = Get-AzLog -StartTime (Get-Date).AddDays(-90) -ResourceId $resource.ResourceId | Sort-Object -Property SubmissionTimestamp
+            $users = Get-AzLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-90) -EndTime (Get-Date)| Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
+            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_By = $users[0]} -Operation Merge
+            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_On_Date = $logEntries[0].SubmissionTimestamp } -Operation Merge
         }
     }
 }
