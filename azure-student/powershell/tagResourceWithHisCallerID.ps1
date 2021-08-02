@@ -35,7 +35,7 @@ try {
         $null = Set-AzContext -SubscriptionObject $_ -Force
 
 
-        $resourceWithTag = Get-AzResource -Tag @{ owner = "None" }
+        $resourceWithTag = Get-AzResource -Tag @{ created_By = "None" }
         
 
         # Tag resources with date created

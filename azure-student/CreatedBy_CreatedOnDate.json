@@ -4,11 +4,11 @@
       "if": {
         "allOf": [
           {
-            "field": "tags['CreatedOnDate']",
+            "field": "tags['created_On_Date']",
             "exists": "false"
           },
           {
-            "field": "tags['CreatedBy']",
+            "field": "tags['created_By']",
             "exists": "false"
           }
         ]
@@ -22,12 +22,12 @@
           "operations": [
             {
               "operation": "addOrReplace",
-              "field": "tags['CreatedOnDate']",
+              "field": "tags['created_On_Date']",
               "value": "[utcNow()]"
             },
             {
               "operation": "addOrReplace",
-              "field": "tags['CreatedBy']",
+              "field": "tags['created_By']",
               "value": "['None']"
             }
           ]
