@@ -43,8 +43,13 @@ try {
         foreach ($resource in $resourceWithTag) {
             $logEntries = Get-AzLog -StartTime (Get-Date).AddDays(-90) -ResourceId $resource.ResourceId | Sort-Object -Property SubmissionTimestamp
             $users = Get-AzLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-90) -EndTime (Get-Date)| Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
+            if ((!$logEntries) -or ($logEntries.SubmissionTimestamp -eq $null)) {
+                Write-Output "no logs"
+            }
+            else {
             Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_By = $users[0]} -Operation Merge
             Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_On_Date = $logEntries[0].SubmissionTimestamp } -Operation Merge
+            }
         }
     }
 }
