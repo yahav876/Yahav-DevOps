@@ -6,3 +6,5 @@ __pycache__
 .python_packages
 .vscode
 .venv
+.gitignore
+.funcignore
