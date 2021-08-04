@@ -4,4 +4,5 @@ testing
 .terragrunt-cache
 __pycache__
 .python_packages
+.vscode
 .venv
