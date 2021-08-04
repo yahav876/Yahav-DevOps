@@ -1,0 +1,9 @@
+testing
+.terraform
+.terraform.lock.hcl
+.terragrunt-cache
+__pycache__
+.python_packages
+.vscode
+.venv
+.funcignore
