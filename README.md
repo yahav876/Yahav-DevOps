@@ -15,6 +15,8 @@ Here i will share with you some of my knowledge about the Tools i have learned.
 - Terraform
 - Terragrunt
 - Python
+- AWS
+- Azure
 
 # Licence
 
