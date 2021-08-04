@@ -3,3 +3,5 @@ testing
 .terraform.lock.hcl
 .terragrunt-cache
 __pycache__
+.python_packages
+.venv
