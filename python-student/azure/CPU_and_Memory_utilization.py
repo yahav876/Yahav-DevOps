@@ -74,15 +74,18 @@ credential = AzureCliCredential()
 subscription_client = SubscriptionClient(credential)
 subscription_ids = subscription_client.subscriptions.list()
 
-
+sub_id_array = []
+rg_name_array = []
 vm_id_array = []
 
 # Iterate all subs , rgs , vms and get their ids/names into an array.
 for sub in list(subscription_ids):
+    sub_id_array.append(sub.subscription_id)
     rg_client = ResourceManagementClient(
         credential, subscription_id=sub.subscription_id)
     rg_list = rg_client.resource_groups.list()
     for rg in list(rg_list):
+        rg_name_array.append(rg.name)
         compute_client = ComputeManagementClient(
             credential, subscription_id=sub.subscription_id)
         vm_list = compute_client.virtual_machines.list(
