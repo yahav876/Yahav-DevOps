@@ -90,8 +90,6 @@ for sub in list(subscription_ids):
         for vm in list(vm_list):
             vm_id_array.append(vm.id)
 
-print(f"Subscriptions ID: {sub_id_array}")
-print(f"Resource Groups Name: {rg_name_array}")
 print(f"Virtual Machines Name: {vm_id_array}")
 
 today = date.today()
