@@ -27,11 +27,15 @@ from azure.mgmt.compute import ComputeManagementClient
 import datetime
 from datetime import date, timedelta
 from azure.common.credentials import ServicePrincipalCredentials
+# For Azure portal login
 # import automationassets
+# For vscode login
 from azure.identity import AzureCliCredential
 
+# For vscode login
 credential = AzureCliCredential() 
 
+## For Azure portal login
 # def get_automation_runas_credential(runas_connection):
 #     from OpenSSL import crypto
 #     import binascii
@@ -60,8 +64,7 @@ credential = AzureCliCredential()
 #             pem_pkey,
 #             thumbprint)
 #     )
-
-
+#
 # # Authenticate to Azure using the Azure Automation RunAs service principal
 # runas_connection = automationassets.get_automation_connection(
 #     "AzureRunAsConnection")
@@ -72,18 +75,14 @@ subscription_client = SubscriptionClient(credential)
 subscription_ids = subscription_client.subscriptions.list()
 
 
-sub_id_array = []
-rg_name_array = []
 vm_id_array = []
 
 # Iterate all subs , rgs , vms and get their ids/names into an array.
 for sub in list(subscription_ids):
-    sub_id_array.append(sub.subscription_id)
     rg_client = ResourceManagementClient(
         credential, subscription_id=sub.subscription_id)
     rg_list = rg_client.resource_groups.list()
     for rg in list(rg_list):
-        rg_name_array.append(rg.name)
         compute_client = ComputeManagementClient(
             credential, subscription_id=sub.subscription_id)
         vm_list = compute_client.virtual_machines.list(
@@ -95,36 +94,16 @@ print(f"Subscriptions ID: {sub_id_array}")
 print(f"Resource Groups Name: {rg_name_array}")
 print(f"Virtual Machines Name: {vm_id_array}")
 
-# for sub_id in sub_id_array:
-#     monitor_client = MonitorManagementClient(credential, subscription_id=sub_id)
-
-    # for vm_id in vm_id_array:
-    #     for metric in monitor_client.metric_definitions.list(vm_id):
-    #         print("{}: id={}, unit={}".format(
-    #             metric.name.localized_value,
-    #             metric.name.value,
-    #             metric.unit
-    #         ))
 today = date.today()
-yesterday = today - datetime.timedelta(days=2)
+last_two_weeks = today - datetime.timedelta(days=1)
 
 for sub_id in sub_id_array:
     monitor_client = MonitorManagementClient(credential, subscription_id=sub_id)
 
-# You can get the available metrics of this specific resource
-for vm_id in vm_id_array:
-    for metric in monitor_client.metric_definitions.list(vm_id):
-        # azure.monitor.models.MetricDefinition
-        print("{}: id={}, unit={}".format(
-            metric.name.localized_value,
-            metric.name.value,
-            metric.unit
-        ))
-
 for vm_id in vm_id_array:
     metrics_data = monitor_client.metrics.list(
         vm_id,
-        timespan="{}/{}".format(yesterday, today),
+        timespan="{}/{}".format(last_two_weeks, today),
         interval='PT1H',
         metricnames='Percentage CPU',
         aggregation='Total'
@@ -135,25 +114,3 @@ for vm_id in vm_id_array:
             for data in timeserie.data:
                 print("{}: {}".format(data.time_stamp, data.total))
 
-
-# try:
-#     # Initialzie subscription client object
-#     sub_client = SubscriptionClient(credential)
-
-#     # Get all subscriptions ids that the account can access
-#     subscription_list_all = sub_client.subscriptions.list()
-
-#     # Get all RG in the subscription
-#     resource_group_client = ResourceManagementClient(credential, subscription_id=subscription_list_all)
-
-#     # Retrive the list of RG
-#     rg_list = resource_group_client.resource_groups.list()
-
-#     print(rg_list)
-# Monitor client
-
-# except Exception as exception:
-#     print(repr(exception))
-
-# finally:
-#     print(f'\nScript execution finished at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}')
