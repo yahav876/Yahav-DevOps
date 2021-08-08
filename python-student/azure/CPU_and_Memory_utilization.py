@@ -32,6 +32,7 @@ from azure.common.credentials import ServicePrincipalCredentials
 # import automationassets
 # For vscode login
 from azure.identity import AzureCliCredential
+from isodate.isostrf import DATE_BAS_ORD_COMPLETE
 
 # For vscode login
 credential = AzureCliCredential()
@@ -105,3 +106,5 @@ for sub in list(subscription_ids):
     vm_list = compute_client.virtual_machines.list_all()
     for vm in list(vm_list):
         fetch_metrics(monitor_client, vm.id, aggregation='average', metricnames='Percentage CPU')
+
+
