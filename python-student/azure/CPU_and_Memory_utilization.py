@@ -25,6 +25,7 @@ from azure.mgmt.resource import SubscriptionClient, subscriptions
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 import datetime
+import math
 from datetime import date, timedelta
 from azure.common.credentials import ServicePrincipalCredentials
 # For Azure portal login
@@ -33,9 +34,9 @@ from azure.common.credentials import ServicePrincipalCredentials
 from azure.identity import AzureCliCredential
 
 # For vscode login
-credential = AzureCliCredential() 
+credential = AzureCliCredential()
 
-## For Azure portal login
+# For Azure portal login
 # def get_automation_runas_credential(runas_connection):
 #     from OpenSSL import crypto
 #     import binascii
@@ -74,44 +75,33 @@ credential = AzureCliCredential()
 subscription_client = SubscriptionClient(credential)
 subscription_ids = subscription_client.subscriptions.list()
 
-sub_id_array = []
-rg_name_array = []
-vm_id_array = []
-
-# Iterate all subs , rgs , vms and get their ids/names into an array.
-for sub in list(subscription_ids):
-    sub_id_array.append(sub.subscription_id)
-    rg_client = ResourceManagementClient(
-        credential, subscription_id=sub.subscription_id)
-    rg_list = rg_client.resource_groups.list()
-    for rg in list(rg_list):
-        rg_name_array.append(rg.name)
-        compute_client = ComputeManagementClient(
-            credential, subscription_id=sub.subscription_id)
-        vm_list = compute_client.virtual_machines.list(
-            resource_group_name=rg.name)
-        for vm in list(vm_list):
-            vm_id_array.append(vm.id)
-
-print(f"Virtual Machines Name: {vm_id_array}")
 
 today = date.today()
-last_two_weeks = today - datetime.timedelta(days=1)
+last_two_weeks = today - datetime.timedelta(days=3)
 
-for sub_id in sub_id_array:
-    monitor_client = MonitorManagementClient(credential, subscription_id=sub_id)
-
-for vm_id in vm_id_array:
+def fetch_metrics (monitor_client, resource_id, aggregation, metricnames, interval = 'PT24H'):
     metrics_data = monitor_client.metrics.list(
-        vm_id,
+        resource_id,
         timespan="{}/{}".format(last_two_weeks, today),
-        interval='PT1H',
+        interval=interval,
         metricnames='Percentage CPU',
-        aggregation='Total'
-            )
+        aggregation=aggregation
+    )
     for item in metrics_data.value:
         print("{} ({})".format(item.name.localized_value, item.unit))
         for timeserie in item.timeseries:
             for data in timeserie.data:
-                print("{}: {}".format(data.time_stamp, data.total))
+                # print(range(int((data.average))))
+                print(data.average)
+                #print(sum((map(int, data.average))))
+                # + data.average / 3
+                # avg = sum(range(int((data.average))))/len(range(int((data.average))))
+                # print("{}: {}".format(data.time_stamp, data.average))
 
+# Iterate all subs , rgs , vms and get their ids/names into an array.
+for sub in list(subscription_ids):
+    compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
+    monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
+    vm_list = compute_client.virtual_machines.list_all()
+    for vm in list(vm_list):
+        fetch_metrics(monitor_client, vm.id, aggregation='average', metricnames='Percentage CPU')
