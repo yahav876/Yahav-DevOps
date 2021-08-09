@@ -78,36 +78,40 @@ subscription_ids = subscription_client.subscriptions.list()
 
 
 today = date.today()
-last_two_weeks = today - datetime.timedelta(days=3)
+last_two_weeks = today - datetime.timedelta(days=4)
 
-def fetch_metrics (monitor_client, resource_id, aggregation, metricnames, interval = 'PT24H'):
+# Monitor function for vms 
+def fetch_metrics (monitor_client, resource_id, metricnames, interval = 'PT24H'):
     metrics_data = monitor_client.metrics.list(
         resource_id,
         timespan="{}/{}".format(last_two_weeks, today),
         interval=interval,
         metricnames='Percentage CPU',
-        aggregation=aggregation
+        aggregation='Average,Maximum',
     )
+    # Get vm metrics by cpu average usage utilization.
     sum = 0 
     count = 0 
+    sum_2 = 0
+    count_2 =0
     for item in metrics_data.value:
-        metadata = [("{}, ({}) ,VM id: {}".format(item.name.localized_value, item.unit, resource_id))]
         for timeserie in item.timeseries:
             for data in timeserie.data:
                 sum = sum + data.average 
+                sum_2 = sum_2 + data.maximum
                 count = count + 1 
-    data = [sum/count]
-    with open('/home/yahav/cpu_memory_utilization', 'a') as file:
-        writer = csv.writer(file)
-        writer.writerow(metadata)
-        writer.writerow(data)
-        file.close()
+                count_2 = count_2 + 1
+    return [resource_id, sum/count, sum_2/count_2]
 
-# Iterate all subs , rgs , vms and get their ids/names into an array.
-for sub in list(subscription_ids):
-    compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
-    monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
-    vm_list = compute_client.virtual_machines.list_all()
-    for vm in list(vm_list):
-        fetch_metrics(monitor_client, vm.id, aggregation='average', metricnames='Percentage CPU')
-        
+# Iterate all vms and get their cpu utilization.
+with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
+    field_names = ['Resource id', 'Average','Maximum']
+    writer = csv.DictWriter(file, fieldnames=field_names)
+    writer.writeheader()
+    for sub in list(subscription_ids):
+        compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
+        monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
+        vm_list = compute_client.virtual_machines.list_all()
+        for vm in list(vm_list):
+            fetch_data = fetch_metrics(monitor_client, vm.id, metricnames='Percentage CPU')
+            writer.writerow({'Resource id': fetch_data[0],'Average': fetch_data[1], 'Maximum': fetch_data[2]})
