@@ -94,7 +94,7 @@ today = date.today()
 last_two_weeks = today - datetime.timedelta(days=5)
 
 # Monitor function for vms 
-def fetch_metrics (monitor_client, resource_id, metricnames, interval = 'PT24H'):
+def fetch_metrics_cpu (monitor_client, resource_id, interval = 'PT24H'):
     metrics_data = monitor_client.metrics.list(
         resource_id,
         timespan="{}/{}".format(last_two_weeks, today),
@@ -117,10 +117,29 @@ def fetch_metrics (monitor_client, resource_id, metricnames, interval = 'PT24H')
                     max = data.maximum
                 count = count + 1 
     return [resource_id, sum/count, max]
+def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
+    metrics_data = monitor_client.metrics.list(
+        resource_id,
+        timespan="{}/{}".format(last_two_weeks, today),
+        interval=interval,
+        metricnames='Available Memory Bytes',
+        aggregation='Average,Maximum',
+    )
+    # Get vm metrics by memory average usage utilization.
+    sum = 0 
+    count = 0 
+    for item in metrics_data.value:
+        for timeserie in item.timeseries:
+            for data in timeserie.data:
+                if not data.average:
+                    data.average = 0
+                sum = sum + data.average
+                count = count + 1 
+    return [resource_id, ((sum/count)/1000)/1000,]
 
 # Iterate all vms and get their cpu utilization.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
-    field_names = ['Resource id', 'Average','Maximum', 'Vm Size', 'Region']
+    field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory' , 'Vm Size', 'Region']
     writer = csv.DictWriter(file, fieldnames=field_names)
     writer.writeheader()
     for sub in list(subscription_ids):
@@ -128,5 +147,6 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
         monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
-            fetch_data = fetch_metrics(monitor_client, vm.id, metricnames='Percentage CPU')
-            writer.writerow({'Resource id': fetch_data[0],'Average': fetch_data[1], 'Maximum': fetch_data[2],'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location})
+            fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
+            fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
+            writer.writerow({'Resource id': fetch_data_cpu[0],'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': fetch_data_memory[1] ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location})
