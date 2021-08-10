@@ -20,10 +20,12 @@
 from typing import List
 from azure.mgmt import resource
 from azure.mgmt import compute
+import requests
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.mgmt.resource import SubscriptionClient, subscriptions
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.compute import ComputeManagementClient
+from azure.mgmt.billing import BillingManagementClient
 import datetime
 import csv
 from datetime import date, timedelta
@@ -33,9 +35,20 @@ from azure.common.credentials import ServicePrincipalCredentials
 # For vscode login
 from azure.identity import AzureCliCredential
 from isodate.isostrf import DATE_BAS_ORD_COMPLETE
+import adal
+import requests
+
 
 # For vscode login
 credential = AzureCliCredential()
+# headers = {
+#     "Content-Type": "application/json",
+#     "Authorization": credential
+# }
+# uri = "/subscriptions/e41740a2-974b-42e0-ac5a-45f8b096bba7/resourceGroups/NetworkWatcherRG/providers/Microsoft.Compute/disks/testing-yahav"
+
+# response = requests.get("https://management.azure.com/subscriptions/e41740a2-974b-42e0-ac5a-45f8b096bba7/resourceGroups/NetworkWatcherRG/providers/Microsoft.Compute/disks/testing-yahav/providers/Microsoft.Insights/metrics?api-version=2018-01-01")
+# print(response)
 
 # For Azure portal login
 # def get_automation_runas_credential(runas_connection):
@@ -78,7 +91,7 @@ subscription_ids = subscription_client.subscriptions.list()
 
 
 today = date.today()
-last_two_weeks = today - datetime.timedelta(days=4)
+last_two_weeks = today - datetime.timedelta(days=5)
 
 # Monitor function for vms 
 def fetch_metrics (monitor_client, resource_id, metricnames, interval = 'PT24H'):
@@ -92,20 +105,22 @@ def fetch_metrics (monitor_client, resource_id, metricnames, interval = 'PT24H')
     # Get vm metrics by cpu average usage utilization.
     sum = 0 
     count = 0 
-    sum_2 = 0
-    count_2 =0
+    max = 0
     for item in metrics_data.value:
         for timeserie in item.timeseries:
             for data in timeserie.data:
-                sum = sum + data.average 
-                sum_2 = sum_2 + data.maximum
+                if not data.average or not data.maximum:
+                    data.average = 0
+                    data.maximum = 0
+                sum = sum + data.average
+                if data.maximum > max:
+                    max = data.maximum
                 count = count + 1 
-                count_2 = count_2 + 1
-    return [resource_id, sum/count, sum_2/count_2]
+    return [resource_id, sum/count, max]
 
 # Iterate all vms and get their cpu utilization.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
-    field_names = ['Resource id', 'Average','Maximum']
+    field_names = ['Resource id', 'Average','Maximum', 'Vm Size', 'Region']
     writer = csv.DictWriter(file, fieldnames=field_names)
     writer.writeheader()
     for sub in list(subscription_ids):
@@ -114,4 +129,4 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
             fetch_data = fetch_metrics(monitor_client, vm.id, metricnames='Percentage CPU')
-            writer.writerow({'Resource id': fetch_data[0],'Average': fetch_data[1], 'Maximum': fetch_data[2]})
+            writer.writerow({'Resource id': fetch_data[0],'Average': fetch_data[1], 'Maximum': fetch_data[2],'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location})
