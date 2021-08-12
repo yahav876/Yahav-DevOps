@@ -162,6 +162,5 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                     if fetch_data_cpu[2] > 50:
                         lt_50 = "False"
                         vm_tagging = compute_client.virtual_machines.begin_create_or_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'tags':{'right_size': 'false'}})
-                        # print(vm_tagging)
                     writer.writerow({'Resource id': fetch_data_cpu[0],'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
                     'LT 50%':  lt_50 })
