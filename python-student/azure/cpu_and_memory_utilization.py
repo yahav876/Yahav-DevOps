@@ -92,7 +92,7 @@ subscription_ids = subscription_client.subscriptions.list()
 today = date.today()
 last_two_weeks = today - datetime.timedelta(days=14)
 
-# Monitor function for vms 
+# Monitor function for vms by cpu.
 def fetch_metrics_cpu (monitor_client, resource_id, interval = 'PT24H'):
     metrics_data = monitor_client.metrics.list(
         resource_id,
@@ -101,7 +101,7 @@ def fetch_metrics_cpu (monitor_client, resource_id, interval = 'PT24H'):
         metricnames='Percentage CPU',
         aggregation='Average,Maximum',
     )
-    # Get vm metrics by cpu average usage utilization.
+    # Get vm metrics by cpu average and maximum usage utilization.
     sum = 0 
     count = 0 
     max = 0
@@ -119,6 +119,7 @@ def fetch_metrics_cpu (monitor_client, resource_id, interval = 'PT24H'):
 
 
 
+# Monitor function for vms by memory.
 def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
     metrics_data = monitor_client.metrics.list(
         resource_id,
@@ -142,7 +143,7 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
 
 lt_50 = "True"
 
-# Iterate all vms and get their cpu utilization.
+# Iterate all vms and export data utilization to CSV.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
     field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory' , 'Vm Size', 'Region','LT 50%']
     writer = csv.DictWriter(file, fieldnames=field_names)
@@ -150,10 +151,8 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
     for sub in list(subscription_ids):
         compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
         monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
-        resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
-            resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
             vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)
             for vm_size in list(vm_list_size):
                 if vm.hardware_profile.vm_size in vm_size.name:
