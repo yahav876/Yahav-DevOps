@@ -36,7 +36,6 @@ from azure.common.credentials import ServicePrincipalCredentials
 from azure.identity import AzureCliCredential
 from isodate.isostrf import DATE_BAS_ORD_COMPLETE
 import adal
-import requests
 
 
 # For vscode login
@@ -91,7 +90,7 @@ subscription_ids = subscription_client.subscriptions.list()
 
 
 today = date.today()
-last_two_weeks = today - datetime.timedelta(days=5)
+last_two_weeks = today - datetime.timedelta(days=14)
 
 # Monitor function for vms 
 def fetch_metrics_cpu (monitor_client, resource_id, interval = 'PT24H'):
@@ -117,13 +116,16 @@ def fetch_metrics_cpu (monitor_client, resource_id, interval = 'PT24H'):
                     max = data.maximum
                 count = count + 1 
     return [resource_id, sum/count, max]
+
+
+
 def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
     metrics_data = monitor_client.metrics.list(
         resource_id,
         timespan="{}/{}".format(last_two_weeks, today),
         interval=interval,
         metricnames='Available Memory Bytes',
-        aggregation='Average,Maximum',
+        aggregation='Average',
     )
     # Get vm metrics by memory average usage utilization.
     sum = 0 
@@ -137,19 +139,29 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
                 count = count + 1 
     return [((sum/count)/1000)/1000,]
 
+
+lt_50 = "True"
+
 # Iterate all vms and get their cpu utilization.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
-    field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory' , 'Vm Size', 'Region']
+    field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory' , 'Vm Size', 'Region','LT 50%']
     writer = csv.DictWriter(file, fieldnames=field_names)
     writer.writeheader()
     for sub in list(subscription_ids):
         compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
         monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
+        resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
+            resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
             vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)
             for vm_size in list(vm_list_size):
                 if vm.hardware_profile.vm_size in vm_size.name:
                     fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
                     fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
-                    writer.writerow({'Resource id': fetch_data_cpu[0],'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location})
+                    if fetch_data_cpu[2] > 50:
+                        lt_50 = "False"
+                        vm_tagging = compute_client.virtual_machines.begin_create_or_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'tags':{'right_size': 'false'}})
+                        # print(vm_tagging)
+                    writer.writerow({'Resource id': fetch_data_cpu[0],'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                    'LT 50%':  lt_50 })
