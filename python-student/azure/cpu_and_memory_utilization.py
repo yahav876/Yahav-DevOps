@@ -40,14 +40,6 @@ import adal
 
 # For vscode login
 credential = AzureCliCredential()
-# headers = {
-#     "Content-Type": "application/json",
-#     "Authorization": credential
-# }
-# uri = "/subscriptions/e41740a2-974b-42e0-ac5a-45f8b096bba7/resourceGroups/NetworkWatcherRG/providers/Microsoft.Compute/disks/testing-yahav"
-
-# response = requests.get("https://management.azure.com/subscriptions/e41740a2-974b-42e0-ac5a-45f8b096bba7/resourceGroups/NetworkWatcherRG/providers/Microsoft.Compute/disks/testing-yahav/providers/Microsoft.Insights/metrics?api-version=2018-01-01")
-# print(response)
 
 # For Azure portal login
 # def get_automation_runas_credential(runas_connection):
