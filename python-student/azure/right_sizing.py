@@ -80,16 +80,17 @@ credential = AzureCliCredential()
 subscription_client = SubscriptionClient(credential)
 subscription_ids = subscription_client.subscriptions.list()
 
-# filter = "tagName eq 'right_size' and tagValue eq 'false'"
-
+# Initiate function to filter vms by tag.
 def tag_is_present(tags_dict):
     return tags_dict and tags_dict.get('right_size') == 'false'
 
+# Iterate through all subs  
 for sub in list(subscription_ids):
     compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
     resource_list = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
     tagged_vms = [vm for vm in compute_client.virtual_machines.list_all() if tag_is_present(vm.tags)]
     original_size = {}
+    # Iterate through all tagged vms and get there hardware specs(Memory ,CPU).
     for vm in tagged_vms:
         original_size[vm.name] = vm.hardware_profile.vm_size
         list_vm_sizes = compute_client.virtual_machine_sizes.list(location=vm.location)
@@ -98,6 +99,7 @@ for sub in list(subscription_ids):
                 cores = vm_size.number_of_cores
                 memory = vm_size.memory_in_mb
                 size = vm_size.name
+    # Iterate through all available sizes and resize by 2.
     for vm in tagged_vms:
         right_size = ""
         available_sizes = compute_client.virtual_machines.list_available_sizes(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
