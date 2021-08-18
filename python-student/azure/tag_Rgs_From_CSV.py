@@ -27,8 +27,9 @@ from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.billing import BillingManagementClient
 import datetime
-import openpyxl
-from pathlib import Path
+# import openpyxl
+# from pathlib import Path
+import csv
 from datetime import date, timedelta
 from azure.common.credentials import ServicePrincipalCredentials
 # For Azure portal login
@@ -81,10 +82,76 @@ credential = AzureCliCredential()
 subscription_client = SubscriptionClient(credential)
 subscription_ids = subscription_client.subscriptions.list()
 
-# ,"Environment", "Owner", "FinOps-email", "Cost-Center"]
 
-with open('/home/yahav/Downloads/rgs-green.xlsx', mode='r', encoding='latin-1') as file:
-    field_names = ["Resource-group-name", "SUBSCRIPTION"]
-    csv_reader = csv.DictReader(file, fieldnames=field_names)
-    for row in csv_reader:
-        print(row['Resource-group-name'], row['SUBSCRIPTION'])
+
+# ,"Environment", "Owner", "FinOps-email", "Cost-Center"]
+# , encoding='latin-1'
+# , fieldnames=field_names
+# file = Path('/home/yahav/Downloads/rgs-green.xlsx')
+#     field_names = ["Resource-group-name", "SUBSCRIPTION"]
+
+tags =  ["Environment", "Owner", "FinOps-email", "Cost-Center"]
+rg_sub_names = ["Resource-group-name", "SUBSCRIPTION"]
+
+match_rg_names = []
+match_sub_names = []
+match_tag_names = []
+
+sub_names = []
+rg_names = []
+
+with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
+    csv_reader = csv.DictReader(file)
+    all_rows = [row for row in csv_reader]
+    #match_rg_names = [row[rg_sub_names[0]] for row in all_rows]
+    #match_sub_names = [row[rg_sub_names[1]] for row in all_rows]
+    # print(all_rows)
+    #match_tag_names = [row[tags[0]] for row in all_rows]
+        # for tag in tags:
+        #     tags_dict[tag] = row[tag]
+    # tags_dict = dict.fromkeys(tags,tags[all_rows])
+    # print(tags_dict)
+    # print(match_tag_names)
+    for sub in subscription_ids:
+        sub_list = []
+        for row in all_rows:
+            if sub.display_name == row['SUBSCRIPTION']:
+                sub_list.append(row)
+        
+        #Initiate rg client
+        resource_group_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
+        rg_list = resource_group_client.resource_groups.list()
+        rg_names = [rg.name for rg in rg_list]
+        
+        rg_exist = []
+        for rg in sub_list:
+            if rg["Resource-group-name"] in rg_names:
+                rg_exist.append(rg)
+                
+        for rg in rg_exist:
+            tags_dict = {}
+            for tag in tags:
+                tags_dict[tag] = rg[tag]
+
+            resource_group_client.resource_groups.create_or_update(resource_group_name=rg["Resource-group-name"],parameters=
+            {'location': rg['location'], 
+                'tags':tags_dict})
+            # # print(match_sub_names)
+            #     for rg in rg_list:
+            #         if rg.name in match_rg_names:
+            #         print(rg.name)
+                    # resource_group_client.resource_groups.create_or_update
+            #     print(rg.id)
+            # rg_names = rg.name
+            # print(rg_names)
+    # if match_rg_names in row[rg_sub[0]]:
+    #     print(match_rg_names)
+            #     print(rg.name)
+            
+        # if sub.display_name in row[field_names_rg_sub[1]]:
+        #     print(sub.display_name)
+    # print(tags)
+    # print(row[field_names[0]], row[field_names[1]])
+    
+
+
