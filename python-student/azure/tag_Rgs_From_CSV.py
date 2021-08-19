@@ -121,7 +121,11 @@ with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
             # Tag the resource groups.
             resource_group_client.resource_groups.create_or_update(resource_group_name=rg["Resource-group-name"],parameters=
             {'location': rg['location'], 
-                'tags':tags_dict})
+                'tagsPatchOperation': 'Merge',
+                'tags':tags_dict,
+                })
+
+                #### Check how to do operation merge for tags!!! 
 
     
 
