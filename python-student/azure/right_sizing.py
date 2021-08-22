@@ -119,3 +119,13 @@ for sub in list(subscription_ids):
                 print(f"Falied to change {vm_log.name} size.")
 
 
+
+
+      body = {
+            "location": vm.location,
+            "operation" :  "Merge",
+            "properties" : {
+                "tags" : 
+                    {'right_size': 'false'},
+            }
+        }

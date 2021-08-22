@@ -143,6 +143,7 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
     for sub in list(subscription_ids):
         compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
         monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
+        resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
             vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)
@@ -150,9 +151,16 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                 if vm.hardware_profile.vm_size in vm_size.name:
                     fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
                     fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
-                    if fetch_data_cpu[2] > 50:
+                    if fetch_data_cpu[2] < 50:
                         lt_50 = "False"
-                        vm_tagging = compute_client.virtual_machines.begin_create_or_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'tags':{'right_size': 'false'}})
+                        body = {
+                                'operation': 'Merge',
+                                "properties" : {
+                                    'tags': 
+                                        {'right_size': 'true'},
+                                }
+                            }
+                        vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
                     writer.writerow({'Resource id': fetch_data_cpu[0],'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
                     'LT 50%':  lt_50 })
 
