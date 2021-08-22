@@ -104,7 +104,7 @@ for sub in list(subscription_ids):
         right_size = ""
         available_sizes = compute_client.virtual_machines.list_available_sizes(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
         for a in list(available_sizes):
-            if a.number_of_cores <= cores*2 and a.memory_in_mb >= memory*2:
+            if a.number_of_cores >= cores/2 and a.number_of_cores < cores and a.memory_in_mb >= memory/2 and a.memory_in_mb < memory:
                 if a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]) and a.name.split('_')[-1] != "Promo" :
                     right_size = a.name
                     break
