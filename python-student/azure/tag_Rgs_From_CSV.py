@@ -82,12 +82,10 @@ credential = AzureCliCredential()
 subscription_client = SubscriptionClient(credential)
 subscription_ids = subscription_client.subscriptions.list()
 
-
 tags =  ["Environment", "Owner", "FinOps-email", "Cost-Center"]
-rg_sub_names = ["Resource-group-name", "SUBSCRIPTION"]
-
 
 rg_names = []
+
 
 # Open CSV file with read mode.
 with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
@@ -104,7 +102,7 @@ with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
         #Initiate rg client
         resource_group_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
         rg_list = resource_group_client.resource_groups.list()
-        rg_names = [rg.name for rg in rg_list]
+        rg_names = [rg.name for rg in rg_list]        
 
         # Validate rg names within the CSV.
         rg_exist = []
@@ -112,21 +110,21 @@ with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
             if rg["Resource-group-name"] in rg_names:
                 rg_exist.append(rg)
         
-        # Create a dict with the tags names and their values like in th CSV.
+        # Create a dict with the tags names and their values like in the CSV.
         for rg in rg_exist:
             tags_dict = {}
             for tag in tags:
                 tags_dict[tag] = rg[tag]
                 
-            # Tag the resource groups.
-            resource_group_client.resource_groups.create_or_update(resource_group_name=rg["Resource-group-name"],parameters=
-            {'location': rg['location'], 
-                'tagsPatchOperation': 'Merge',
-                'tags':tags_dict,
-                })
+        # Tag the resource groups.
+        body = {
+            "operation" :  "Merge",
+            "properties" : {
+                "tags" : 
+                    tags_dict,
+            }
+        }
 
-                #### Check how to do operation merge for tags!!! 
-
-    
+        resource_group_client.tags.update_at_scope(rg["Resource-id"] , body)
 
 
