@@ -82,7 +82,7 @@ subscription_ids = subscription_client.subscriptions.list()
 
 # Initiate function to filter vms by tag.
 def tag_is_present(tags_dict):
-    return tags_dict and tags_dict.get('right_size') == 'false'
+    return tags_dict and tags_dict.get('right_size') == 'true'
 
 # Iterate through all subs and export data utilization to CSV.
 with open('/home/yahav/right_sizing.csv', 'a') as file:
@@ -108,14 +108,14 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
             right_size = ""
             available_sizes = compute_client.virtual_machines.list_available_sizes(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
             for a in list(available_sizes):
-                if a.number_of_cores <= cores/2 and a.number_of_cores < cores and a.memory_in_mb <= memory/2 and a.memory_in_mb < memory:
+                if a.number_of_cores >= cores*2 and a.number_of_cores > cores and a.memory_in_mb >= memory*2 and a.memory_in_mb > memory:
                     # If vms are in Promo(Preview) size than resize them also to Promo.
                     if original_size[vm.name].split('_')[-1] == "Promo":
-                        if a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]):
+                        if a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]) and "s" in a.name:
                             right_size = a.name
                             break
                     # If vms are not in Promo(Preview) size than resize them to regular size.
-                    elif a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]) and  a.name.split('_')[-1] != "Promo": 
+                    elif a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]) and  a.name.split('_')[-1] != "Promo"  and "s" in a.name: 
                         right_size = a.name
                         break
             if not right_size:
@@ -131,5 +131,4 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
                     print(f"Falied to change {vm_log.name} size.")
 
 
-ג
 
