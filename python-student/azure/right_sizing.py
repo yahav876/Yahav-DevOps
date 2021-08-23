@@ -84,48 +84,52 @@ subscription_ids = subscription_client.subscriptions.list()
 def tag_is_present(tags_dict):
     return tags_dict and tags_dict.get('right_size') == 'false'
 
-# Iterate through all subs  
-for sub in list(subscription_ids):
-    compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
-    resource_list = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
-    tagged_vms = [vm for vm in compute_client.virtual_machines.list_all() if tag_is_present(vm.tags)]
-    original_size = {}
-    # Iterate through all tagged vms and get there hardware specs(Memory ,CPU).
-    for vm in tagged_vms:
-        original_size[vm.name] = vm.hardware_profile.vm_size
-        list_vm_sizes = compute_client.virtual_machine_sizes.list(location=vm.location)
-        for vm_size in list_vm_sizes:
-            if (original_size[vm.name]) in vm_size.name:
-                cores = vm_size.number_of_cores
-                memory = vm_size.memory_in_mb
-                size = vm_size.name
-    # Iterate through all available sizes and resize by 2.
-    for vm in tagged_vms:
-        right_size = ""
-        available_sizes = compute_client.virtual_machines.list_available_sizes(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
-        for a in list(available_sizes):
-            if a.number_of_cores >= cores/2 and a.number_of_cores < cores and a.memory_in_mb >= memory/2 and a.memory_in_mb < memory:
-                if a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]) and a.name.split('_')[-1] != "Promo" :
-                    right_size = a.name
-                    break
-        if not right_size:
-            print(f"No Available Resize For The VM: '{vm.name}'")
-        else:
-            vm_resize = compute_client.virtual_machines.begin_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'hardware_profile':{'vm_size': right_size}})
-            vm_log = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
-            if vm_log.hardware_profile.vm_size == right_size:
-                print(f"Vm Name:'{vm_log.name}' Changed from {original_size[vm_log.name]} To {right_size}")
+# Iterate through all subs and export data utilization to CSV.
+with open('/home/yahav/right_sizing.csv', 'a') as file:
+    field_names = ['Resource id', 'Previous Size','Current Size']
+    writer = csv.DictWriter(file, fieldnames=field_names)
+    writer.writeheader()
+    for sub in list(subscription_ids):
+        compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
+        resource_list = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
+        tagged_vms = [vm for vm in compute_client.virtual_machines.list_all() if tag_is_present(vm.tags)]
+        original_size = {}
+        # Iterate through all tagged vms and get there hardware specs(Memory ,CPU).
+        for vm in tagged_vms:
+            original_size[vm.name] = vm.hardware_profile.vm_size
+            list_vm_sizes = compute_client.virtual_machine_sizes.list(location=vm.location)
+            for vm_size in list_vm_sizes:
+                if (original_size[vm.name]) in vm_size.name:
+                    cores = vm_size.number_of_cores
+                    memory = vm_size.memory_in_mb
+                    size = vm_size.name
+        # Iterate through all available sizes and resize by 2.
+        for vm in tagged_vms:
+            right_size = ""
+            available_sizes = compute_client.virtual_machines.list_available_sizes(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
+            for a in list(available_sizes):
+                if a.number_of_cores <= cores/2 and a.number_of_cores < cores and a.memory_in_mb <= memory/2 and a.memory_in_mb < memory:
+                    # If vms are in Promo(Preview) size than resize them also to Promo.
+                    if original_size[vm.name].split('_')[-1] == "Promo":
+                        if a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]):
+                            right_size = a.name
+                            break
+                    # If vms are not in Promo(Preview) size than resize them to regular size.
+                    elif a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]) and  a.name.split('_')[-1] != "Promo": 
+                        right_size = a.name
+                        break
+            if not right_size:
+                writer.writerow({'Resource id': vm.id,'Current Size': original_size[vm.name]})
+                print(f"No Available Resize For The VM: '{vm.name}'")
             else:
-                print(f"Falied to change {vm_log.name} size.")
+                vm_resize = compute_client.virtual_machines.begin_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'hardware_profile':{'vm_size': right_size}})
+                vm_log = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
+                if vm_log.hardware_profile.vm_size == right_size:
+                    writer.writerow({'Resource id': vm.id,'Previous Size': original_size[vm_log.name],'Current Size': right_size})
+                    print(f"Vm Name:'{vm_log.name}' Changed from {original_size[vm_log.name]} To {right_size}")
+                else:
+                    print(f"Falied to change {vm_log.name} size.")
 
 
+ג
 
-
-      body = {
-            "location": vm.location,
-            "operation" :  "Merge",
-            "properties" : {
-                "tags" : 
-                    {'right_size': 'false'},
-            }
-        }
