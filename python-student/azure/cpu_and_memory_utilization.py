@@ -118,26 +118,30 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
         timespan="{}/{}".format(last_two_weeks, today),
         interval=interval,
         metricnames='Available Memory Bytes',
-        aggregation='Average',
+        aggregation='Average,Maximum',
     )
     # Get vm metrics by memory average usage utilization.
     sum = 0 
     count = 0 
+    max = 0
     for item in metrics_data.value:
         for timeserie in item.timeseries:
             for data in timeserie.data:
-                if not data.average:
+                if not data.average or not data.maximum:
                     data.average = 0
+                    data.maximum = 0
                 sum = sum + data.average
+                if data.maximum > max:
+                    max = data.maximum
                 count = count + 1 
-    return [((sum/count)/1000)/1000,]
+    return [((sum/count)/1000)/1000, max/1000/1000]
 
 
 lt_50 = "True"
 
 # Iterate all vms and export data utilization to CSV.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
-    field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory' , 'Vm Size', 'Region','LT 50%']
+    field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory','Maximum Memory' , 'Vm Size', 'Region','LT 50%']
     writer = csv.DictWriter(file, fieldnames=field_names)
     writer.writeheader()
     for sub in list(subscription_ids):
@@ -161,7 +165,7 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                                 }
                             }
                         vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
-                    writer.writerow({'Resource id': fetch_data_cpu[0],'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                    writer.writerow({'Resource id': fetch_data_cpu[0],'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': fetch_data_memory[1] ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
                     'LT 50%':  lt_50 })
 
 
