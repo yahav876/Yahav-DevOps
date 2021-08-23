@@ -105,17 +105,15 @@ with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
         rg_names = [rg.name for rg in rg_list]        
 
         # Validate rg names within the CSV.
-        rg_exist = []
-        for rg in sub_exist:
-            if rg["Resource-group-name"] in rg_names:
-                rg_exist.append(rg)
+        rg_exist = [rg for rg in sub_exist if rg["Resource-group-name"] in rg_names]
         
         # Create a dict with the tags names and their values like in the CSV.
         for rg in rg_exist:
             tags_dict = {}
             for tag in tags:
                 tags_dict[tag] = rg[tag]
-                
+                print(tags_dict)
+
         # Tag the resource groups.
         body = {
             "operation" :  "Merge",
@@ -124,7 +122,6 @@ with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
                     tags_dict,
             }
         }
-
         resource_group_client.tags.update_at_scope(rg["Resource-id"] , body)
 
 
