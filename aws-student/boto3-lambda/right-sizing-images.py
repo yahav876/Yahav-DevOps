@@ -9,7 +9,7 @@ DEST_BUCKET = os.environ['DEST_BUCKET']
 SIZE = 128, 128
 
 def lambda_handler(event, context):
-    for record in event[Records]:
+    for record in event['Records']:
         sourcce_bucket = record['s3']['bucket']['name']
         key = record['s3']['object']['key']
         thumb = 'thumb-' + key
