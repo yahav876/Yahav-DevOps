@@ -40,12 +40,12 @@ try {
 
         # Tag resources with last-modified tag by Caller id.
         foreach ($resource in $resources) {
-            $users = Get-AzLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-90) -EndTime (Get-Date)| Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
-            if ((!$users) -or ($users.SubmissionTimestamp -eq $null)) {
+            $last_modified = Get-AzLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-90) -EndTime (Get-Date)| Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
+            if ((!$last_modified) -or ($last_modified.SubmissionTimestamp -eq $null)) {
                 Write-Output "no logs"
             }
             else {
-            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ last_modified_by = $users[0].Caller.Split('@')[0]} -Operation Merge
+            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ last_modified_by = $last_modified[0].Caller.Split('@')[0]} -Operation Merge
             }
         }
     }

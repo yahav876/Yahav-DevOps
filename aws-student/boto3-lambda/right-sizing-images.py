@@ -4,7 +4,6 @@ import tempfile
 import boto3
 from PIL import Image
 
-
 s3 = boto3.client('s3')
 DEST_BUCKET = os.environ['DEST_BUCKET']
 SIZE = 128, 128
