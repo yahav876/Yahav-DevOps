@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="32329746-4677-4de9-93ca-173949be130d" name="Default Changelist" comment="right sizing aws images">
+      <change afterPath="$PROJECT_DIR$/aws-student/boto3-lambda/import-csv-dynamoDB.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aws-student/boto3-lambda/right-sizing-images.py" beforeDir="false" afterPath="$PROJECT_DIR$/aws-student/boto3-lambda/right-sizing-images.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -496,7 +496,14 @@
       <option name="project" value="LOCAL" />
       <updated>1629816942016</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="right sizing aws images">
+      <created>1629875215538</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1629875215538</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="UnknownFeatures">
