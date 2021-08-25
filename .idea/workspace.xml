@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="32329746-4677-4de9-93ca-173949be130d" name="Default Changelist" comment="right sizing aws images">
-      <change afterPath="$PROJECT_DIR$/aws-student/boto3-lambda/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aws-student/boto3-lambda/right-sizing-images.py" beforeDir="false" afterPath="$PROJECT_DIR$/aws-student/boto3-lambda/right-sizing-images.py" afterDir="false" />
     </list>
@@ -47,7 +46,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="TF_FMT" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/terraform-student" />
-    <property name="settings.editor.selected.configurable" value="aws" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -59,7 +58,7 @@
       <recent name="$PROJECT_DIR$/terraform-student/wordpress-infrastrcture/modules" />
     </key>
   </component>
-  <component name="RunManager" selected="AWS Lambda.[Remote] right-sizing-yahav">
+  <component name="RunManager" selected="Python.Python">
     <configuration name="Python" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -158,12 +157,12 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="AWS Lambda.[Remote] right-sizing-yahav" />
       <item itemvalue="Python.Python" />
       <item itemvalue="Terraform.init" />
       <item itemvalue="Terraform.plan" />
       <item itemvalue="Terraform.apply" />
       <item itemvalue="Terraform.destroy" />
-      <item itemvalue="AWS Lambda.[Remote] right-sizing-yahav" />
     </list>
     <recent_temporary>
       <list>
@@ -490,7 +489,14 @@
       <option name="project" value="LOCAL" />
       <updated>1629811986210</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="right sizing aws images">
+      <created>1629816942016</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1629816942016</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="UnknownFeatures">
