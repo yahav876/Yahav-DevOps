@@ -155,7 +155,7 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                 if vm.hardware_profile.vm_size in vm_size.name:
                     fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
                     fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
-                    if fetch_data_cpu[2] < 50:
+                    if fetch_data_cpu[2] < 50 and fetch_data_memory[1] < 50:
                         lt_50 = "False"
                         body = {
                                 'operation': 'Merge',
