@@ -14,9 +14,9 @@ def lambda_handler(event, context):
         source_bucket = record['s3']['bucket']['name']
         key = record['s3']['object']['key']
         with tempfile.TemporaryDirectory() as tmpdir:
-            donwload_path = os.path.join(tmpdir, key)
-            s3.download_file(source_bucket, key, donwload_path)
-            items = read_csv(download_file)
+            download_path = os.path.join(tmpdir, key)
+            s3.download_file(source_bucket, key, download_path)
+            items = read_csv(download_path)
 
             with table.batch_writer() as batch:
                 for item in items:
@@ -41,7 +41,7 @@ def read_csv(file):
              data['Meta']['Image'] = row['Image'] or None
              data['Meta'] = {k: v for k,
                              v in data['Meta'].items() if v is not None}
-            items.append(data)
+             items.append(data)
 
-        return items
+    return items
 
