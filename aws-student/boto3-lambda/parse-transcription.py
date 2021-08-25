@@ -24,3 +24,5 @@ def lambda_handler(event, context):
 
     object = s3.Object(BUCKET_NAME, job_name + '-asrOutput.txt')
     object.put(Body=text)
+
+
