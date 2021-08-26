@@ -86,7 +86,7 @@ def tag_is_present(tags_dict):
 
 # Iterate through all subs and export data utilization to CSV.
 with open('/home/yahav/right_sizing.csv', 'a') as file:
-    field_names = ['Resource id', 'Previous Size','Current Size']
+    field_names = ['Subscription Name','ResourceGroup','Location','Resource id', 'Previous Size','Current Size','Tags']
     writer = csv.DictWriter(file, fieldnames=field_names)
     writer.writeheader()
     for sub in list(subscription_ids):
@@ -134,8 +134,9 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
             else:
                 vm_resize = compute_client.virtual_machines.begin_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'hardware_profile':{'vm_size': right_size}})
                 vm_log = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
+                # print(vm_log)
                 if vm_log.hardware_profile.vm_size == right_size:
-                    writer.writerow({'Resource id': vm.id,'Previous Size': original_size[vm_log.name],'Current Size': right_size})
+                    writer.writerow({'Subscription Name': sub.display_name,'ResourceGroup': vm_log.id.split('/')[4],'Location': vm_log.location, 'Resource id': vm.id,'Previous Size': original_size[vm_log.name],'Current Size': right_size,'Tags': vm_log.tags})
                     print(f"Vm Name:'{vm_log.name}' Changed from {original_size[vm_log.name]} To {right_size}")
                 else:
                     print(f"Falied to change {vm_log.name} size.")
