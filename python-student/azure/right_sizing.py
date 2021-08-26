@@ -108,31 +108,30 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
             right_size = ""
             available_sizes = compute_client.virtual_machines.list_available_sizes(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
             for a in list(available_sizes):
-                if a.number_of_cores >= cores*2 and a.number_of_cores > cores and a.memory_in_mb >= memory*2 and a.memory_in_mb > memory:
+                if a.number_of_cores >= cores/2 and a.number_of_cores < cores and a.memory_in_mb >= memory/2 and a.memory_in_mb < memory:
                     # If vms are in Promo(Preview) size than resize them also to Promo.
-                    # if original_size[vm.name].split('_')[-1] == "Promo":
-                    #     if a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]):
-                    #         right_size = a.name
-                    #         break
+                    if original_size[vm.name].split('_')[-1] == "Promo":
+                        if (len(original_size[vm.name].split('_'))) == len(a.name.split('_')) and a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]) and a.name.split('_')[-2] == original_size[vm.name].split('_')[-2]:
+                            right_size = a.name
+                            break
                     # If vms are not in Promo(Preview) size than resize them to regular size.
-                    # elif a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]):
-                        if (len(original_size[vm.name].split('_'))) == len(a.name.split('_')) and a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]):
-                             if a.name.split('_')[-1] == original_size[vm.name].split('_')[-1]:
-                                 print(a.name)
-                        # print(original_size[vm.name])
-                        # right_size = a.name
-                        # break
-            # if not right_size:
-            #     writer.writerow({'Resource id': vm.id,'Current Size': original_size[vm.name]})
-            #     print(f"No Available Resize For The VM: '{vm.name}'")
-            # else:
-            #     vm_resize = compute_client.virtual_machines.begin_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'hardware_profile':{'vm_size': right_size}})
-            #     vm_log = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
-            #     if vm_log.hardware_profile.vm_size == right_size:
-            #         writer.writerow({'Resource id': vm.id,'Previous Size': original_size[vm_log.name],'Current Size': right_size})
-            #         print(f"Vm Name:'{vm_log.name}' Changed from {original_size[vm_log.name]} To {right_size}")
-            #     else:
-            #         print(f"Falied to change {vm_log.name} size.")
+                    elif (len(original_size[vm.name].split('_'))) == len(a.name.split('_')) and a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]):
+                        if a.name.split('_')[-1] == original_size[vm.name].split('_')[-1]:
+                            right_size = a.name
+                            print(right_size)
+                            break
+                            # If there is no options to resize the vm
+            if not right_size:
+                writer.writerow({'Resource id': vm.id,'Current Size': original_size[vm.name]})
+                print(f"No Available Resize For The VM: '{vm.name}'")
+            else:
+                vm_resize = compute_client.virtual_machines.begin_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'hardware_profile':{'vm_size': right_size}})
+                vm_log = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
+                if vm_log.hardware_profile.vm_size == right_size:
+                    writer.writerow({'Resource id': vm.id,'Previous Size': original_size[vm_log.name],'Current Size': right_size})
+                    print(f"Vm Name:'{vm_log.name}' Changed from {original_size[vm_log.name]} To {right_size}")
+                else:
+                    print(f"Falied to change {vm_log.name} size.")
 
 
 
