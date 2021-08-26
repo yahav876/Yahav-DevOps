@@ -120,10 +120,11 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
                             right_size = a.name
                             print(right_size)
                             break
-                            # If there is no options to resize the vm
+            # If there is no options to resize the vm and export to CSV.
             if not right_size:
                 writer.writerow({'Resource id': vm.id,'Current Size': original_size[vm.name]})
                 print(f"No Available Resize For The VM: '{vm.name}'")
+            # Resize the vm and export all the data into CSV.
             else:
                 vm_resize = compute_client.virtual_machines.begin_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'hardware_profile':{'vm_size': right_size}})
                 vm_log = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
