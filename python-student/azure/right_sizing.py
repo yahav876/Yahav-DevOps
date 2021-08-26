@@ -116,9 +116,15 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
                             break
                     # If vms are not in Promo(Preview) size than resize them to regular size.
                     elif (len(original_size[vm.name].split('_'))) == len(a.name.split('_')) and a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]):
-                        if a.name.split('_')[-1] == original_size[vm.name].split('_')[-1]:
+                        if (len(original_size[vm.name].split('_'))) == 4 and a.name.split('_')[-1] == original_size[vm.name].split('_')[-1] and a.name.split('_')[-2] == original_size[vm.name].split('_')[-2]:
                             right_size = a.name
-                            print(right_size)
+                            break
+                        if (len(original_size[vm.name].split('_'))) == 3:
+                            if a.name.split('_')[-1] == original_size[vm.name].split('_')[-1]:
+                                right_size = a.name
+                                break
+                        if (len(original_size[vm.name].split('_'))) == 2:
+                            right_size = a.name
                             break
             # If there is no options to resize the vm and export to CSV.
             if not right_size:
