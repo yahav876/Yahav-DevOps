@@ -17,63 +17,64 @@
 ######################################################################################################################
 
 # Import module dependencies
-import os, datetime, csv
 from typing import List
+from azure.mgmt import resource
+from azure.mgmt import compute
+import requests
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.mgmt.resource import SubscriptionClient, subscriptions
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.billing import BillingManagementClient
+import datetime
+import csv
 from datetime import date, timedelta
 from azure.common.credentials import ServicePrincipalCredentials
+# For Azure portal login
+# import automationassets
+# For vscode login
 from azure.identity import AzureCliCredential
 from isodate.isostrf import DATE_BAS_ORD_COMPLETE
 import adal
 
 
-# Global Credential 
-credential = None
+# For vscode login
+credential = AzureCliCredential()
 
-if os.getenv('AUTOMATION_ASSET_ACCOUNTID'):
-    import automationassets
-    # For Azure portal login
-    def get_automation_runas_credential(runas_connection):
-        from OpenSSL import crypto
-        import binascii
-        from msrestazure import azure_active_directory
-        import adal
+# For Azure portal login
+# def get_automation_runas_credential(runas_connection):
+#     from OpenSSL import crypto
+#     import binascii
+#     from msrestazure import azure_active_directory
+#     import adal
 
-        # Get the Azure Automation RunAs service principal certificate
-        cert = automationassets.get_automation_certificate("AzureRunAsCertificate")
-        pks12_cert = crypto.load_pkcs12(cert)
-        pem_pkey = crypto.dump_privatekey(
-            crypto.FILETYPE_PEM, pks12_cert.get_privatekey())
+#     # Get the Azure Automation RunAs service principal certificate
+#     cert = automationassets.get_automation_certificate("AzureRunAsCertificate")
+#     pks12_cert = crypto.load_pkcs12(cert)
+#     pem_pkey = crypto.dump_privatekey(
+#         crypto.FILETYPE_PEM, pks12_cert.get_privatekey())
 
-        # Get run as connection information for the Azure Automation service principal
-        application_id = runas_connection["ApplicationId"]
-        thumbprint = runas_connection["CertificateThumbprint"]
-        tenant_id = runas_connection["TenantId"]
+#     # Get run as connection information for the Azure Automation service principal
+#     application_id = runas_connection["ApplicationId"]
+#     thumbprint = runas_connection["CertificateThumbprint"]
+#     tenant_id = runas_connection["TenantId"]
 
-        # Authenticate with service principal certificate
-        resource = "https://management.core.windows.net/"
-        authority_url = ("https://login.microsoftonline.com/"+tenant_id)
-        context = adal.AuthenticationContext(authority_url)
-        return azure_active_directory.AdalAuthentication(
-            lambda: context.acquire_token_with_client_certificate(
-                resource,
-                application_id,
-                pem_pkey,
-                thumbprint)
-    )
-
-    # Authenticate to Azure using the Azure Automation RunAs service principal
-    runas_connection = automationassets.get_automation_connection(
-        "AzureRunAsConnection")
-    credential = get_automation_runas_credential(runas_connection)
-
-else:
-    credential = AzureCliCredential()
-
+#     # Authenticate with service principal certificate
+#     resource = "https://management.core.windows.net/"
+#     authority_url = ("https://login.microsoftonline.com/"+tenant_id)
+#     context = adal.AuthenticationContext(authority_url)
+#     return azure_active_directory.AdalAuthentication(
+#         lambda: context.acquire_token_with_client_certificate(
+#             resource,
+#             application_id,
+#             pem_pkey,
+#             thumbprint)
+#     )
+#
+# # Authenticate to Azure using the Azure Automation RunAs service principal
+# runas_connection = automationassets.get_automation_connection(
+#     "AzureRunAsConnection")
+# credential = get_automation_runas_credential(runas_connection)
 
 # Initiate sub client
 subscription_client = SubscriptionClient(credential)
@@ -140,7 +141,7 @@ lt_50 = "True"
 
 # Iterate all vms and export data utilization to CSV.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
-    field_names = ['Subscription','Resource Group','Resource Name','Resource id', 'Average CPU','Maximum CPU','Average Memory','Maximum Memory' , 'Vm Size', 'Region','LT 50%']
+    field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory','Maximum Memory' , 'Vm Size', 'Region','LT 50%']
     writer = csv.DictWriter(file, fieldnames=field_names)
     writer.writeheader()
     for sub in list(subscription_ids):
@@ -149,7 +150,6 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
         resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
-            # print(vm)
             vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)
             for vm_size in list(vm_list_size):
                 if vm.hardware_profile.vm_size in vm_size.name:
@@ -165,5 +165,5 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                                 }
                             }
                         vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
-                    writer.writerow({'Subscription': sub.display_name ,'Resource Group': vm.id.split('/')[4], 'Resource Name': vm.name ,'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': fetch_data_memory[1] ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                    writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': fetch_data_memory[1] ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
                     'LT 50%':  lt_50})
