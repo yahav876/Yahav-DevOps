@@ -18,16 +18,12 @@
 
 # Import module dependencies
 from typing import List
-from azure.mgmt import resource
-from azure.mgmt import compute
-import requests
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.mgmt.resource import SubscriptionClient, subscriptions
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.billing import BillingManagementClient
-import datetime
-import csv
+import datetime,csv,os
 from datetime import date, timedelta
 from azure.common.credentials import ServicePrincipalCredentials
 # For Azure portal login
