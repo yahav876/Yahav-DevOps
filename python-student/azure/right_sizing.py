@@ -112,20 +112,24 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
                     # If vms are in Promo(Preview) size than resize them also to Promo.
                     if original_size[vm.name].split('_')[-1] == "Promo":
                         if (len(original_size[vm.name].split('_'))) == len(a.name.split('_')) and a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]) and a.name.split('_')[-2] == original_size[vm.name].split('_')[-2]:
-                            right_size = a.name
-                            break
+                            if all(l[0] == l[1] for l in zip(original_size[vm.name], a.name) if not l[0].isdigit()):
+                                right_size = a.name
+                                break
                     # If vms are not in Promo(Preview) size than resize them to regular size.
                     elif (len(original_size[vm.name].split('_'))) == len(a.name.split('_')) and a.name.split('_')[1].startswith(original_size[vm.name].split('_')[1][0]):
                         if (len(original_size[vm.name].split('_'))) == 4 and a.name.split('_')[-1] == original_size[vm.name].split('_')[-1] and a.name.split('_')[-2] == original_size[vm.name].split('_')[-2]:
-                            right_size = a.name
-                            break
-                        if (len(original_size[vm.name].split('_'))) == 3:
-                            if a.name.split('_')[-1] == original_size[vm.name].split('_')[-1]:
+                            if all(l[0] == l[1] for l in zip(original_size[vm.name], a.name) if not l[0].isdigit()):
                                 right_size = a.name
                                 break
+                        if (len(original_size[vm.name].split('_'))) == 3:
+                            if a.name.split('_')[-1] == original_size[vm.name].split('_')[-1]:
+                                if all(l[0] == l[1] for l in zip(original_size[vm.name], a.name) if not l[0].isdigit()):
+                                    right_size = a.name
+                                    break
                         if (len(original_size[vm.name].split('_'))) == 2:
-                            right_size = a.name
-                            break
+                            if all(l[0] == l[1] for l in zip(original_size[vm.name], a.name) if not l[0].isdigit()):
+                                right_size = a.name
+                                break
             # If there is no options to resize the vm and export to CSV.
             if not right_size:
                 writer.writerow({'Resource id': vm.id,'Current Size': original_size[vm.name]})
@@ -134,7 +138,7 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
             else:
                 vm_resize = compute_client.virtual_machines.begin_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'hardware_profile':{'vm_size': right_size}})
                 vm_log = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
-                # print(vm_log)
+                # Validate if the vm changed her size and print
                 if vm_log.hardware_profile.vm_size == right_size:
                     writer.writerow({'Subscription Name': sub.display_name,'ResourceGroup': vm_log.id.split('/')[4],'Location': vm_log.location, 'Resource id': vm.id,'Previous Size': original_size[vm_log.name],'Current Size': right_size,'Tags': vm_log.tags})
                     print(f"Vm Name:'{vm_log.name}' Changed from {original_size[vm_log.name]} To {right_size}")
