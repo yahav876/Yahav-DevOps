@@ -138,7 +138,7 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
     return [((sum/count)/1000)/1000, max/1000/1000]
 
 
-lt_50 = "True"
+lt_50 = "False"
 
 # Iterate all vms and export data utilization to CSV.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
@@ -149,15 +149,18 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
         compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
         monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
         resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
+        
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
+            get_memory_in_mb = compute_client.virtual_machines.list_available_sizes(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
             vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)
             for vm_size in list(vm_list_size):
                 if vm.hardware_profile.vm_size in vm_size.name:
                     fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
                     fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
-                    if fetch_data_cpu[2] < 50 and fetch_data_memory[1] < 50:
-                        lt_50 = "False"
+                    # Check if Maximum CPU and MAximum Memory are less than 50% in use.
+                    if (fetch_data_cpu[2] < 50) and ((fetch_data_memory[1]/vm_size.memory_in_mb)*100 < 50):
+                        lt_50 = "True"
                         body = {
                                 'operation': 'Merge',
                                 "properties" : {
