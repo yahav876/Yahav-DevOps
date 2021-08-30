@@ -25,7 +25,7 @@ from azure.mgmt.resource import SubscriptionClient, subscriptions
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.billing import BillingManagementClient
-import datetime
+import datetime ,os
 import csv
 from datetime import date, timedelta
 from azure.common.credentials import ServicePrincipalCredentials

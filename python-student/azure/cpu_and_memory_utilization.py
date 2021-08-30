@@ -18,16 +18,12 @@
 
 # Import module dependencies
 from typing import List
-from azure.mgmt import resource
-from azure.mgmt import compute
-import requests
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.mgmt.resource import SubscriptionClient, subscriptions
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.billing import BillingManagementClient
-import datetime
-import csv
+import datetime,csv,os
 from datetime import date, timedelta
 from azure.common.credentials import ServicePrincipalCredentials
 # For Azure portal login
@@ -98,7 +94,7 @@ def fetch_metrics_cpu (monitor_client, resource_id, interval = 'PT24H'):
         metricnames='Percentage CPU',
         aggregation='Average,Maximum',
     )
-    # Get vm metrics by cpu average and maximum usage utilization.
+    # Get vm metrics by cpu average/maximum usage utilization.
     sum = 0 
     count = 0 
     max = 0
@@ -125,7 +121,7 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
         metricnames='Available Memory Bytes',
         aggregation='Average,Maximum',
     )
-    # Get vm metrics by memory average usage utilization.
+    # Get vm metrics by memory average/maximum usage utilization.
     sum = 0 
     count = 0 
     max = 0
@@ -142,7 +138,7 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
     return [((sum/count)/1000)/1000, max/1000/1000]
 
 
-lt_50 = "True"
+lt_50 = "False"
 
 # Iterate all vms and export data utilization to CSV.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
@@ -153,6 +149,7 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
         compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
         monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
         resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
+        
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
             vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)
@@ -160,8 +157,9 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                 if vm.hardware_profile.vm_size in vm_size.name:
                     fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
                     fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
-                    if fetch_data_cpu[2] < 50 and fetch_data_memory[1] < 50:
-                        lt_50 = "False"
+                    # Check if Maximum CPU and Maximum Memory are less than 50% in use - if yes than tag them with {'right_size': 'true'}.
+                    if (fetch_data_cpu[2] < 50) and ((fetch_data_memory[1]/vm_size.memory_in_mb)*100 < 50):
+                        lt_50 = "True"
                         body = {
                                 'operation': 'Merge',
                                 "properties" : {
