@@ -24,10 +24,11 @@ Write-Output ('{0:yyyy-MM-dd HH:mm:ss.f} - Starting' -f (Get-Date))
 
 try {
     # Login to Azure
-    $servicePrincipalConnection = Get-AutomationConnection -Name $connectionName
-    $null = Add-AzAccount -ServicePrincipal -Tenant $servicePrincipalConnection.TenantId `
-        -ApplicationId $servicePrincipalConnection.ApplicationId `
-        -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint
+    if ($env:AUTOMATION_ASSET_ACCOUNTID) {
+        $runAsConnection = Get-AutomationConnection -Name $ConnectionName -ErrorAction Stop
+        Add-AzAccount -ServicePrincipal -Tenant $runAsConnection.TenantId -ApplicationId $runAsConnection.ApplicationId `
+            -CertificateThumbprint $runAsConnection.CertificateThumbprint -ErrorAction Stop | Out-Null
+    }
     # Iterate all subscriptions
     Get-AzSubscription | Where-Object { ($_.Name -match $SubscriptionNamePattern) -and ($_.State -eq 'Enabled') } | ForEach-Object {
 
@@ -35,7 +36,7 @@ try {
         $null = Set-AzContext -SubscriptionObject $_ -Force
 
 
-        $resourceWithTag = Get-AzResource -Tag @{ created_By = "None" }
+        $resourceWithTag = Get-AzResource -Tag @{ environment = "None" }
         
 
         # Tag resources with date created
@@ -47,7 +48,7 @@ try {
                 Write-Output "no logs"
             }
             else {
-            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_By = $users[0]} -Operation Merge
+            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_By = $users[0].Caller.Split('@')[0]} -Operation Merge
             Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_On_Date = $logEntries[0].SubmissionTimestamp } -Operation Merge
             }
         }
