@@ -48,8 +48,17 @@ try {
                 Write-Output "no logs"
             }
             else {
-            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_By = $users[0].Caller.Split('@')[0]} -Operation Merge
             Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_On_Date = $logEntries[0].SubmissionTimestamp } -Operation Merge
+            }
+            if ((!$users) -or ($users.SubmissionTimestamp -eq $null)) {
+                Write-Output "no logs"
+            }
+            else {
+                foreach ($caller in $users.Caller) {
+                    if 
+                    Update-AzTag -ResourceId $resource.ResourceId -Tag @{ created_By = $users[0].Caller.Split('@')[0]} -Operation Merge
+
+                }
             }
         }
     }
@@ -60,3 +69,6 @@ catch {
 finally {
     Write-Output ('{0:yyyy-MM-dd HH:mm:ss.f} - Completed' -f (Get-Date))
 }
+
+
+-and ($users.Caller -match 'idf.il$')

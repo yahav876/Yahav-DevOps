@@ -32,27 +32,28 @@ try {
         -ApplicationId $servicePrincipalConnection.ApplicationId `
         -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint
 
-    # # Initialzie the blob stprage connection using the connection string parameter
-    # $blobStorageContext = New-AzStorageContext -ConnectionString $ConnectionString
-    # # Get the current time by timezone
-    # $currentTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($($(Get-Date).ToUniversalTime()), $([System.TimeZoneInfo]::GetSystemTimeZones() | Where-Object {$_.Id -match "Israel"}))
-    # # Creating the name of the CSV file blob
-    # $blobName = $("deleted_unattached_disks_$(Get-Date -Date $currentTime -Format 'dd-MM-yyyy_HH:mm:ss').csv")
-    # # Craeting the temporary local CSV file
-    # New-Item -Name "tempFile.csv" -ItemType File -Force | Out-Null
-    # # Copying the the temporary CSV file to the blob storage container as an append blob
-    # Set-AzStorageBlobContent -File ".\tempFile.csv" -Blob $blobName -Container $BlobContainer -BlobType Append -Context $blobStorageContext -Force | Out-Null
-    # # Get the CSV file blob from the container in the storage account
-    # $blobStorage = Get-AzStorageBlob -Blob $blobName -Container $BlobContainer -Context $blobStorageContext
-    # # Add the header to the CSV file
-    # $blobStorage.ICloudBlob.AppendText("subscription_name,resource_group,location,resource_id,size`n")
+    # Initialzie the blob stprage connection using the connection string parameter
+    $blobStorageContext = New-AzStorageContext -ConnectionString $ConnectionString
+    # Get the current time by timezone
+    $currentTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($($(Get-Date).ToUniversalTime()), $([System.TimeZoneInfo]::GetSystemTimeZones() | Where-Object {$_.Id -match "Israel"}))
+    # Creating the name of the CSV file blob
+    $blobName = $("deleted_unattached_disks_$(Get-Date -Date $currentTime -Format 'dd-MM-yyyy_HH:mm:ss').csv")
+    # Craeting the temporary local CSV file
+    New-Item -Name "tempFile.csv" -ItemType File -Force | Out-Null
+    # Copying the the temporary CSV file to the blob storage container as an append blob
+    Set-AzStorageBlobContent -File ".\tempFile.csv" -Blob $blobName -Container $BlobContainer -BlobType Append -Context $blobStorageContext -Force | Out-Null
+    # Get the CSV file blob from the container in the storage account
+    $blobStorage = Get-AzStorageBlob -Blob $blobName -Container $BlobContainer -Context $blobStorageContext
+    # Add the header to the CSV file
+    $blobStorage.ICloudBlob.AppendText("subscription_name,resource_group,location,resource_id,size,tags`n")
 
 
     # Iterate all subscriptions
     Get-AzSubscription | Where-Object { ($_.Name -match ".*") -and ($_.State -eq 'Enabled') } | ForEach-Object {
-
+        $subscriptionName = $_.Name
         Write-Output ('Switching to subscription: {0}' -f $_.Name)
         $null = Set-AzContext -SubscriptionObject $_ -Force
+    
           
 
         $tagname = "Candidate"
@@ -61,24 +62,23 @@ try {
         $taggedResourcesDisks = Get-AzResource -ResourceType Microsoft.Compute/Disks -TagName $tagname -TagValue $TagValue
 
         
-    # # Iterate all Vms with specific tag key 'bla'(replace bla with your key name you want to filter out!)
-    #     foreach ( $resource in $taggedResourcesVms) {
-    #         if (!$resource.tags.bla) {
-    #             Remove-AzResource -ResourceId $resource.Id -Force 
-    #             Write-Output('will remove {0} resources' -f $resource.Count) 
+    # Iterate all Vms with specific tag key 'bla'(replace bla with your key name you want to filter out!)
+        foreach ( $resource in $taggedResourcesVms) {
+            if (!$resource.tags.bla) {
+                Remove-AzResource -ResourceId $resource.Id -Force 
+                $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($resource.ResourceGroupName), $($resource.location), $($resource.ResourceId), $($resource.Tags)`n")
+                Write-Output('will remove {0} resources' -f $resource.Count) 
                 
-    #         }
-    #     }
+            }
+        }
     # Iterate all Disks with specific tag key 'bla' (replace bla with your key name you want to filter out!)
         foreach ( $resource in $taggedResourcesDisks) {
             # if (!$resource.tags.Candidate) {
-                #Remove-AzResource -ResourceId $resource.Id -Force
-                Write-Output($resource.location)
-                Write-Output($resource.ResourceGroupName)
-                Write-Output($resource.ResourceId)
-                Write-Output($resource.tags)
-                # Write-Output('will remove {0} resources' -f $resource.Count)
-            # }
+                Remove-AzResource -ResourceId $resource.Id -Force
+                $diskInfo = Get-AzDisk -ResourceGroupName $resource.ResourceGroupName -DiskName $resource.Name
+                $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($resource.ResourceGroupName), $($resource.location), $($resource.ResourceId), $($diskInfo.DiskSizeGB), $($resource.Tags)`n")
+                Write-Output('will remove {0} resources' -f $resource.Count)
+            }
         }
         
     }
