@@ -27,11 +27,11 @@ Write-Output ('{0:yyyy-MM-dd HH:mm:ss.f} - Starting' -f (Get-Date))
 try {
 
     # Login to Azure
-    $servicePrincipalConnection = Get-AutomationConnection -Name $connectionName
-    $null = Add-AzAccount -ServicePrincipal -Tenant $servicePrincipalConnection.TenantId `
-        -ApplicationId $servicePrincipalConnection.ApplicationId `
-        -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint
-
+    if ($env:AUTOMATION_ASSET_ACCOUNTID) {
+        $runAsConnection = Get-AutomationConnection -Name $ConnectionName -ErrorAction Stop
+        Add-AzAccount -ServicePrincipal -Tenant $runAsConnection.TenantId -ApplicationId $runAsConnection.ApplicationId `
+            -CertificateThumbprint $runAsConnection.CertificateThumbprint -ErrorAction Stop | Out-Null
+    }
     # Initialzie the blob stprage connection using the connection string parameter
     $blobStorageContext = New-AzStorageContext -ConnectionString $ConnectionString
     # Get the current time by timezone
@@ -61,7 +61,8 @@ try {
         $taggedResourcesVms = Get-AzResource -ResourceType Microsoft.Compute/virtualMachines -TagName $tagname -TagValue $TagValue
         $taggedResourcesDisks = Get-AzResource -ResourceType Microsoft.Compute/Disks -TagName $tagname -TagValue $TagValue
 
-        
+  
+
     # Iterate all Vms with specific tag key 'bla'(replace bla with your key name you want to filter out!)
         foreach ( $resource in $taggedResourcesVms) {
             if (!$resource.tags.bla) {
@@ -73,7 +74,7 @@ try {
         }
     # Iterate all Disks with specific tag key 'bla' (replace bla with your key name you want to filter out!)
         foreach ( $resource in $taggedResourcesDisks) {
-            # if (!$resource.tags.Candidate) {
+            if (!$resource.tags.bla) {
                 Remove-AzResource -ResourceId $resource.Id -Force
                 $diskInfo = Get-AzDisk -ResourceGroupName $resource.ResourceGroupName -DiskName $resource.Name
                 $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($resource.ResourceGroupName), $($resource.location), $($resource.ResourceId), $($diskInfo.DiskSizeGB), $($resource.Tags)`n")
