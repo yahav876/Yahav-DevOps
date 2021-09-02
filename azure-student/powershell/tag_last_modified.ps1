@@ -74,6 +74,7 @@ try {
             }
         }
     }
+}
     catch {
         Write-Output ($_)
     }
