@@ -16,7 +16,9 @@
 
 PARAM(
     [string] $SubscriptionNamePattern = '.*',
-    [string] $ConnectionName = 'AzureRunAsConnection'
+    [string] $ConnectionName = 'AzureRunAsConnection',
+    # Replace here your endswith username like = idf.il / greendreamteam.onmicrosoft.com etc.
+    [string] $userName = "$*cloudteam.ai"
 )
 
 
@@ -38,24 +40,43 @@ try {
         $null = Set-AzContext -SubscriptionObject $_ -Force
 
 
-        $resources = Get-AzResource
-        
+        $vmsResources = Get-AzResource -ResourceType Microsoft.Compute/virtualMachines 
+        $disksResources = Get-AzResource -ResourceType Microsoft.Compute/Disks      
+       
         Write-Output($resources)
         # Tag resources with last-modified tag by Caller id.
-        # foreach ($resource in $resources) {
-        #     $last_modified = Get-AzLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-90) -EndTime (Get-Date)| Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
-        #     if ((!$last_modified) -or ($last_modified.SubmissionTimestamp -eq $null)) {
-        #         Write-Output "no logs"
-        #     }
-        #     else {
-        #     Update-AzTag -ResourceId $resource.ResourceId -Tag @{ last_modified_by = $last_modified[0].Caller.Split('@')[0]} -Operation Merge
-        #     }
-        # }
+        foreach ($resource in $vmsResources) {
+            $users = Get-AzActivityLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-90) -EndTime (Get-Date) -WarningAction SilentlyContinue | Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
+
+            if ((!$users) -or ($users.Caller -eq $null)) {
+                Write-Output "no logs"
+            }
+            else {
+                foreach ($caller in $users) {
+                    if ($caller -match $userName) {
+                        Update-AzTag -ResourceId $resource.ResourceId -Tag @{ last_modified_by = $caller.Caller } -Operation Merge
+                    }
+                
+                }
+            }
+            foreach ($resource in $disksResources) {
+                $users = Get-AzActivityLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-14) -EndTime (Get-Date) -WarningAction SilentlyContinue | Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
+                if ((!$users) -or ($users.Caller -eq $null)) {
+                    Write-Output "no logs"
+                }
+                else {
+                    foreach ($caller in $users) {
+                        if ($caller -match $userName) {
+                            Update-AzTag -ResourceId $resource.ResourceId -Tag @{ last_modified_by = $caller.Caller } -Operation Merge
+                        }
+                    }
+                }
+            }
+        }
     }
-}
-catch {
-    Write-Output ($_)
-}
-finally {
-    Write-Output ('{0:yyyy-MM-dd HH:mm:ss.f} - Completed' -f (Get-Date))
-}
+    catch {
+        Write-Output ($_)
+    }
+    finally {
+        Write-Output ('{0:yyyy-MM-dd HH:mm:ss.f} - Completed' -f (Get-Date))
+    }
