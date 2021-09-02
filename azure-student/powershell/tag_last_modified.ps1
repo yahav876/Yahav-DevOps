@@ -46,7 +46,7 @@ try {
         Write-Output($resources)
         # Tag resources with last-modified tag by Caller id.
         foreach ($resource in $vmsResources) {
-            $users = Get-AzActivityLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-90) -EndTime (Get-Date) -WarningAction SilentlyContinue | Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
+            $users = Get-AzActivityLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-14) -EndTime (Get-Date) -WarningAction SilentlyContinue | Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
 
             if ((!$users) -or ($users.Caller -eq $null)) {
                 Write-Output "no logs"
