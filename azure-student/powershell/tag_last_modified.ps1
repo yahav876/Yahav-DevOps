@@ -75,9 +75,9 @@ try {
         }
     }
 }
-    catch {
-        Write-Output ($_)
-    }
-    finally {
-        Write-Output ('{0:yyyy-MM-dd HH:mm:ss.f} - Completed' -f (Get-Date))
-    }
+catch {
+    Write-Output ($_)
+}
+finally {
+    Write-Output ('{0:yyyy-MM-dd HH:mm:ss.f} - Completed' -f (Get-Date))
+}
