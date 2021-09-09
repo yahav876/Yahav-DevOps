@@ -41,7 +41,7 @@ try {
         
         Write-Output($resourceWithTag.Name)
         # Tag resources with date created
-        # Tag each resource with tag name 'created_By = None' with his CallerID'
+        # Tag each resource that have a tag name 'created_By = None' with his CallerID'
         foreach ($resource in $resourceWithTag) {
             $logEntries = Get-AzLog -StartTime (Get-Date).AddDays(-90) -ResourceId $resource.ResourceId -WarningAction SilentlyContinue | Sort-Object -Property SubmissionTimestamp
             $users = Get-AzActivityLog -ResourceId $resource.ResourceId -StartTime (Get-Date).AddDays(-90) -EndTime (Get-Date) -WarningAction SilentlyContinue | Select-Object Caller | Where-Object { $_.Caller } | Sort-Object -Property Caller -Unique | Sort-Object -Property Caller -Descending
