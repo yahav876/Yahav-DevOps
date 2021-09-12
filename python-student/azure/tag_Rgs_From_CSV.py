@@ -114,14 +114,14 @@ with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
                 tags_dict[tag] = rg[tag]
                 print(tags_dict)
 
-        # Tag the resource groups.
-        body = {
-            "operation" :  "Merge",
-            "properties" : {
-                "tags" : 
-                    tags_dict,
+            # Tag the resource groups.
+            body = {
+                "operation" :  "Merge",
+                "properties" : {
+                    "tags" : 
+                        tags_dict,
+                }
             }
-        }
-        resource_group_client.tags.update_at_scope(rg["Resource-id"] , body)
+            resource_group_client.tags.update_at_scope(rg["Resource-id"] , body)
 
 
