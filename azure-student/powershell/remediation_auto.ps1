@@ -18,7 +18,9 @@ PARAM(
     [string] $SubscriptionNamePattern = '.*',
     [string] $ConnectionName = 'AzureRunAsConnection',
     [string] $policyAssignmentId = "",
-    [string] $subscriptionName = ""
+    [string] $subscriptionName = "",
+    [string] $ManagementGroupName = ""
+          
 
 )
 
@@ -41,7 +43,7 @@ try {
 
         while($(Get-AzPolicyState | Where-Object {$_.PolicyAssignmentId -eq $policyAssignmentId -and $_.ComplianceState -eq "NonCompliant"}))
         {
-            $job = Start-AzPolicyRemediation -PolicyAssignmentId $policyAssignmentId -Name "remediation$(Get-Random)" -AsJob
+            $job = Start-AzPolicyRemediation -ManagementGroupName $ManagementGroupName  -PolicyAssignmentId $policyAssignmentId -Name "remediation$(Get-Random)" -AsJob
             $job | Wait-Job
             $remediation = $job | Receive-Job
         }
