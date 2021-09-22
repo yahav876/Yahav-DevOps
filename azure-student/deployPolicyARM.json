@@ -73,7 +73,17 @@
             ]
           },
           "then": {
-            "effect": "audit"
+            "effect": "modify",
+            "details": {
+              "operations": [
+              { 
+                "operation" : "addOrReplace",
+                "field": "Microsoft.Compute/licenseType",
+                "value": "Windows_Server"
+               }
+              ]
+            }
+
           }
         }
       }
