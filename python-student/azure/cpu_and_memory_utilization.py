@@ -135,7 +135,7 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
                 if data.maximum > max:
                     max = data.maximum
                 count = count + 1 
-    return [((sum/count)/1000)/1000, max/1000/1000]
+    return [((sum/count)/1000)/1000, (max/1000)/1000]
 
 
 lt_50 = "False"
@@ -157,8 +157,8 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                 if vm.hardware_profile.vm_size in vm_size.name:
                     fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
                     fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
-                    # Check if Maximum CPU and Maximum Memory are less than 50% in use - if yes than tag them with {'right_size': 'true'}.
-                    if (fetch_data_cpu[2] < 50) and ((fetch_data_memory[1]/vm_size.memory_in_mb)*100 < 50):
+                    #Check if Maximum CPU and Maximum Memory are less than 50% in use - if yes than tag them with {'right_size': 'true'}.
+                    if (fetch_data_cpu[2] < 50) and ((fetch_data_memory[1]/vm_size.memory_in_mb)*100) < 50:
                         lt_50 = "True"
                         body = {
                                 'operation': 'Merge',
