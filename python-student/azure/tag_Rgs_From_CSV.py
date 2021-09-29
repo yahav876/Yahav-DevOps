@@ -88,7 +88,7 @@ rg_names = []
 
 
 # Open CSV file with read mode.
-with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
+with open('/home/yahav/Downloads/rgs-green.csv', mode='r',) as file:
     csv_reader = csv.DictReader(file)
     all_rows = [row for row in csv_reader]
 
@@ -112,7 +112,7 @@ with open('/home/yahav/Downloads/rgs-green.csv', mode='r') as file:
             tags_dict = {}
             for tag in tags:
                 tags_dict[tag] = rg[tag]
-                print(tags_dict)
+                
 
             # Tag the resource groups.
             body = {
