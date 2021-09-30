@@ -86,57 +86,61 @@ subscription_client = SubscriptionClient(credential)
 subscription_ids = subscription_client.subscriptions.list()
 
 
-# tags =  ["Environment", "Owner", "FinOps-email", "Cost-Center"]
+tags =  ["Environment", "Owner", "FinOps-email", "Cost-Center"]
 
-# rg_names = []
+rg_names = []
 
 
-# # Open CSV file with read mode.
-# with open('/home/yahav/Downloads/rgs-green.csv', mode='r',) as file:
-#     csv_reader = csv.DictReader(file)
-#     all_rows = [row for row in csv_reader]
+# Open CSV file with read mode.
+with open('/home/yahav/Downloads/rgs-green.csv', mode='r',) as file:
+    csv_reader = csv.DictReader(file)
+    all_rows = [row for row in csv_reader]
 
-for sub in subscription_ids:
-    policy = PolicyInsightsClient(credential=credential, subscription_id=sub.subscription_id)
-    policy_client = PolicyClient(credential=credential, subscription_id=sub.subscription_id)
-    # get_deny = policy_client.policy_assignments.get(policy_assignment_name="c6e7e78b36604aa4acfcd6f8", scope="Aviad@Energyteam")
-    # print(get_deny)
-    get_deny = policy_client.policy_assignments.get()
-    
-    for p in get_:
-        print(p)
-        break
-    # print(get_deny)
+    for sub in subscription_ids:
+        # policy = PolicyInsightsClient(credential=credential, subscription_id=sub.subscription_id)
+        with open('/home/yahav/Downloads/deny_policy_data_30-09-2021_09 57 23.csv', mode='r',) as file_click:
+            policy_reader = csv.DictReader(file_click)
+            row_data = [id for id in policy_reader]
+            policy_client = PolicyClient(credential=credential, subscription_id=sub.subscription_id)
+           
 
-#     # # Validate sub names within the CSV.
-#     # sub_exist = []
-#     # for row in all_rows:
-#     #     if sub.display_name == row['SUBSCRIPTION']:
-#     #         sub_exist.append(row)
+            # Validate sub names within the CSV.
+            sub_exist = []
+            for row in all_rows:
+                if sub.display_name == row['SUBSCRIPTION']:
+                    sub_exist.append(row)
 
-#     #Initiate rg client
-#     resource_group_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
-#     rg_list = resource_group_client.resource_groups.list()
-#     # rg_names = [rg.name for rg in rg_list]        
+            #Initiate rg client
+            resource_group_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
+            rg_list = resource_group_client.resource_groups.list()
+            rg_names = [rg.name for rg in rg_list]        
 
-#     # Validate rg names within the CSV.
-#     rg_exist = [rg for rg in sub_exist if rg["Resource-group-name"] in rg_names]
-    
-#     # Create a dict with the tags names and their values like in the CSV.
-#     for rg in rg_exist:
-#         tags_dict = {}
-#         for tag in tags:
-#             tags_dict[tag] = rg[tag]
+            # Validate rg names within the CSV.
+            rg_exist = [rg for rg in sub_exist if rg["Resource-group-name"] in rg_names]
+            
+            # Create a dict with the tags names and their values like in the CSV.
+            for rg in rg_exist:
+                get_deny = policy_client.policy_assignments.list_for_resource_group(resource_group_name=rg.name)
+                deny_ids = []
+                for p in get_deny:
+                    deny_ids.append( p.policy_definition_id.split('/')[4])
+                tags_dict = {}
+                for tag in tags:
+                    tags_dict[tag] = rg[tag]
+                    
             
 
-#         # Tag the resource groups.
-#         body = {
-#             "operation" :  "Merge",
-#             "properties" : {
-#                 "tags" : 
-#                     tags_dict,
-#             }
-#         }
-#         resource_group_client.tags.update_at_scope(rg["Resource-id"] , body)
+                # Tag the resource groups.
+                body = {
+                    "operation" :  "Merge",
+                    "properties" : {
+                        "tags" : 
+                            tags_dict,
+                    }
+                }
+                if deny_ids in row_data:
+                    print("Cannot tag the resource group")
+                else:
+                    resource_group_client.tags.update_at_scope(rg["Resource-id"] , body)
 
 
