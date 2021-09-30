@@ -102,6 +102,7 @@ with open('/home/yahav/Downloads/rgs-click.csv', mode='r',) as file:
         with open('/home/yahav/Downloads/deny_policy_data_30-09-2021_09 57 23.csv', mode='r',) as file_click:
             policy_reader = csv.DictReader(file_click)
             row_data = [id for id in policy_reader]
+            print(row_data)
             policy_client = PolicyClient(credential=credential, subscription_id=sub.subscription_id)
            
             # Validate sub names within the CSV.
