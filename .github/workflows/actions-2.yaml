@@ -1,0 +1,10 @@
+name: Must run on linux vm AWS
+
+on: push
+
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      - run: echo 'hello a cloud guru'
+      - run: echo $HOSTNAME
