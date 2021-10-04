@@ -17,7 +17,7 @@
 PARAM(
     [string] $SubscriptionNamePattern = '.*',
     [string] $ConnectionName = 'AzureRunAsConnection',
-    # [string] $policyAssignmentId = "/providers/Microsoft.Management/managementGroups/m1/providers/Microsoft.Authorization/policyAssignments/3e6a78ad6e40450eb5dbd3f4",
+    [string] $policyAssignmentId = "/providers/Microsoft.Management/managementGroups/m1/providers/Microsoft.Authorization/policyAssignments/3e6a78ad6e40450eb5dbd3f4",
     # [string] $subscriptionName = "e2",
     [String] $ConnectionString = $(Get-AutomationVariable -Name 'CONNECTION_STRING'),
     [String] $BlobContainer = $(Get-AutomationVariable -Name 'BLOB_CONTAINER')
@@ -43,7 +43,7 @@ try {
     # Get the current time by timezone
     $currentTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($($(Get-Date).ToUniversalTime()), $([System.TimeZoneInfo]::GetSystemTimeZones() | Where-Object {$_.Id -match "Israel"}))
     # Creating the name of the CSV file blob
-    $blobName = $("deny_policy_data_$(Get-Date -Date $currentTime -Format 'dd-MM-yyyy_HH:mm:ss').csv")
+    $blobName = $("hybrid_benefit_data_$(Get-Date -Date $currentTime -Format 'dd-MM-yyyy_HH:mm:ss').csv")
     # Craeting the temporary local CSV file
     New-Item -Name "tempFile.csv" -ItemType File -Force | Out-Null
     # Copying the the temporary CSV file to the blob storage container as an append blob
@@ -51,7 +51,7 @@ try {
     # Get the CSV file blob from the container in the storage account
     $blobStorage = Get-AzStorageBlob -Blob $blobName -Container $BlobContainer -Context $blobStorageContext
     # Add the header to the CSV file
-    $blobStorage.ICloudBlob.AppendText("resource_id`n")
+    $blobStorage.ICloudBlob.AppendText("resource_name,subscription_name,resource_group,location,resource_id,size,tags`n")
 
     Get-AzSubscription | Where-Object { ($_.Name -match ".*") -and ($_.State -eq 'Enabled') } | ForEach-Object {
         $subscriptionName = $_.Name
@@ -61,22 +61,21 @@ try {
         
     # Set-AzContext -SubscriptionName $subscriptionName -Force | Out-Null
 
-    $policyData = Get-AzDenyAssignment
+    $policyData = Get-AzPolicyState | Where-Object {$_.PolicyAssignmentId -eq $policyAssignmentId -and $_.ComplianceState -eq "NonCompliant"}
 
-    foreach ($policy in $policyData) {
-        Write-Output($policy)
+    foreach ($resource in $policyData) {
 
         # Get information needed for further proccess.
-        # $getResourceInfo = Get-AzResource -ResourceId $resource.ResourceId
+        $getResourceInfo = Get-AzResource -ResourceId $resource.ResourceId
 
         # Create a tags variable to be able insert it in CSV.
-        # $tags = $getResourceInfo.Tags.GetEnumerator() | ForEach-Object {"$($_.Key): $($_.Value)"} 
+        $tags = $getResourceInfo.Tags.GetEnumerator() | ForEach-Object {"$($_.Key): $($_.Value)"} 
 
         # Get VM size 
-        # $vmSize = Get-AzVM -ResourceGroupName $resource.ResourceGroup -Name $getResourceInfo.Name
+        $vmSize = Get-AzVM -ResourceGroupName $resource.ResourceGroup -Name $getResourceInfo.Name
 
         # Write information about NonCompliant VMs in CSV.
-        # $blobStorage.ICloudBlob.AppendText("$($policy.id)`n")
+        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($policyData.ResourceGroup), $($policyData.ResourceLocation), $($policyData.ResourceId), $($vmSize.HardwareProfile.VmSize), $($tags)`n")
 
         }
     }
