@@ -62,7 +62,8 @@ try {
     # Set-AzContext -SubscriptionName $subscriptionName -Force | Out-Null
 
     $policyDataVM = Get-AzPolicyState | Where-Object {$_.PolicyAssignmentId -eq $policyAssignmentId -and $_.ComplianceState -eq "NonCompliant"}
-
+    $Na = ""
+    
     foreach ($resource in $policyDataVM) {
 
         # Get information needed for further proccess.
@@ -75,7 +76,7 @@ try {
         $vmSize = Get-AzVM -ResourceGroupName $resource.ResourceGroup -Name $getResourceInfo.Name
 
         # Write information about NonCompliant VMs in CSV.
-        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($policyDataVM.ResourceGroup), $($policyDataVM.ResourceLocation), $($policyDataVM.ResourceId), $($vmSize.HardwareProfile.VmSize), $($tags)`n")
+        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($policyDataVM.ResourceGroup), $($policyDataVM.ResourceLocation), $($policyDataVM.ResourceId), $($vmSize.HardwareProfile.VmSize),$($Na) , $($tags)`n")
 
         }
 
