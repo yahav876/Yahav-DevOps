@@ -18,7 +18,7 @@ PARAM(
     [string] $SubscriptionNamePattern = '.*',
     [string] $ConnectionName = 'AzureRunAsConnection',
     [string] $policyAssignmentId = "/providers/Microsoft.Management/managementGroups/m1/providers/Microsoft.Authorization/policyAssignments/3e6a78ad6e40450eb5dbd3f4",
-    # [string] $subscriptionName = "e2",
+    [string] $policyAssignmentIdsql = "",
     [String] $ConnectionString = $(Get-AutomationVariable -Name 'CONNECTION_STRING'),
     [String] $BlobContainer = $(Get-AutomationVariable -Name 'BLOB_CONTAINER')
           
@@ -61,9 +61,9 @@ try {
         
     # Set-AzContext -SubscriptionName $subscriptionName -Force | Out-Null
 
-    $policyData = Get-AzPolicyState | Where-Object {$_.PolicyAssignmentId -eq $policyAssignmentId -and $_.ComplianceState -eq "NonCompliant"}
+    $policyDataVM = Get-AzPolicyState | Where-Object {$_.PolicyAssignmentId -eq $policyAssignmentId -and $_.ComplianceState -eq "NonCompliant"}
 
-    foreach ($resource in $policyData) {
+    foreach ($resource in $policyDataVM) {
 
         # Get information needed for further proccess.
         $getResourceInfo = Get-AzResource -ResourceId $resource.ResourceId
@@ -75,7 +75,22 @@ try {
         $vmSize = Get-AzVM -ResourceGroupName $resource.ResourceGroup -Name $getResourceInfo.Name
 
         # Write information about NonCompliant VMs in CSV.
-        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($policyData.ResourceGroup), $($policyData.ResourceLocation), $($policyData.ResourceId), $($vmSize.HardwareProfile.VmSize), $($tags)`n")
+        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($policyDataVM.ResourceGroup), $($policyDataVM.ResourceLocation), $($policyDataVM.ResourceId), $($vmSize.HardwareProfile.VmSize), $($tags)`n")
+
+        }
+
+    $policyDataSQL = Get-AzPolicyState | Where-Object {$_.PolicyAssignmentId -eq $policyAssignmentIdsql -and $_.ComplianceState -eq "NonCompliant"}
+    
+    foreach ($resource in $policyDataSQL) {
+    
+        # Get information needed for further proccess.
+        $getResourceInfo = Get-AzResource -ResourceId $resource.ResourceId
+        
+        # Create a tags variable to be able insert it in CSV.
+        $tags = $getResourceInfo.Tags.GetEnumerator() | ForEach-Object {"$($_.Key): $($_.Value)"}
+
+        # Write information about NonCompliant VMs in CSV.
+        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($policyDataSQL.ResourceGroup), $($policyDataSQL.ResourceLocation), $($policyDataSQL.ResourceId), $($tags)`n")
 
         }
     }
