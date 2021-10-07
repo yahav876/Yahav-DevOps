@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "automationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "automation account name..."
+            }
+
+        },
+
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "location for the runbook"
+            }
+        }
+    },
+
+
+
+
+    "resources": [
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Automation/automationAccounts/runbooks",
+            "name": "[concat(parameters('automationAccountName'), '/tag_deallocated')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                
+                "description": "a runbook to tag all deallocated disks",
+                "runbookType": "PowerShell",
+                "logProgress": false,
+                "logVerbose": true,
+                "publishContentLink": {
+                    "uri": "https://raw.githubusercontent.com/CloudHiro/azure-finops/main/ARM_templates/tag_deallocated/TagDeallocatedVmsAndDisks.ps1",
+                    "version": "1"
+                }
+            }
+        }
+    ]
+}
+                "message": "{\r\n  \"error\": {\r\n    \"code\": \"InvalidTemplate\",\r\n    \"message\": \"Unable to process template language expressions for resource '/providers/Microsoft.Management/managementGroups/m1/providers/Microsoft.Authorization/policyDefinitions/test4' at line '30' and column '9'. 'The template function 'utcNow' is not expected at this location. The function can only be used with parameter default value expresions. Please see https://aka.ms/arm-template-expressions for usage details.'\",\r\n    \"additionalInfo\": [\r\n      {\r\n        \"type\": \"TemplateViolation\",\r\n        \"info\": {\r\n          \"lineNumber\": 30,\r\n          \"linePosition\": 9,\r\n          \"path\": \"\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
