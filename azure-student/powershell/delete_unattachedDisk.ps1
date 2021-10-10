@@ -37,7 +37,7 @@ try {
     # Get the current time by timezone
     $currentTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($($(Get-Date).ToUniversalTime()), $([System.TimeZoneInfo]::GetSystemTimeZones() | Where-Object {$_.Id -match "Israel"}))
     # Creating the name of the CSV file blob
-    $blobName = $("deleted_unattached_disks_$(Get-Date -Date $currentTime -Format 'dd-MM-yyyy_HH:mm:ss').csv")
+    $blobName = $("deleted_unattached_disks_and_vms_$(Get-Date -Date $currentTime -Format 'dd-MM-yyyy_HH:mm:ss').csv")
     # Craeting the temporary local CSV file
     New-Item -Name "tempFile.csv" -ItemType File -Force | Out-Null
     # Copying the the temporary CSV file to the blob storage container as an append blob

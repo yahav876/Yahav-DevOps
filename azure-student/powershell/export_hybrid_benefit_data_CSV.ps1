@@ -61,8 +61,9 @@ try {
         
     # Set-AzContext -SubscriptionName $subscriptionName -Force | Out-Null
 
-    $policyDataVM = Get-AzPolicyState | Where-Object {$_.PolicyAssignmentId -eq $policyAssignmentId -and $_.ComplianceState -eq "NonCompliant"}
+    # $policyDataVM = Get-AzPolicyState | Where-Object {$_.PolicyAssignmentId -eq $policyAssignmentId -and $_.ComplianceState -eq "NonCompliant"}
     $Na = ""
+    $policyDataVM = Get-AzPolicyState -Filter "PolicyAssignmentId eq '$($policyAssignmentId)' and ComplianceState eq 'NonCompliant'"
     
     foreach ($resource in $policyDataVM) {
 
@@ -76,7 +77,7 @@ try {
         $vmSize = Get-AzVM -ResourceGroupName $resource.ResourceGroup -Name $getResourceInfo.Name
 
         # Write information about NonCompliant VMs in CSV.
-        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($policyDataVM.ResourceGroup), $($policyDataVM.ResourceLocation), $($policyDataVM.ResourceId), $($vmSize.HardwareProfile.VmSize),$($Na) , $($tags)`n")
+        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($resource.ResourceGroup), $($resource.ResourceLocation), $($resource.ResourceId), $($vmSize.HardwareProfile.VmSize), $($tags)`n")
 
         }
 
@@ -91,7 +92,7 @@ try {
         $tags = $getResourceInfo.Tags.GetEnumerator() | ForEach-Object {"$($_.Key): $($_.Value)"}
 
         # Write information about NonCompliant VMs in CSV.
-        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($policyDataSQL.ResourceGroup), $($policyDataSQL.ResourceLocation), $($policyDataSQL.ResourceId), $($tags)`n")
+        $blobStorage.ICloudBlob.AppendText("$($getResourceInfo.Name) ,$subscriptionName, $($resource.ResourceGroup), $($resource.ResourceLocation), $($resource.ResourceId),$($Na) ,$($tags)`n")
 
         }
     }
