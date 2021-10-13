@@ -24,14 +24,14 @@ sudo systemctl stop docker
 hw=$(hwinfo --disk | grep 'Device File:' | cut -d ' ' -f5)
 disk=$(echo $hw | cut -d ' ' -f2)
 sudo mkfs -t ext4 $disk
-sudo mkdir  /mnt/neura
-sudo mount /dev/xvdb /mnt/neura
-sudo rsync -aP /var/lib/docker/ /mnt/neura
+sudo mkdir  /mnt/example
+sudo mount /dev/xvdb /mnt/example
+sudo rsync -aP /var/lib/docker/ /mnt/example
 sudo mv /var/lib/docker /var/lib/docker.old
 sudo touch /etc/docker/daemon.json
 sudo echo \
 "{
-   \"data-root\": \"/mnt/neura\"
+   \"data-root\": \"/mnt/example\"
 }" > /etc/docker/daemon.json
 sudo systemctl restart docker
 
