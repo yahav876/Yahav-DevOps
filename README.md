@@ -1,4 +1,4 @@
-# Yahav-Student
+# Yahav-DevOps
 
 Welcome to my first github repo!
 For the last year i  took some DevOps courses and i am trying to get better and better!
