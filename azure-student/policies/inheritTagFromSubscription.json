@@ -1,0 +1,128 @@
+{
+    "mode": "All",
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "environment"
+      },
+      "tagName2": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "owner"
+      },
+      "tagName3": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "owner-email"
+      },
+      "tagName4": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "finops-email"
+      },
+      "tagName5": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'environment'"
+        },
+        "defaultValue": "cost-center"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "notEquals": "[subscription().tags[parameters('tagName')]]"
+          },
+          {
+            "value": "[subscription().tags[parameters('tagName')]]",
+            "notEquals": ""
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName2'), ']')]",
+            "notEquals": "[subscription().tags[parameters('tagName2')]]"
+          },
+          {
+            "value": "[subscription().tags[parameters('tagName2')]]",
+            "notEquals": ""
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName3'), ']')]",
+            "notEquals": "[subscription().tags[parameters('tagName3')]]"
+          },
+          {
+            "value": "[subscription().tags[parameters('tagName3')]]",
+            "notEquals": ""
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName4'), ']')]",
+            "notEquals": "[subscription().tags[parameters('tagName4')]]"
+          },
+          {
+            "value": "[subscription().tags[parameters('tagName4')]]",
+            "notEquals": ""
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName5'), ']')]",
+            "notEquals": "[subscription().tags[parameters('tagName5')]]"
+          },
+          {
+            "value": "[subscription().tags[parameters('tagName5')]]",
+            "notEquals": ""
+          }
+        ]
+      },
+      "then": {
+        "effect": "modify",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+          ],
+          "operations": [
+            {
+              "operation": "addOrReplace",
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "value": "[subscription().tags[parameters('tagName')]]"
+            },
+            {
+              "operation": "addOrReplace",
+              "field": "[concat('tags[', parameters('tagName2'), ']')]",
+              "value": "[subscription().tags[parameters('tagName2')]]"
+            },
+            {
+              "operation": "addOrReplace",
+              "field": "[concat('tags[', parameters('tagName3'), ']')]",
+              "value": "[subscription().tags[parameters('tagName3')]]"
+            },
+            {
+              "operation": "addOrReplace",
+              "field": "[concat('tags[', parameters('tagName4'), ']')]",
+              "value": "[subscription().tags[parameters('tagName4')]]"
+            },
+            {
+              "operation": "addOrReplace",
+              "field": "[concat('tags[', parameters('tagName5'), ']')]",
+              "value": "[subscription().tags[parameters('tagName5')]]"
+            }
+          ]
+        }
+      }
+    }
+  }
+  
+  
