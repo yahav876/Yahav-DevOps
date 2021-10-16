@@ -126,7 +126,7 @@ lt_50 = "False"
 
 # Iterate all vms and export data utilization to CSV.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
-    field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory','Maximum Memory' , 'Vm Size', 'Region','LT 50%']
+    field_names = ['Resource id', 'Average CPU','Maximum CPU','Average Memory','Maximum Memory' ,'Total Memory(MB)', 'Vm Size', 'Region','LT 50%']
     writer = csv.DictWriter(file, fieldnames=field_names)
     writer.writeheader()
     for sub in list(subscription_ids):
@@ -152,5 +152,5 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                                 }
                             }
                         vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
-                    writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': fetch_data_memory[1] ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                    writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': fetch_data_memory[1] ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
                     'LT 50%':  lt_50})
