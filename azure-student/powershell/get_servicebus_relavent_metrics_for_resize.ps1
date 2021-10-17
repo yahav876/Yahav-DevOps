@@ -44,9 +44,9 @@ try {
         
         # Set-AzContext -SubscriptionName "Aviad@Energyteam" -Force | Out-Null
 
-        $Rid = "/subscriptions/5ff6992d-a095-4f58-a41d-e4d6fc974a53/resourceGroups/a2_group/providers/Microsoft.ServiceBus/namespaces/cloudteam" 
         $datenow = Get-Date
-        $metrics = Get-AzMetric -ResourceId $Rid -MetricName "Size" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum"
+        $getServiceBus = Get-AzServiceBusNamespace
+        $metrics = foreach ($sbid in $getServiceBus.Id) { Get-AzMetric -ResourceId $sbid -MetricName "Size" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum" }
         $max = 0
 
         foreach ($metric in $metrics.Data.Maximum ) {
@@ -60,7 +60,7 @@ try {
 
         }
     }
-        Write-Output "Maximum Message size is $($max/1000)KB"
+        Write-Output "Maximum Message size is $($max/1000)KB For service bus 1"
 
 }
 catch {
