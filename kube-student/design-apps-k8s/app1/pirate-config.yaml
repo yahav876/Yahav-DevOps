@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pirate-config
+data:
+  .env: |
+   REACT_APP_PIRATE_MESSAGE='No!'

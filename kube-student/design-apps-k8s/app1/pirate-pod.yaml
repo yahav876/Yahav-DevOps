@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pirate-day
+  labels:
+    app: pirate-day
+spec:
+  containers:
+  - name: pirate-day
+    image: yahav876/second-app:0.0.1
+    resources:
+      limits:
+        memory: "500Mi"
+        cpu: "2000m"
+    volumeMounts:
+      - name: pirate-config
+        mountPath: /usr/src/app/.env
+        subPath: .env
+  volumes:
+    - name: pirate-config
+      configMap:
+        name: pirate-config
+        items:
+          - key: .env
+            path: .env
+        
