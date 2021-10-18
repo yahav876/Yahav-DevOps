@@ -34,7 +34,7 @@ try {
     # # Get the CSV file blob from the container in the storage account
     # $blobStorage = Get-AzStorageBlob -Blob $blobName -Container $BlobContainer -Context $blobStorageContext
     # # Add the header to the CSV file
-    # $blobStorage.ICloudBlob.AppendText("resource_name,subscription_name,resource_group,location,resource_id,size,tags`n")
+    # $blobStorage.ICloudBlob.AppendText("sub_name,resource_group,resource_name,service_tier,resource_id,location,tags`n")
 
     Get-AzSubscription | Where-Object { ($_.Name -match ".*") -and ($_.State -eq 'Enabled') } | ForEach-Object {
         $subscriptionName = $_.Name
@@ -61,14 +61,18 @@ try {
 
                     if ($max/1000 -lt 256) {
                         Write-Output "greater than 256"
+                        # $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($sbid.Tags)`n")
+
                     } 
 
                 } 
             }
             foreach ($metric in $cpuMetrics) {
 
-                if ($metric.Data.Maximum -gt 20) {
+                if ($metric.Data.Maximum -lt 20) {
                     Write-Output("Need to scale units in $($metric.Name)")
+                    # $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($sbid.Tags)`n")
+
                 }
                 
             }
