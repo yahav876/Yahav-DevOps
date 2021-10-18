@@ -1,7 +1,7 @@
 # import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-CONNECTION_STR = "Endpoint=sb://cloudteam-premium.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=rXLqMCyIN8KHxvbyaGj4WH17fFUAUfKDJ3pS30avx5w="
+CONNECTION_STR = "Endpoint=sb://cloudteam.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=tSycYDD4cCgyTuOm5yXNOCf3c97OsDOlUCqoV2TTC/Q="
 QUEUE_NAME = "yahav-test"
 
 def send_single_message(sender):
