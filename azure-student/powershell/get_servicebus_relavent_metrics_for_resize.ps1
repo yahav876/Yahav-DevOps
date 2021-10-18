@@ -50,8 +50,8 @@ try {
         # $sbids = New-Object System.Collections.ArrayList
 
         foreach ($sbid in $getServiceBus) {
-            $sizeMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "Size" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00
-            $cpuMetrics =  Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00
+            $sizeMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "Size" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum" 
+            # $cpuMetrics =  Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum"
 
             foreach ($metric in $sizeMetrics) {
             

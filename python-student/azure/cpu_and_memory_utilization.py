@@ -158,4 +158,7 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                         vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
                         writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
                         'LT 50%':  lt_50})
+                    else:
+                        writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                        'LT 50%':  "False"})
 
