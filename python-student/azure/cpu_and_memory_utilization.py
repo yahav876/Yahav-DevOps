@@ -65,7 +65,6 @@ else:
 subscription_client = SubscriptionClient(credential)
 subscription_ids = subscription_client.subscriptions.list()
 
-
 today = date.today()
 last_two_weeks = today - datetime.timedelta(days=14)
 
@@ -142,8 +141,13 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                     fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
                     fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
                     #Check if Maximum CPU and Maximum Memory are less than 50% in use - if yes than tag them with {'right_size': 'true'}.
-                    if (fetch_data_cpu[2] < 50) and ((fetch_data_memory[1]/vm_size.memory_in_mb)*100) < 50:
+                    if (fetch_data_cpu[2] < 50 and fetch_data_memory[1]/vm_size.memory_in_mb*100 < 50):
+                    #     print("lt 50")
+                    # else:
+                    #     print("gt 50")
                         lt_50 = "True"
+                    # print(fetch_data_memory[1]/vm_size.memory_in_mb*100)
+
                         body = {
                                 'operation': 'Merge',
                                 "properties" : {
@@ -152,6 +156,6 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                                 }
                             }
                         vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
-                    writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': fetch_data_memory[1] ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
-                    'LT 50%':  lt_50})
+                        writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                        'LT 50%':  lt_50})
 

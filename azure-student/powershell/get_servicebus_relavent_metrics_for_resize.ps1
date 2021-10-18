@@ -46,21 +46,37 @@ try {
 
         $datenow = Get-Date
         $getServiceBus = Get-AzServiceBusNamespace
-        $metrics = foreach ($sbid in $getServiceBus.Id) { Get-AzMetric -ResourceId $sbid -MetricName "Size" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum" }
-        $max = 0
+        $max = 0    
+        # $sbids = New-Object System.Collections.ArrayList
 
-        foreach ($metric in $metrics.Data.Maximum ) {
+        foreach ($sbid in $getServiceBus) {
+            $sizeMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "Size" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00
+            $cpuMetrics =  Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-30) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00
 
+            foreach ($metric in $sizeMetrics) {
             
-            if ($metric -gt $max) {
+                if ($metric.Data.Maximum -gt $max) {
 
-                $max = $metric
+                    $max = $metric
 
-            } 
+                    if ($max/1000 -lt 256) {
+                        Write-Output "greater than 256"
+                    } 
 
+                } 
+            }
+            foreach ($metric in $cpuMetrics) {
+
+                if ($metric.Data.Maximum -gt 20) {
+                    Write-Output("Need to scale units in $($metric.Name)")
+                }
+                
+            }
         }
+    
     }
-        Write-Output "Maximum Message size is $($max/1000)KB For service bus 1"
+    
+    Write-Output "Maximum Message size is $($max/1000)KB For service bus 1"
 
 }
 catch {
