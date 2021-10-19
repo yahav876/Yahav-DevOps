@@ -1,0 +1,1 @@
+bla = filter(lambda vm :   'Standard_F2' in vm.name  , vm_list_size)
