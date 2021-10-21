@@ -1,7 +1,7 @@
 # import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-CONNECTION_STR = "Endpoint=sb://cloudteam.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=tSycYDD4cCgyTuOm5yXNOCf3c97OsDOlUCqoV2TTC/Q="
+CONNECTION_STR = "Endpoint=sb://cloudteam-premium2.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=waZOVSCm+SjZi+qlut55soMKdLX0D0Yh92D8U4XQzw4="
 QUEUE_NAME = "yahav-test"
 
 def send_single_message(sender):
@@ -10,7 +10,7 @@ def send_single_message(sender):
     print("Sent a single message")
 
 def send_a_list_of_messages(sender):
-    messages = [ServiceBusMessage("Message in list") for _ in range(200)]
+    messages = [ServiceBusMessage("Message in list") for _ in range(420)]
     sender.send_messages(messages)
     print("Sent a list of 5 messages")
 

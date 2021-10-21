@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Import module dependencies
-from typing import List
+# from typing import List
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.mgmt.resource import SubscriptionClient, subscriptions
 from azure.mgmt.resource import ResourceManagementClient
@@ -16,7 +16,11 @@ from azure.common.credentials import ServicePrincipalCredentials
 from azure.identity import AzureCliCredential
 from isodate.isostrf import DATE_BAS_ORD_COMPLETE
 import adal
+import argparse
 
+parser = argparse.ArgumentParser(description='Please insert subscription id.')
+parser.add_argument('subid', type=str)
+args = parser.parse_args()
 
 credential = None
 
@@ -129,9 +133,9 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
     writer = csv.DictWriter(file, fieldnames=field_names)
     writer.writeheader()
     for sub in list(subscription_ids):
-        compute_client = ComputeManagementClient(credential, subscription_id=sub.subscription_id)
-        monitor_client = MonitorManagementClient(credential, subscription_id=sub.subscription_id)
-        resource_client = ResourceManagementClient(credential, subscription_id=sub.subscription_id)
+        compute_client = ComputeManagementClient(credential, subscription_id=args.subid)
+        monitor_client = MonitorManagementClient(credential, subscription_id=args.subid)
+        resource_client = ResourceManagementClient(credential, subscription_id=args.subid)
         
         vm_list = compute_client.virtual_machines.list_all()
         for vm in list(vm_list):
@@ -157,3 +161,4 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                     else:
                         writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
                         'LT 50%':  "False"})
+        
