@@ -39,7 +39,7 @@ try {
     # Get the CSV file blob from the container in the storage account
     $blobStorage = Get-AzStorageBlob -Blob $blobName -Container $BlobContainer -Context $blobStorageContext
     # Add the header to the CSV file
-    $blobStorage.ICloudBlob.AppendText("sub_name,resource_group,resource_name,units,highest_message_size(KB),cpu_usage(%),service_tier,resource_id,location,tags`n")
+    $blobStorage.ICloudBlob.AppendText("sub_name,resource_group,resource_name,units,highest_topic/queue_size(KB),cpu_usage(%),memory_usage(%),service_tier,resource_id,location,tags`n")
 
     Get-AzSubscription | Where-Object { ($_.Name -match ".*") -and ($_.State -eq 'Enabled') } | ForEach-Object {
         $subscriptionName = $_.Name
@@ -57,30 +57,34 @@ try {
             if (($sbid.Sku.Name -eq "Premium") -and ($sbid.Sku.Capacity -gt 1)) {
                 $sizeMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "Size" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue
                 $cpuMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+                $memoryMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceMemoryUsage" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
 
                 $cpuPrecent = ($cpuMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1)
                 $messageSize = ($sizeMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1) 
+                $memoryPrecent = ($memoryMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1) 
                     
                 $tags = $sbid.Tags.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
 
                 if (($messageSize / 1000 -lt 256) -or ($cpuPrecent -lt $cpuPrecentage)) {
-                    $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($messageSize/1000),$($cpuPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($tags)`n")
+                    $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($messageSize/1000),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($tags)`n")
                 }
             }
             else {
                 if ($sbid.Sku.Capacity -eq 1) {
                     $sizeMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "Size" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue
                     $cpuMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+                    $memoryMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceMemoryUsage" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
 
                     
                     $messageSize = ($sizeMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1)
                     $cpuPrecent = ($cpuMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1)
-                    
+                    $memoryPrecent = ($memoryMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1) 
+
                     $tags = $sbid.Tags.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
 
                     if ($messageSize / 1000 -lt 256) {
                 
-                        $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($messageSize/1000),$($cpuPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($tags)`n")
+                        $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($messageSize/1000),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($tags)`n")
     
                     }
             
