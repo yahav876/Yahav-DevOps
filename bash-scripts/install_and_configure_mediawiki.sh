@@ -24,7 +24,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 # Assosiate elastic ip 
 sudo apt install awscli -y
 instance_id=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-allocated_eip=$IP
+allocated_eip=44.199.93.146
 REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document|grep region|awk -F\" '{print $4}'`
 aws ec2 associate-address --instance-id $instance_id --public-ip $allocated_eip --region $REGION
 
@@ -34,7 +34,7 @@ cat <<EOF > stack.yaml
 version: '3'
 services:
   mediawiki:
-    image: mediawiki
+    image: mediawiki:1.36.2
     restart: always
     ports:
       - 8080:80
@@ -43,12 +43,12 @@ services:
     volumes:
       - /var/www/html/images
   database:
-    image: mysql
+    image: mysql:8.0.27
     restart: always
     environment:
-      MYSQL_DATABASE: mediawiki
-      MYSQL_USER: USER
-      MYSQL_PASSWORD: PASSWORD
+      MYSQL_DATABASE: mediawiki-ct-db
+      MYSQL_USER: cloudteam
+      MYSQL_PASSWORD: 'pVqNgSKm'
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
 EOF
 
@@ -60,18 +60,19 @@ sudo docker-compose -f stack.yaml up -d
 sudo docker exec -it default_database_1 apt update -y
 sudo docker exec -it default_database_1 apt install vim awscli -y
 
-
+sudo docker exec -it default_mediawiki_1 apt update -y
+sudo docker exec -it default_mediawiki_1 apt install vim awscli -y
 
 sudo cat << EOF > /home/ubuntu/debian.cnf
 [client]
 host     = localhost
 user     = cloudteam
-password = "PASSWORD"
+password = "pVqNgSKm"
 socket   = /var/run/mysqld/mysqld.sock
 [mysql_upgrade]
 host     = localhost
 user     = cloudteam
-password = $PASSWORD
+password = 'pVqNgSKm'
 socket   = /var/run/mysqld/mysqld.sock
 basedir  = /usr
 EOF
@@ -86,15 +87,35 @@ EOF
 
 sudo docker cp /home/ubuntu/crontab default_database_1:/etc/
 
+sudo mkdir /home/ubuntu/wikibackup
+sudo cat << EOF > /home/ubuntu/wikibackup/crontab
+0  1    * * *   root cd /var/www/html/maintenance | php dumpBackup.php --full --quiet > dump.xml | aws s3 cp /var/www/html/maintenance/dump.xml s3://mediawiki-cloudteam/backup-wiki/
+0  1    * * *   root aws s3 cp /var/www/html/LocalSettings.php s3://mediawiki-cloudteam/backup-wiki/
+EOF
+
+sudo docker cp /home/ubuntu/wikibackup/crontab default_mediawiki_1:/etc/
+
 aws s3 cp s3://mediawiki-cloudteam/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
 sudo docker cp wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql default_database_1:/root/backup-wiki/
 
+aws s3 cp s3://mediawiki-cloudteam/backup-wiki/dump.xml dump.xml
+sudo docker cp dump.xml default_mediawiki_1:/var/www/html/maintenance
+
+sudo cat << EOF > /home/ubuntu/restoreMW.sh
+cd /var/www/html/maintenance
+php importDump.php < dump.xml
+EOF
+
+chmod +x restoreMW.sh
+
+sudo docker cp /home/ubuntu/restoreMW.sh default_mediawiki_1:/root
+
 aws s3 cp s3://mediawiki-cloudteam/backup-wiki/LocalSettings.php LocalSettings.php
+
 sudo docker cp LocalSettings.php default_mediawiki_1:/var/www/html
 
-
 sudo cat << EOF > /home/ubuntu/restoreDB.sh
- mysql -u cloudteam --password=pVqNgSKm mediawiki-ct-db < /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
+mysql -u cloudteam --password=pVqNgSKm mediawiki-ct-db < /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
 EOF
 
 sudo chmod +x /home/ubuntu/restoreDB.sh
@@ -104,7 +125,8 @@ sudo docker cp /home/ubuntu/restoreDB.sh default_database_1:/root
 DATA_STATE="unknown"
 until ["${DATA_STATE}" == "done"]; do
   sudo docker exec default_database_1 /bin/sh -c /root/restoreDB.sh
-  sleep 10
+  sudo docker exec default_mediawiki_1 /bin/sh -c /root/restoreMW.sh
+  sleep 20
   DATA_STATE="done"
 done
 
