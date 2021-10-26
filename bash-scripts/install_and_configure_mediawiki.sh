@@ -24,7 +24,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 # Assosiate elastic ip 
 sudo apt install awscli -y
 instance_id=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-allocated_eip=44.199.93.146
+allocated_eip=$IP
 REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document|grep region|awk -F\" '{print $4}'`
 aws ec2 associate-address --instance-id $instance_id --public-ip $allocated_eip --region $REGION
 
@@ -46,9 +46,9 @@ services:
     image: mysql
     restart: always
     environment:
-      MYSQL_DATABASE: mediawiki-ct-db
-      MYSQL_USER: cloudteam
-      MYSQL_PASSWORD: pVqNgSKm
+      MYSQL_DATABASE: mediawiki
+      MYSQL_USER: USER
+      MYSQL_PASSWORD: PASSWORD
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
 EOF
 
@@ -64,12 +64,12 @@ sudo cat << EOF > /home/ubuntu/debian.cnf
 [client]
 host     = localhost
 user     = cloudteam
-password = "pVqNgSKm"
+password = "PASSWORD"
 socket   = /var/run/mysqld/mysqld.sock
 [mysql_upgrade]
 host     = localhost
 user     = cloudteam
-password = "pVqNgSKm"
+password = $PASSWORD
 socket   = /var/run/mysqld/mysqld.sock
 basedir  = /usr
 EOF
