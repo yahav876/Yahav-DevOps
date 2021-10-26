@@ -60,6 +60,8 @@ sudo docker-compose -f stack.yaml up -d
 sudo docker exec -it default_database_1 apt update -y
 sudo docker exec -it default_database_1 apt install vim awscli -y
 
+
+
 sudo cat << EOF > /home/ubuntu/debian.cnf
 [client]
 host     = localhost
