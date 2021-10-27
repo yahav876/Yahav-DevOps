@@ -126,7 +126,6 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
 
 
 lt_50 = "False"
-display_status = "False"
 
 # Iterate all vms and export data utilization to CSV.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
@@ -144,34 +143,37 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
         # for rg in rg_list:
         for vm in list(vm_list):
             generalized_vms = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4], vm_name=vm.name,expand='instanceView')
-            vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)
-            generalizeds = [state for state in generalized_vms.instance_view.statuses]
-            
+            generalized = generalized_vms.instance_view.statuses
+            # generalized_vms.instance_view.statuses[0]:
+            status = None
+            for g in generalized:
+                if g.code == "OSState/generalized":
+                    status = "Generalized"
+                    break
+                else:
+                    break
+            if status == "Generalized":
+                continue
+            vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)            
             for vm_size in list(vm_list_size):
                 if vm.hardware_profile.vm_size == vm_size.name:
                     fetch_data_cpu = fetch_metrics_cpu(monitor_client, vm.id)
                     fetch_data_memory = fetch_metrics_memory(monitor_client, vm.id)
                     #Check if Maximum CPU and Maximum Memory are less than 50% in use - if yes than tag them with {'right_size': 'true'}.
-                    # generalizeds = [state for state in generalized_vms.instance_view.statuses]
-                    for g in generalizeds:
-                        if g.display_status == "VM generalized":
-                            display_status = "True"
-                    if display_status == "False":
-                        print(fetch_data_cpu[0])
-                                # # if (fetch_data_cpu[2] < 50 and fetch_data_memory[1]/vm_size.memory_in_mb*100 < 50):
-                                # #     lt_50 = "True"
+                    if (fetch_data_cpu[2] < 50 and fetch_data_memory[1]/vm_size.memory_in_mb*100 < 50):
+                        lt_50 = "True"
 
-                                # #     body = {
-                                # #             'operation': 'Merge',
-                                # #             "properties" : { 
-                                # #                 'tags': 
-                                # #                     {'right_size': 'true'},
-                                # #             }
-                                # #         }
-                                # #     vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
-                                # writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
-                                # 'LT 50%':  lt_50})
-                                # # else:
-                                # #     writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
-                                # #     'LT 50%':  "False"})
+                        body = {
+                                'operation': 'Merge',
+                                "properties" : { 
+                                    'tags': 
+                                        {'right_size': 'true'},
+                                }
+                            }
+                        vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
+                        writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                        'LT 50%':  lt_50})
+                    else:
+                        writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                        'LT 50%':  "False"})
         
