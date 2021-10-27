@@ -144,15 +144,8 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
         for vm in list(vm_list):
             generalized_vms = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4], vm_name=vm.name,expand='instanceView')
             generalized = generalized_vms.instance_view.statuses
-            # generalized_vms.instance_view.statuses[0]:
-            status = None
-            for g in generalized:
-                if g.code == "OSState/generalized":
-                    status = "Generalized"
-                    break
-                else:
-                    break
-            if status == "Generalized":
+            # Exclude vms that in "OSState/generalized" state.
+            if generalized[0].code == "OSState/generalized":
                 continue
             vm_list_size = compute_client.virtual_machine_sizes.list(vm.location)            
             for vm_size in list(vm_list_size):
