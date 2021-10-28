@@ -57,11 +57,13 @@ sudo docker-compose -f stack.yaml up -d
 
 
 # Install Backup prerequisite
-sudo docker exec -it default_database_1 apt update -y
-sudo docker exec -it default_database_1 apt install vim awscli -y
+sudo docker exec default_mediawiki_1 apt update -y
 
-sudo docker exec -it default_mediawiki_1 apt update -y
-sudo docker exec -it default_mediawiki_1 apt install vim awscli -y
+sudo docker exec default_mediawiki_1 apt install -y awscli vim zip
+
+sudo docker exec default_database_1 apt update -y
+
+sudo docker exec default_database_1 apt install -y awscli vim zip
 
 sudo cat << EOF > /home/ubuntu/debian.cnf
 [client]
@@ -82,15 +84,14 @@ sudo docker cp /home/ubuntu/debian.cnf default_database_1:/etc/mysql/
 sudo docker exec default_database_1 mkdir /root/backup-wiki
 
 sudo cat << EOF > /home/ubuntu/crontab
-0  1    * * *   root mysqldump -h database --no-tablespaces -u cloudteam --default-character-set=binary mediawiki-ct-db --password=pVqNgSKm > /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql | aws s3 cp ~/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql s3://mediawiki-cloudteam/backup-wiki/ 
+0  1    * * *   root mysqldump -h database --no-tablespaces -u cloudteam --default-character-set=binary mediawiki-ct-db --password=pVqNgSKm > /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql && aws s3 cp ~/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql s3://mediawiki-cloudteam/backup-wiki/ 
 EOF
 
 sudo docker cp /home/ubuntu/crontab default_database_1:/etc/
 
 sudo mkdir /home/ubuntu/wikibackup
 sudo cat << EOF > /home/ubuntu/wikibackup/crontab
-0  1    * * *   root cd /var/www/html/maintenance | php dumpBackup.php --full --quiet > dump.xml | aws s3 cp /var/www/html/maintenance/dump.xml s3://mediawiki-cloudteam/backup-wiki/
-0  1    * * *   root aws s3 cp /var/www/html/LocalSettings.php s3://mediawiki-cloudteam/backup-wiki/
+0  1    * * *   root cd /var/www/html/ && zip -r website.zip . && aws s3 cp /var/www/html/website.zip s3://mediawiki-cloudteam/backup-wiki/
 EOF
 
 sudo docker cp /home/ubuntu/wikibackup/crontab default_mediawiki_1:/etc/
@@ -98,21 +99,22 @@ sudo docker cp /home/ubuntu/wikibackup/crontab default_mediawiki_1:/etc/
 aws s3 cp s3://mediawiki-cloudteam/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
 sudo docker cp wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql default_database_1:/root/backup-wiki/
 
-aws s3 cp s3://mediawiki-cloudteam/backup-wiki/dump.xml dump.xml
-sudo docker cp dump.xml default_mediawiki_1:/var/www/html/maintenance
+aws s3 cp s3://mediawiki-cloudteam/backup-wiki/website.zip website.zip
+sudo docker cp website.zip default_mediawiki_1:/var/www/html/
 
 sudo cat << EOF > /home/ubuntu/restoreMW.sh
-cd /var/www/html/maintenance
-php importDump.php < dump.xml
+cd /var/www/html/
+mv website.zip ../
+rm -R *
+mv ../website.zip .
+unzip website.zip
+rm website.zip
 EOF
 
-chmod +x restoreMW.sh
+chmod +x /home/ubuntu/restoreMW.sh
 
 sudo docker cp /home/ubuntu/restoreMW.sh default_mediawiki_1:/root
 
-aws s3 cp s3://mediawiki-cloudteam/backup-wiki/LocalSettings.php LocalSettings.php
-
-sudo docker cp LocalSettings.php default_mediawiki_1:/var/www/html
 
 sudo cat << EOF > /home/ubuntu/restoreDB.sh
 mysql -u cloudteam --password=pVqNgSKm mediawiki-ct-db < /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
@@ -122,13 +124,9 @@ sudo chmod +x /home/ubuntu/restoreDB.sh
 
 sudo docker cp /home/ubuntu/restoreDB.sh default_database_1:/root
 
-DATA_STATE="unknown"
-until ["${DATA_STATE}" == "done"]; do
-  sudo docker exec default_database_1 /bin/sh -c /root/restoreDB.sh
-  sudo docker exec default_mediawiki_1 /bin/sh -c /root/restoreMW.sh
-  sleep 20
-  DATA_STATE="done"
-done
+
+sudo docker exec default_database_1 /bin/sh -c /root/restoreDB.sh && sudo docker exec default_mediawiki_1 /bin/sh -c /root/restoreMW.sh
+
 
 
 
