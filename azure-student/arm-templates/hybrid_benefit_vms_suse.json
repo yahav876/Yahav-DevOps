@@ -55,16 +55,27 @@
                 },
                 {
                   "field": "Microsoft.Compute/imagePublisher",
-                  "equals": "suse"
+                  "in":[ 
+                    "suse",
+                    "SUSE"
+                    ]
                 },
                 {
                   "field": "Microsoft.Compute/imageOffer",
-                  "equals": "sles-15-sp2-basic"
+                  "in":[ 
+                    "sles-15-sp2-basic",
+                    "sles-15-sp1-basic",
+                    "sles-sap-15-sp1-byos	",
+                    "SLES"
+                    ]
+
                 },
                 {
                   "field": "Microsoft.Compute/imageSKU",
                   "in": [
-                    "gen2"
+                    "gen2",
+                    "gen1",
+                    "sp4-12"
                   ]
                 },
                 {
