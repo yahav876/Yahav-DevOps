@@ -92,14 +92,17 @@ sudo cat << EOF > /home/ubuntu/crontab
 0 1 * * * mysqldump -h database --no-tablespaces -u cloudteam --default-character-set=binary mediawiki-ct-db --password=pVqNgSKm > /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql && aws s3 cp ~/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql s3://mediawiki-cloudteam/backup-wiki/ 
 EOF
 
-sudo docker cp /home/ubuntu/crontab default_database_1:/etc/
+sudo docker cp /home/ubuntu/crontab default_database_1:/root
+sudo docker exec default_database_1 crontab /root/crontab
 
 sudo mkdir /home/ubuntu/wikibackup
 sudo cat << EOF > /home/ubuntu/wikibackup/crontab
 0 1 * * * cd /var/www/html/ && zip -r website.zip . && aws s3 cp /var/www/html/website.zip s3://mediawiki-cloudteam/backup-wiki/
 EOF
 
-sudo docker cp /home/ubuntu/wikibackup/crontab default_mediawiki_1:/etc/
+sudo docker cp /home/ubuntu/wikibackup/crontab default_mediawiki_1:/root
+sudo docker exec default_mediawiki_1 crontab /root/crontab
+
 
 aws s3 cp s3://mediawiki-cloudteam/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
 sudo docker cp wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql default_database_1:/root/backup-wiki/
