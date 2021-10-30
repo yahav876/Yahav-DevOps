@@ -1,6 +1,6 @@
 # Introduction
 
-Hi , Here i will show you how to you can create a kubernetes cluster , installing helm for deploying and finally deploy a redis on your kubernetes cluster with configuration and security enabled.
+Hi , Here i will show you how to you can create a kubernetes cluster , installing helm for deploying complex applications and finally deploy a redis on your kubernetes cluster with configuration and security enabled.
 
 
 # Requirements
