@@ -215,7 +215,7 @@ persistence:
 ```
 
 Create PV and StorageClass as storage.yaml and pv-redis.yaml:
-NOTE* create 4 PVs for the master and 3 replicas.
+NOTE* create 4 PVs , 1 for the master and 3 for replicas.
 
 ```
 apiVersion: storage.k8s.io/v1
