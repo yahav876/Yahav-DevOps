@@ -24,7 +24,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 # Assosiate elastic ip 
 sudo apt install awscli -y
 instance_id=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-allocated_eip=44.199.93.146
+allocated_eip=XXXXXX
 REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document|grep region|awk -F\" '{print $4}'`
 aws ec2 associate-address --instance-id $instance_id --public-ip $allocated_eip --region $REGION
 
@@ -47,8 +47,8 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: mediawiki-ct-db
-      MYSQL_USER: cloudteam
-      MYSQL_PASSWORD: 'pVqNgSKm'
+      MYSQL_USER: XXXXXX
+      MYSQL_PASSWORD: 'XXXXXX'
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
 EOF
 
@@ -73,13 +73,13 @@ sudo docker exec default_database_1 service cron start
 sudo cat << EOF > /home/ubuntu/debian.cnf
 [client]
 host     = localhost
-user     = cloudteam
-password = "pVqNgSKm"
+user     = XXXXXX
+password = "XXXXXX"
 socket   = /var/run/mysqld/mysqld.sock
 [mysql_upgrade]
 host     = localhost
-user     = cloudteam
-password = 'pVqNgSKm'
+user     = XXXXXX
+password = 'XXXXXX'
 socket   = /var/run/mysqld/mysqld.sock
 basedir  = /usr
 EOF
@@ -128,7 +128,7 @@ sudo docker cp /home/ubuntu/restoreMW.sh default_mediawiki_1:/root
 
 
 sudo cat << EOF > /home/ubuntu/restoreDB.sh
-mysql -u cloudteam --password=pVqNgSKm mediawiki-ct-db < /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
+mysql -u cloudteam --password=XXXXXX mediawiki-ct-db < /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
 EOF
 
 sudo chmod +x /home/ubuntu/restoreDB.sh
