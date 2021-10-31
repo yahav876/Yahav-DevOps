@@ -85,3 +85,179 @@ sudo apt-get install helm
 
 ```
 
+3. Deploy Redis with security enables.
+
+Download helm chart for Redis.
+
+```
+ helm repo add bitnami https://charts.bitnami.com/bitnami
+ mkdir helm-redis
+ cd helm redis
+ helm pull bitnami/redis    
+ tar xfv redis-15.5.2.tgz
+
+```
+Install CFFSL tool for certificates.
+
+``` 
+sudo apt-get update -y
+sudo apt-get install -y golang-cfssl
+```
+
+Create TLS certificate with CFSSL
+
+```
+mkdir cert
+cd cert
+cfssl print-defaults config > config.json
+cfssl print-defaults csr > csr.json
+```
+Create a JSON config file for generating the CA file, for example, ca-config.json
+```
+{
+  "signing": {
+    "default": {
+      "expiry": "8760h"
+    },
+    "profiles": {
+      "kubernetes": {
+        "usages": [
+          "signing",
+          "key encipherment",
+          "server auth",
+          "client auth"
+        ],
+        "expiry": "8760h"
+      }
+    }
+  }
+}
+```
+Create a JSON config file for CA certificate signing request (CSR), for example, ca-csr.json. Be sure to replace the values marked with angle brackets with real values you want to use
+```
+{
+  "CN": "kubernetes",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names":[{
+    "C": "<country>",
+    "ST": "<state>",
+    "L": "<city>",
+    "O": "<organization>",
+    "OU": "<organization unit>"
+  }]
+}
+```
+Generate CA key (ca-key.pem) and certificate (ca.pem):
+```
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+```
+Create a JSON config file for generating keys and certificates for the API server, for example, server-csr.json. Be sure to replace the values in angle brackets with real values you want to use. The MASTER_CLUSTER_IP is the service cluster IP for the API server . The sample below also assumes that you are using cluster.local as the default DNS domain name
+```
+{
+  "CN": "kubernetes",
+  "hosts": [
+    "127.0.0.1",
+    "<MASTER_IP>",
+    "<MASTER_CLUSTER_IP>",
+    "kubernetes",
+    "kubernetes.default",
+    "kubernetes.default.svc",
+    "kubernetes.default.svc.cluster",
+    "kubernetes.default.svc.cluster.local"
+  ],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [{
+    "C": "<country>",
+    "ST": "<state>",
+    "L": "<city>",
+    "O": "<organization>",
+    "OU": "<organization unit>"
+  }]
+}
+```
+Generate the key and certificate for the API server, which are by default saved into file server-key.pem and server.pem respectively:
+```
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem \
+--config=ca-config.json -profile=kubernetes \
+server-csr.json | cfssljson -bare server
+
+```
+
+Create a secret for k8s 
+```
+kubectl create secret generic certificates-tls-secret --from-file=server.pem  --from-file=server-key.pem--from-file=ca.pem 
+
+```
+
+Now open values.yaml file and edit this lines:
+```
+  tls.enabled="true"
+  tls.certificatesSecret="certificates-tls-secret"
+  tls.certFilename="server.pem"
+  tls.certKeyFilename="server-key.pem"
+  tls.certCAFilename="ca.pem"
+```
+```
+volumePermissions:
+   enabled: true
+```
+
+```
+persistence:
+   enabled: true
+   storageClass: "localdisk"
+```
+
+Create PV and StorageClass as storage.yaml and pv-redis.yaml:
+NOTE* create 4 PVs for the master and 3 replicas.
+
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass 
+metadata:
+ name: localdisk
+provisioner: kubernetes.io/no-provisioner 
+allowVolumeExpansion: true
+
+```
+```
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redispv4
+spec:
+  capacity:
+    storage: 8Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: localdisk
+  hostPath:
+    path: /mnt
+
+```
+Run
+```
+kubectl apply -f storage.yaml 
+kubectl apply -f pv-redis.yaml
+```
+Create config map for logging in debug mode:
+
+```
+
+
+```
+
+
+
+
+configmap path
+myredis-master-0:/opt/bitnami/redis/mounted-etc 
+loglevel debug
