@@ -247,17 +247,7 @@ Run
 ```
 kubectl apply -f storage.yaml 
 kubectl apply -f pv-redis.yaml
-```
-Create config map for logging in debug mode:
-
+helm install myredis -f values.yaml ../redis
 ```
 
 
-```
-
-
-
-
-configmap path
-myredis-master-0:/opt/bitnami/redis/mounted-etc 
-loglevel debug
