@@ -3,15 +3,11 @@ kind: Pod
 metadata:
   name: myapp
   labels:
-    name: myapp
+    app: uloe-mongodb
 spec:
   containers:
     - name: myapp
-      image: yahav876/uloe-server:0.0.1
-      resources:
-        limits:
-          memory: "128Mi"
-          cpu: "500m"
+      image: yahav876/uloe-server:0.0.2
       ports:
         - name: web
           containerPort: 3001

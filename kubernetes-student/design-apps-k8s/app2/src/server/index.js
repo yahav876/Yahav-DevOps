@@ -21,7 +21,7 @@ const fs = require('fs')
 const cors = require('cors')
 app.use(cors())
 
-MongoClient.connect(mongoURI, { useUnifiedTopology: true }).then(client => {
+MongoClient.connect(mongoURI, { useUnifiedTopology: false }).then(client => {
   const db = client.db('uloe')
   const listCollection = db.collection('ultimate_list');
 

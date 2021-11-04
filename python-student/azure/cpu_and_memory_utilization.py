@@ -2,6 +2,7 @@
 
 # Import module dependencies
 # from typing import List
+from logging import exception
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.mgmt.resource import SubscriptionClient, subscriptions
 from azure.mgmt.resource import ResourceManagementClient
@@ -94,7 +95,10 @@ def fetch_metrics_cpu (monitor_client, resource_id, interval = 'PT24H'):
                 sum = sum + data.average
                 if data.maximum > max:
                     max = data.maximum
-                count = count + 1 
+                count = count + 1
+    if count or sum == 0:
+        count == 1
+        sum == 1
     return [resource_id, sum/count, max]
 
 
@@ -122,10 +126,14 @@ def fetch_metrics_memory (monitor_client, resource_id, interval = 'PT24H'):
                 if data.maximum > max:
                     max = data.maximum
                 count = count + 1 
+    if count or sum == 0:
+        count == 1
+        sum == 1
     return [((sum/count)/1000)/1000, (max/1000)/1000]
 
 
 lt_50 = "False"
+
 
 # Iterate all vms and export data utilization to CSV.
 with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
@@ -160,12 +168,16 @@ with open('/home/yahav/cpu_memory_utilization_average.csv', 'a') as file:
                                 'operation': 'Merge',
                                 "properties" : { 
                                     'tags': 
-                                        {'right_size': 'true'},
+                                        {'candidate': 'right_size'},
                                 }
                             }
-                        vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
-                        writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
-                        'LT 50%':  lt_50})
+                        try:
+                            vm_tagging = resource_client.tags.update_at_scope(vm.id , body)
+                            writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                            'LT 50%':  lt_50})
+                        except azure.core.exceptions.ResourceExistsError as e:
+                            writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
+                            'LT 50%':  lt_50})
                     else:
                         writer.writerow({'Resource id': fetch_data_cpu[0], 'Average CPU': fetch_data_cpu[1], 'Maximum CPU': fetch_data_cpu[2],'Average Memory': (fetch_data_memory[0]/vm_size.memory_in_mb)*100, 'Maximum Memory': (fetch_data_memory[1]/vm_size.memory_in_mb)*100 ,'Total Memory(MB)': vm_size.memory_in_mb ,'Vm Size': vm.hardware_profile.vm_size ,'Region': vm.location,
                         'LT 50%':  "False"})

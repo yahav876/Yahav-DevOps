@@ -1,5 +1,5 @@
 import boto3
-
+import csv
 
 def lambda_handler(event, context):
     # Get list of regions
