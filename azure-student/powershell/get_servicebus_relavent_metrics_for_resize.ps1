@@ -51,7 +51,7 @@ try {
 
         $datenow = Get-Date
         $getServiceBus = Get-AzServiceBusNamespace -WarningAction SilentlyContinue
-
+        $resizeTag = "resize"
         foreach ($sbid in $getServiceBus) {
 
             if (($sbid.Sku.Name -eq "Premium") -and ($sbid.Sku.Capacity -gt 1)) {
@@ -66,6 +66,7 @@ try {
                 $tags = $sbid.Tags.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
 
                 if (($messageSize / 1000 -lt 256) -or ($cpuPrecent -lt $cpuPrecentage)) {
+                    Update-AzTag -ResourceId $sbid.Id -Tag @{ candidate = $resizeTag } -Operation Merge
                     $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($messageSize/1000),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($tags)`n")
                 }
             }
@@ -83,9 +84,10 @@ try {
                     $tags = $sbid.Tags.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
 
                     if ($messageSize / 1000 -lt 256) {
-                
+                        Update-AzTag -ResourceId $sbid.Id -Tag @{ candidate = $resizeTag } -Operation Merge
+
                         $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($messageSize/1000),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($tags)`n")
-    
+                        
                     }
             
     
