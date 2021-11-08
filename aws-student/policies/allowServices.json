@@ -1,0 +1,39 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowServices",
+            "Effect": "Allow",
+            "Action": [
+                "s3:*",
+                "ecr:*",
+                "cloudwatch:*",
+                "quicksight:*",
+                "ds:*",
+                "health:*",
+                "sts:*",
+                "logs:*",
+                "resource-groups:*",
+                "applicationinsights:*"
+
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "DenyAction",
+            "Effect": "Deny",
+            "Action":[
+                "s3:Del*",
+                "ecr:Del*",
+                "cloudwatch:Del*",
+                "quicksight:Del*",
+                "ds:Del*",
+                "logs:Del*",
+                "resource-groups:Del*",
+                "applicationinsights:Del*"
+            ],
+            "Resource": "*"
+
+        }
+    ]
+}
