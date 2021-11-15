@@ -55,8 +55,8 @@ try {
         foreach ($sbid in $getServiceBus) {
 
             if (($sbid.Sku.Name -eq "Premium") -and ($sbid.Sku.Capacity -gt 1)) {
-                $cpuMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
-                $memoryMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceMemoryUsage" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+                $cpuMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-$daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+                $memoryMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceMemoryUsage" -StartTime $datenow.AddDays(-$daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
 
                 $cpuPrecent = ($cpuMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1)
                 $memoryPrecent = ($memoryMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1) 
@@ -70,8 +70,8 @@ try {
             }
             else {
                 if ($sbid.Sku.Capacity -eq 1) {
-                    $cpuMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
-                    $memoryMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceMemoryUsage" -StartTime $datenow.AddDays($daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+                    $cpuMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-$daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+                    $memoryMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceMemoryUsage" -StartTime $datenow.AddDays(-$daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
 
                     
                     $cpuPrecent = ($cpuMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1)

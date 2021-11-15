@@ -29,15 +29,18 @@ REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document|gr
 aws ec2 associate-address --instance-id $instance_id --public-ip $allocated_eip --region $REGION
 
 
+# Login to ECR 
+aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 457486133872.dkr.ecr.us-east-1.amazonaws.com
+
 # Create docker-compose stack for mediawiki
 cat <<EOF > stack.yaml
 version: '3'
 services:
   mediawiki:
-    image: mediawiki:1.36.2
+    image: 457486133872.dkr.ecr.us-east-1.amazonaws.com/cloudteam:latest
     restart: always
     ports:
-      - 8080:80
+      - 90:90
     links:
       - database
     volumes:
@@ -47,8 +50,8 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: mediawiki-ct-db
-      MYSQL_USER: XXXXXX
-      MYSQL_PASSWORD: 'XXXXXX'
+      MYSQL_USER: cloudteam
+      MYSQL_PASSWORD: 'yahav876'
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
 EOF
 
@@ -89,7 +92,7 @@ sudo docker cp /home/ubuntu/debian.cnf default_database_1:/etc/mysql/
 sudo docker exec default_database_1 mkdir /root/backup-wiki
 
 sudo cat << EOF > /home/ubuntu/crontab
-0 1 * * * mysqldump -h database --no-tablespaces -u cloudteam --default-character-set=binary mediawiki-ct-db --password=pVqNgSKm > /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql && aws s3 cp ~/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql s3://mediawiki-cloudteam/backup-wiki/ 
+0 1 * * * mysqldump -h database --no-tablespaces -u cloudteam --default-character-set=binary mediawiki-ct-db --password=pVqNgSKm > /root/backup-wiki/wiki-mediawiki-ct-db.sql && aws s3 cp ~/backup-wiki/wiki-mediawiki-ct-db.sql s3://mediawiki-cloudteam/backup-wiki/ 
 EOF
 
 sudo docker cp /home/ubuntu/crontab default_database_1:/etc/cron.d/crontab 
@@ -107,8 +110,8 @@ sudo docker exec default_mediawiki_1 crontab /etc/cron.d/crontab
 sudo docker exec default_mediawiki_1 chmod 0777 /etc/cron.d/crontab
 
 
-aws s3 cp s3://mediawiki-cloudteam/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
-sudo docker cp wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql default_database_1:/root/backup-wiki/
+aws s3 cp s3://mediawiki-cloudteam/backup-wiki/wiki-mediawiki-ct-db.sql wiki-mediawiki-ct-db.sql
+sudo docker cp wiki-mediawiki-ct-db.sql default_database_1:/root/backup-wiki/
 
 aws s3 cp s3://mediawiki-cloudteam/backup-wiki/website.zip website.zip
 sudo docker cp website.zip default_mediawiki_1:/var/www/html/
@@ -128,7 +131,7 @@ sudo docker cp /home/ubuntu/restoreMW.sh default_mediawiki_1:/root
 
 
 sudo cat << EOF > /home/ubuntu/restoreDB.sh
-mysql -u cloudteam --password=XXXXXX mediawiki-ct-db < /root/backup-wiki/wiki-mediawiki-ct-db-$(date '+%Y%m%d').sql
+mysql -u cloudteam --password=XXXXXX mediawiki-ct-db < /root/backup-wiki/wiki-mediawiki-ct-db.sql
 EOF
 
 sudo chmod +x /home/ubuntu/restoreDB.sh
