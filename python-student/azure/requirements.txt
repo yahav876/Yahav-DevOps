@@ -1,0 +1,15 @@
+azure-common==1.1.27
+azure-core==1.16.0
+azure-identity==1.6.0
+azure-mgmt-billing==6.0.0
+azure-mgmt-compute==22.1.0
+azure-mgmt-core==1.3.0
+azure-mgmt-costmanagement==3.0.0
+azure-mgmt-monitor==2.0.0
+azure-mgmt-network===19.0.0
+azure-mgmt-policyinsights==1.0.0
+azure-mgmt-resource==19.0.0
+azure-nspkg==3.0.2
+azure-servicebus==7.3.4
+azure-storage==0.36.0
+azure-storage-blob==12.8.1

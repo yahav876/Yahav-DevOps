@@ -6,9 +6,9 @@ PARAM(
     [String] $BlobContainer = $(Get-AutomationVariable -Name 'BLOB_CONTAINER'),
     
     # Number of days to look backwards.
-    [int]    $daysChart = "",
+    [int]    $daysChart = "14",
     # Cpu utilization in %
-    [int]    $cpuPrecentage = ""
+    [int]    $cpuPrecentage = "20"
           
 
 )

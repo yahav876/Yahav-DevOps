@@ -7,7 +7,7 @@
         "displayName": "Tag Name",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "environment"
+      "defaultValue": "BusinessOwner"
     },
     "tagName2": {
       "type": "String",
@@ -15,7 +15,7 @@
         "displayName": "Tag Name",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "owner"
+      "defaultValue": "Application"
     },
     "tagName3": {
       "type": "String",
@@ -23,7 +23,7 @@
         "displayName": "Tag Name",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "owner-email"
+      "defaultValue": "BusinessUnit"
     },
     "tagName4": {
       "type": "String",
@@ -31,15 +31,7 @@
         "displayName": "Tag Name",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "finops-email"
-    },
-    "tagName5": {
-      "type": "String",
-      "metadata": {
-        "displayName": "Tag Name",
-        "description": "Name of the tag, such as 'environment'"
-      },
-      "defaultValue": "cost-center"
+      "defaultValue": "Environment"
     }
   },
   "policyRule": {
@@ -76,14 +68,6 @@
         {
           "value": "[resourceGroup().tags[parameters('tagName4')]]",
           "notEquals": ""
-        },
-        {
-          "field": "[concat('tags[', parameters('tagName5'), ']')]",
-          "notEquals": "[resourceGroup().tags[parameters('tagName5')]]"
-        },
-        {
-          "value": "[resourceGroup().tags[parameters('tagName5')]]",
-          "notEquals": ""
         }
       ]
     },
@@ -113,11 +97,6 @@
             "operation": "addOrReplace",
             "field": "[concat('tags[', parameters('tagName4'), ']')]",
             "value": "[resourceGroup().tags[parameters('tagName4')]]"
-          },
-          {
-            "operation": "addOrReplace",
-            "field": "[concat('tags[', parameters('tagName5'), ']')]",
-            "value": "[resourceGroup().tags[parameters('tagName5')]]"
           }
         ]
       }

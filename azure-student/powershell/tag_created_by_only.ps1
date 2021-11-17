@@ -37,7 +37,7 @@ try {
 
         #Write-Output ('Switching to subscription: {0}' -f $_.Name)
         $null = Set-AzContext -SubscriptionObject $_ -Force
-        $resourceWithTag = Get-AzResource -Tag @{ created_By = "None" }
+        $resourceWithTag = Get-AzResource -Tag @{ created_by = "None" }
         
         Write-Output($resourceWithTag.Name)
         # Tag resources with date created
@@ -60,6 +60,7 @@ try {
     }
 }
         
+
 
 # }
 # }
