@@ -54,8 +54,9 @@ try {
         foreach ($sbid in $getServiceBus) {
 
             if (($sbid.Sku.Name -eq "Premium") -and ($sbid.Sku.Capacity -gt 1)) {
-
-                $autoScale = Get-AzAutoscaleSetting -ResourceGroupName $sbid.ResourceGroupName -Name $sbid.Name -ErrorAction SilentlyContinue
+                $autoscaleName = try { $(Get-AzAutoscaleHistory -ErrorAction SilentlyContinue | Where-Object ResourceId -like "*/$($sbid.Name)*" | Select-Object -ExpandProperty ResourceId)[0].Split('/')[-1] } catch {}
+                $autoscaleRGName = try { $(Get-AzAutoscaleHistory -ErrorAction SilentlyContinue | Where-Object ResourceId -like "*/$($sbid.Name)*" | Select-Object -ExpandProperty ResourceId)[0].Split('/')[4] } catch {}
+                $autoScale = Get-AzAutoscaleSetting -ResourceGroupName $autoscaleRGName -Name $autoscaleName -ErrorAction SilentlyContinue
                 # Check if ServiceBus has an Auto Scale
                 if (-not $autoScale) {
 
@@ -66,16 +67,14 @@ try {
                     $memoryPrecent = ($memoryMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1) 
                     
                     $tags = $sbid.Tags.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
-                    # Check auto-scale setting if exist , Than check if CPU is underutilaized if yes consider to scale in auto-scale minimum unit.
-                    # $autoScale = Get-AzAutoscaleSetting -ResourceGroupName $sbid.ResourceGroupName -Name $sbid.Name -ErrorAction SilentlyContinue
-                
+                    # Check if cpu utilization less than X and if yes export to CSV.                
                     if ($cpuPrecent -lt $cpuPrecentage) {
                         Update-AzTag -ResourceId $sbid.Id -Tag @{ candidate = $resizeTag } -Operation Merge
                         $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),No,$($tags)`n")
                     }
                 }
                 else {
-
+                    # Check auto-scale setting if exist , Than check if CPU is underutilaized if yes consider to scale in auto-scale minimum unit.                
                     $getMinimumScaleCapacity = $autoScale.Profiles.Capacity.Minimum | Select-Object -First 1
                     $cpuMetrics3Days = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-3) -EndTime $datenow -AggregationType "Average" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
                     $cpuPrecent3Days = ($cpuMetrics3Days.Data.Average | Sort-Object -Descending | Select-Object -First 1)
@@ -86,7 +85,6 @@ try {
                         $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($cpuPrecent3Days),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),Yes,$($tags)`n")
                     }
                 }
-
             }
             else {
                 if ($sbid.Sku.Capacity -eq 1) {
