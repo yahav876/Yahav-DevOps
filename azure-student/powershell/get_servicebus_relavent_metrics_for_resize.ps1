@@ -2,9 +2,8 @@
 PARAM(
     [string] $SubscriptionNamePattern = '.*',
     [string] $ConnectionName = 'AzureRunAsConnection',
-    [String] $ConnectionString = $(Get-AutomationVariable -Name 'CONNECTION_STRING'),
-    [String] $BlobContainer = $(Get-AutomationVariable -Name 'BLOB_CONTAINER'),
-    
+    [String] $ConnectionString = $(Get-AutomationVariable -Name 'BLOB_CONTAINER'),
+    [String] $BlobContainer = $(Get-AutomationVariable -Name 'CONNECTION_STRING'),
     # Number of days to look backwards.
     [int]    $daysChart = "14",
     # Cpu utilization in %
@@ -29,7 +28,7 @@ try {
     # Initialzie the blob stprage connection using the connection string parameter
     $blobStorageContext = New-AzStorageContext -ConnectionString $ConnectionString
     # Get the current time by timezone
-    $currentTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($($(Get-Date).ToUniversalTime()), $([System.TimeZoneInfo]::GetSystemTimeZones() | Where-Object {$_.Id -match "Israel"}))
+    $currentTime = [System.TimeZoneInfo]::ConvertTimeFromUtc($($(Get-Date).ToUniversalTime()), $([System.TimeZoneInfo]::GetSystemTimeZones() | Where-Object { $_.Id -match "Israel" }))
     # Creating the name of the CSV file blob
     $blobName = $("service_bus_data_$(Get-Date -Date $currentTime -Format 'dd-MM-yyyy_HH:mm:ss').csv")
     # Craeting the temporary local CSV file
@@ -39,7 +38,7 @@ try {
     # Get the CSV file blob from the container in the storage account
     $blobStorage = Get-AzStorageBlob -Blob $blobName -Container $BlobContainer -Context $blobStorageContext
     # Add the header to the CSV file
-    $blobStorage.ICloudBlob.AppendText("sub_name,resource_group,resource_name,units,highest_topic/queue_size(KB),cpu_usage(%),memory_usage(%),service_tier,resource_id,location,tags`n")
+    $blobStorage.ICloudBlob.AppendText("sub_name,resource_group,resource_name,units,cpu_usage(%),memory_usage(%),service_tier,resource_id,location,auto_scale,tags`n")
 
     Get-AzSubscription | Where-Object { ($_.Name -match ".*") -and ($_.State -eq 'Enabled') } | ForEach-Object {
         $subscriptionName = $_.Name
@@ -55,18 +54,39 @@ try {
         foreach ($sbid in $getServiceBus) {
 
             if (($sbid.Sku.Name -eq "Premium") -and ($sbid.Sku.Capacity -gt 1)) {
-                $cpuMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-$daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
-                $memoryMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceMemoryUsage" -StartTime $datenow.AddDays(-$daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
 
-                $cpuPrecent = ($cpuMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1)
-                $memoryPrecent = ($memoryMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1) 
+                $autoScale = Get-AzAutoscaleSetting -ResourceGroupName $sbid.ResourceGroupName -Name $sbid.Name -ErrorAction SilentlyContinue
+                # Check if ServiceBus has an Auto Scale
+                if (-not $autoScale) {
+
+                    $cpuMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-$daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+                    $memoryMetrics = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceMemoryUsage" -StartTime $datenow.AddDays(-$daysChart) -EndTime $datenow -AggregationType "Maximum" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+
+                    $cpuPrecent = ($cpuMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1)
+                    $memoryPrecent = ($memoryMetrics.Data.Maximum | Sort-Object -Descending | Select-Object -First 1) 
                     
-                $tags = $sbid.Tags.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
-
-                if ($cpuPrecent -lt $cpuPrecentage){
-                    Update-AzTag -ResourceId $sbid.Id -Tag @{ candidate = $resizeTag } -Operation Merge
-                    $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($tags)`n")
+                    $tags = $sbid.Tags.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
+                    # Check auto-scale setting if exist , Than check if CPU is underutilaized if yes consider to scale in auto-scale minimum unit.
+                    # $autoScale = Get-AzAutoscaleSetting -ResourceGroupName $sbid.ResourceGroupName -Name $sbid.Name -ErrorAction SilentlyContinue
+                
+                    if ($cpuPrecent -lt $cpuPrecentage) {
+                        Update-AzTag -ResourceId $sbid.Id -Tag @{ candidate = $resizeTag } -Operation Merge
+                        $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),No,$($tags)`n")
+                    }
                 }
+                else {
+
+                    $getMinimumScaleCapacity = $autoScale.Profiles.Capacity.Minimum | Select-Object -First 1
+                    $cpuMetrics3Days = Get-AzMetric -ResourceId $sbid.Id -MetricName "NamespaceCpuUsage" -StartTime $datenow.AddDays(-3) -EndTime $datenow -AggregationType "Average" -TimeGrain 01:00:00 -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+                    $cpuPrecent3Days = ($cpuMetrics3Days.Data.Average | Sort-Object -Descending | Select-Object -First 1)
+
+                    if (($getMinimumScaleCapacity -gt 1) -and ($cpuPrecent3Days -lt 35 )) {
+
+                        Update-AzTag -ResourceId $sbid.Id -Tag @{ candidate = $resizeTag } -Operation Merge
+                        $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($cpuPrecent3Days),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),Yes,$($tags)`n")
+                    }
+                }
+
             }
             else {
                 if ($sbid.Sku.Capacity -eq 1) {
@@ -80,11 +100,8 @@ try {
                     $tags = $sbid.Tags.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
 
                     
-                    $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),$($tags)`n")
+                    $blobStorage.ICloudBlob.AppendText("$subscriptionName, $($sbid.ResourceGroupName),$($sbid.Name),$($sbid.Sku.Capacity),$($cpuPrecent),$($memoryPrecent),$($sbid.Sku.Name), $($sbid.Id),$($sbid.Location),No,$($tags)`n")
                         
-                    
-            
-    
                 }
                 
             }
