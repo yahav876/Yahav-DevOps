@@ -1,17 +1,31 @@
+
+module "s3_bucket_for_logs" {
+  source = "terraform-aws-modules/s3-bucket/aws"
+
+  bucket = "circles-up-elb-for-logs"
+  acl    = "log-delivery-write"
+
+  # Allow deletion of non-empty bucket
+  force_destroy = true
+
+  attach_elb_log_delivery_policy = true
+}
+
+
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 6.0"
 
-  name = "my-alb"
+  name = "circles-up-test"
 
   load_balancer_type = "application"
 
-  vpc_id             = data.terraform_remote_state.vpc.vpc_id
-  subnets            = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
-  security_groups    = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
+  vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
+  subnets         = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
+  security_groups = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
 
   access_logs = {
-    bucket = "cloudteam-tf"
+    bucket = "${module.s3_bucket_for_logs.s3_bucket_id}"
   }
 
   target_groups = [
@@ -23,11 +37,11 @@ module "alb" {
       targets = [
         {
           target_id = "${data.terraform_remote_state.ec2.outputs.ec2-prod-id-website}"
-          port = 80
+          port      = 80
         },
         {
           target_id = "${data.terraform_remote_state.ec2.outputs.ec2-prod-id-all-in-one}"
-          port = 80
+          port      = 80
         }
       ]
     }
@@ -46,7 +60,12 @@ module "alb" {
     {
       port               = 80
       protocol           = "HTTP"
-      target_group_index = 0
+      action_type = "redirect"
+      redirect = {
+        port        = "443"
+        protocol    = "HTTPS"
+        status_code = "HTTP_301"
+      }
     }
   ]
 
