@@ -1,7 +1,8 @@
 variable "general_config" {
     type = map
     default = {
-        vpc_name = ""
+        zone_2 = ""
+        zone_1 = ""
     }
 }
 
@@ -14,3 +15,4 @@ variable "vpc_id" {
     type = string
     default = ""
 }
+
