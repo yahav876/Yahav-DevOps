@@ -82,30 +82,27 @@ module "ec2_instance_4" {
 }
 
 
-
-
-
 module "bastion" {
-  source = "Guimove/bastion/aws"
-  bucket_name = var.general_config.s3_bucket_name
-  region = var.general_config.region
-  vpc_id = data.terraform_remote_state.vpc.vpc_id
-  is_lb_private = "false"
-  bastion_host_key_pair = aws_key_pair.master-key.key_name
-  create_dns_record = "true"
-  hosted_zone_id = "my.hosted.zone.name."
-  bastion_record_name = "bastion.my.hosted.zone.name."
+  source                  = "Guimove/bastion/aws"
+  bucket_name             = var.general_config.s3_bucket_name
+  region                  = var.general_config.region
+  vpc_id                  = data.terraform_remote_state.vpc.outputs.vpc_id
+  is_lb_private           = "false"
+  bastion_host_key_pair   = aws_key_pair.master-key.key_name
+  create_dns_record       = "false"
+  hosted_zone_id          = data.terraform_remote_state.vpc.outputs.zone_id
+  bastion_record_name     = "circles-test."
   bastion_iam_policy_name = "myBastionHostPolicy"
   elb_subnets = [
     data.terraform_remote_state.vpc.outputs.subnets_id_private[0],
     data.terraform_remote_state.vpc.outputs.subnets_id_private[1]
   ]
   auto_scaling_group_subnets = [
-    "subnet-id1a",
-    "subnet-id1b"
+    data.terraform_remote_state.vpc.outputs.subnets_id_private[0],
+    data.terraform_remote_state.vpc.outputs.subnets_id_private[1]
   ]
   tags = {
-    name = "my_bastion_name",
+    name        = "my_bastion_name",
     description = "my_bastion_description"
   }
 }
@@ -220,18 +217,12 @@ module "asg" {
       delete_on_termination = true
       description           = "eth0"
       device_index          = 0
-      security_groups       = ["sg-12345678"]
-    },
-    {
-      delete_on_termination = true
-      description           = "eth1"
-      device_index          = 1
-      security_groups       = ["sg-12345678"]
+      network_interface_id  = module.ec2_instance_11.primary_network_interface_id
     }
   ]
 
   placement = {
-    availability_zone = "us-west-1b"
+    availability_zone = "$${module.ec2_instance_11.availability_zone, module.ec2_instance_2.availability_zone}"
   }
 
   tag_specifications = [

@@ -40,3 +40,11 @@ output "sec-group-db" {
     module.vpc
   ]
 }
+
+output "zone_id" {
+  value = module.zones.route53_zone_zone_id
+  depends_on = [
+    module.zones
+  ]
+  
+}
