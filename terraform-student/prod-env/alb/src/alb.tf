@@ -6,9 +6,9 @@ module "alb" {
 
   load_balancer_type = "application"
 
-  vpc_id             = output.vpc_id
-  subnets            = output.subnet_id
-  security_groups    = ["sg-edcd9784", "sg-edcd9785"]
+  vpc_id             = data.terraform_remote_state.vpc.vpc_id
+  subnets            = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
+  security_groups    = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
 
   access_logs = {
     bucket = "cloudteam-tf"
@@ -22,12 +22,12 @@ module "alb" {
       target_type      = "instance"
       targets = [
         {
-          target_id = "i-0123456789abcdefg"
+          target_id = "${data.terraform_remote_state.ec2.outputs.ec2-prod-id-website}"
           port = 80
         },
         {
-          target_id = "i-a1b2c3d4e5f6g7h8i"
-          port = 8080
+          target_id = "${data.terraform_remote_state.ec2.outputs.ec2-prod-id-all-in-one}"
+          port = 80
         }
       ]
     }

@@ -5,8 +5,12 @@ variable "general_config" {
     }
 }
 
+variable "subnets_id" {
+    type = string
+    default = ""
+}
 
-# variable "vpc_id" {
-#     type = string
-#     default = module.vpc.aws_vpc.id
-# }
+variable "vpc_id" {
+    type = string
+    default = ""
+}

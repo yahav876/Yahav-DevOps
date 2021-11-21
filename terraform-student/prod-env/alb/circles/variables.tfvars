@@ -1,6 +1,6 @@
 general_config = {
     
-    vpc_name = "test-circles"
+    region = "us-east-1"
 
 }
 

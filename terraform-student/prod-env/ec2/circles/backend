@@ -1,4 +1,4 @@
 bucket = "cloudteam-tf"
-key    = "Terraform/circlesup/alb"
+key    = "Terraform/circlesup/ec2"
 region = "eu-west-3"
 
