@@ -41,10 +41,10 @@ output "sec-group-db" {
   ]
 }
 
-output "zone_id" {
-  value = module.zones.route53_zone_zone_id
-  depends_on = [
-    module.zones
-  ]
+# output "zone_id" {
+#   value = module.zones.route53_zone_zone_id
+#   depends_on = [
+#     module.zones
+#   ]
   
-}
+# }

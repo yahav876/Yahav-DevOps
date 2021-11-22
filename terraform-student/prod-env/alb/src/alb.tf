@@ -18,20 +18,16 @@ module "alb" {
 
   name = "circles-up-test"
 
-  load_balancer_type = "application"
+  load_balancer_type = "network"
 
   vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
   subnets         = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
-  security_groups = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
-
-  access_logs = {
-    bucket = "${module.s3_bucket_for_logs.s3_bucket_id}"
-  }
+  # security_groups = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
 
   target_groups = [
     {
       name_prefix      = "pref-"
-      backend_protocol = "HTTP"
+      backend_protocol = "TCP"
       backend_port     = 80
       target_type      = "instance"
       targets = [
@@ -45,12 +41,23 @@ module "alb" {
         }
       ]
     }
+    # {
+    #   name_prefix      = "pref-"
+    #   backend_protocol = "TCP"
+    #   backend_port     = 5000
+    #   target_type      = "instance"
+    #         targets = [
+    #     {
+    #       target_id = "${data.terraform_remote_state.asg_bastion.outputs.bastion_id}"
+    #       port      = 5000
+    #     }
+    # }
   ]
 
   https_listeners = [
     {
       port               = 443
-      protocol           = "HTTPS"
+      protocol           = "TLS"
       certificate_arn    = "arn:aws:acm:us-east-1:457486133872:certificate/881ca1f7-e716-430b-9784-58afc05ac0da"
       target_group_index = 0
     }
@@ -58,14 +65,15 @@ module "alb" {
 
   http_tcp_listeners = [
     {
-      port               = 80
-      protocol           = "HTTP"
-      action_type = "redirect"
-      redirect = {
-        port        = "443"
-        protocol    = "HTTPS"
-        status_code = "HTTP_301"
-      }
+      port        = 80
+      protocol    = "TCP"
+      target_group_index = 0
+      # action_type = "redirect"
+      # redirect = {
+      #   port        = "443"
+      #   protocol    = "HTTPS"
+      #   status_code = "HTTP_301"
+      # }
     }
   ]
 

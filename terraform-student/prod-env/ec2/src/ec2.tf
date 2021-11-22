@@ -1,9 +1,9 @@
 resource "aws_key_pair" "master-key" {
-  key_name   = "terraform-circles"
-  public_key = file("/home/yahav/.ssh/terraform-circles.pub")
+  key_name   = "terraform-circles2"
+  public_key = file("/home/yahav/.ssh/circles-test-terraform2.pub")
 }
 
-module "ec2_instance_11" {
+module "ec2_instance_1" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 3.0"
 
