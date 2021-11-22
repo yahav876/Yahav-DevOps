@@ -25,8 +25,8 @@ module "records" {
       name    = "circles-test"
       type    = "A"
       alias   = {
-        name    = "dualstack.circles-up-test-877142550.us-east-1.elb.amazonaws.com"
-        zone_id = "Z35SXDOTRQ7X7K"
+        name    = data.terraform_remote_state.alb.elb_dns_name
+        zone_id = data.terraform_remote_state.alb.elb_zone_id
       }
     }
   ]
