@@ -11,3 +11,11 @@ output "elb_dns_name" {
       module.alb
     ] 
 }
+
+output "lb_arn" {
+  value = module.alb.lb_arn
+  depends_on = [
+    module.alb
+  ]
+  
+}

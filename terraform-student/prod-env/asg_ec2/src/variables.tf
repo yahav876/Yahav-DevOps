@@ -1,7 +1,7 @@
 variable "general_config" {
     type = map
     default = {
-        zone_2 = ""
+        asg_ec2_size = ""
         zone_1 = ""
     }
 }
