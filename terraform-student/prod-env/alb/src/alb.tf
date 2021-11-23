@@ -30,16 +30,16 @@ module "alb" {
       backend_protocol = "TCP"
       backend_port     = 80
       target_type      = "instance"
-      targets = [
-        {
-          target_id = "${data.terraform_remote_state.ec2.outputs.ec2-prod-id-website}"
-          port      = 80
-        },
-        {
-          target_id = "${data.terraform_remote_state.ec2.outputs.ec2-prod-id-all-in-one}"
-          port      = 80
-        }
-      ]
+      # targets = [
+      #   {
+      #     target_id = "${data.terraform_remote_state.ec2.outputs.ec2-prod-id-website}"
+      #     port      = 80
+      #   },
+      #   {
+      #     target_id = "${data.terraform_remote_state.ec2.outputs.ec2-prod-id-all-in-one}"
+      #     port      = 80
+      #   }
+      # ]
     }
     # {
     #   name_prefix      = "pref-"

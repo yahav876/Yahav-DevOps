@@ -3,15 +3,17 @@ module "asg" {
   version = "~> 4.0"
 
   # Autoscaling group
-  name = "circles-asg"
+  name = "circlesup-asg-prod"
 
-  min_size                  = 1
-  max_size                  = 2
-  desired_capacity          = 1
+  min_size                  = 2
+  max_size                  = 4
+  desired_capacity          = 2
   wait_for_capacity_timeout = 0
   health_check_type         = "EC2"
   vpc_zone_identifier       = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
-
+  target_group_arns = ["arn:aws:elasticloadbalancing:us-east-1:457486133872:targetgroup/pref-20211123132734723700000001/16f3f5de3d71d436"]
+  force_delete = true
+  
   initial_lifecycle_hooks = [
     {
       name                  = "ExampleStartupLifeCycleHook"
@@ -53,7 +55,7 @@ module "asg" {
   ebs_optimized     = true
   enable_monitoring = true
 
-  target_group_arns = data.terraform_remote_state.alb.outputs.lb_arn
+#   target_group_arns = [data.terraform_remote_state.alb.outputs.lb_arn]
 
   block_device_mappings = [
     {
@@ -91,12 +93,6 @@ module "asg" {
     cpu_credits = "standard"
   }
 
-  instance_market_options = {
-    market_type = "spot"
-    spot_options = {
-      block_duration_minutes = 60
-    }
-  }
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -120,23 +116,24 @@ module "asg" {
   ]
 
   placement = {
-    availability_zone = ["us-east-1b","us-east-1a"]
+    availability_zone = "us-east-1b"
+    # "us-east-1a"
   }
 
-  tag_specifications = [
-    {
-      resource_type = "instance"
-      tags          = { WhatAmI = "Instance" }
-    },
-    {
-      resource_type = "volume"
-      tags          = { WhatAmI = "Volume" }
-    },
-    {
-      resource_type = "spot-instances-request"
-      tags          = { WhatAmI = "SpotInstanceRequest" }
-    }
-  ]
+#   tag_specifications = [
+#     {
+#       resource_type = "instance"
+#       tags          = { WhatAmI = "Instance" }
+#     },
+#     {
+#       resource_type = "volume"
+#       tags          = { WhatAmI = "Volume" }
+#     },
+#     {
+#       resource_type = "spot-instances-request"
+#       tags          = { WhatAmI = "SpotInstanceRequest" }
+#     }
+#   ]
 
   tags = [
     {
@@ -151,8 +148,8 @@ module "asg" {
     },
   ]
 
-  tags_as_map = {
-    extra_tag1 = "extra_value1"
-    extra_tag2 = "extra_value2"
-  }
+#   tags_as_map = {
+#     extra_tag1 = "extra_value1"
+#     extra_tag2 = "extra_value2"
+#   }
 }

@@ -7,7 +7,7 @@
         "displayName": "Tag Name",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "BusinessOwner"
+      "defaultValue": "owner"
     },
     "tagName2": {
       "type": "String",
@@ -15,7 +15,7 @@
         "displayName": "Tag Name",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "Application"
+      "defaultValue": "owner email"
     },
     "tagName3": {
       "type": "String",
@@ -23,7 +23,7 @@
         "displayName": "Tag Name",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "BusinessUnit"
+      "defaultValue": "finops email"
     },
     "tagName4": {
       "type": "String",
@@ -32,7 +32,24 @@
         "description": "Name of the tag, such as 'environment'"
       },
       "defaultValue": "Environment"
+    },
+    "tagName5": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Tag Name",
+        "description": "Name of the tag, such as 'environment'"
+      },
+      "defaultValue": "scheduling"
+    },
+    "tagName6": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Tag Name",
+        "description": "Name of the tag, such as 'environment'"
+      },
+      "defaultValue": "cost center"
     }
+
   },
   "policyRule": {
     "if": {
@@ -68,6 +85,22 @@
         {
           "value": "[resourceGroup().tags[parameters('tagName4')]]",
           "notEquals": ""
+        },
+        {
+          "field": "[concat('tags[', parameters('tagName5'), ']')]",
+          "notEquals": "[resourceGroup().tags[parameters('tagName5')]]"
+        },
+        {
+          "value": "[resourceGroup().tags[parameters('tagName5')]]",
+          "notEquals": ""
+        },
+        {
+          "field": "[concat('tags[', parameters('tagName6'), ']')]",
+          "notEquals": "[resourceGroup().tags[parameters('tagName6')]]"
+        },
+        {
+          "value": "[resourceGroup().tags[parameters('tagName6')]]",
+          "notEquals": ""
         }
       ]
     },
@@ -97,6 +130,16 @@
             "operation": "addOrReplace",
             "field": "[concat('tags[', parameters('tagName4'), ']')]",
             "value": "[resourceGroup().tags[parameters('tagName4')]]"
+          },
+          {
+            "operation": "addOrReplace",
+            "field": "[concat('tags[', parameters('tagName5'), ']')]",
+            "value": "[resourceGroup().tags[parameters('tagName5')]]"
+          },
+          {
+            "operation": "addOrReplace",
+            "field": "[concat('tags[', parameters('tagName6'), ']')]",
+            "value": "[resourceGroup().tags[parameters('tagName6')]]"
           }
         ]
       }

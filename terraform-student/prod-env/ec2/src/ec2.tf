@@ -3,44 +3,44 @@ resource "aws_key_pair" "master-key" {
   public_key = file("/home/yahav/.ssh/circles-test-terraform2.pub")
 }
 
-module "ec2_instance_1" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "~> 3.0"
+# module "ec2_instance_1" {
+#   source  = "terraform-aws-modules/ec2-instance/aws"
+#   version = "~> 3.0"
 
-  name = "website-prod"
+#   name = "website-prod"
 
-  ami                    = data.aws_ssm_parameter.linuxAmi.value
-  instance_type          = var.general_config.ec2_size
-  key_name               = aws_key_pair.master-key.key_name
-  monitoring             = true
-  vpc_security_group_ids = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
-  subnet_id              = data.terraform_remote_state.vpc.outputs.subnets_id_private[0]
+#   ami                    = data.aws_ssm_parameter.linuxAmi.value
+#   instance_type          = var.general_config.ec2_size
+#   key_name               = aws_key_pair.master-key.key_name
+#   monitoring             = true
+#   vpc_security_group_ids = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
+#   subnet_id              = data.terraform_remote_state.vpc.outputs.subnets_id_private[0]
 
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
-}
+#   tags = {
+#     Terraform   = "true"
+#     Environment = "dev"
+#   }
+# }
 
 
-module "ec2_instance_2" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "~> 3.0"
+# module "ec2_instance_2" {
+#   source  = "terraform-aws-modules/ec2-instance/aws"
+#   version = "~> 3.0"
 
-  name = "all_in_one-prod"
+#   name = "all_in_one-prod"
 
-  ami                    = data.aws_ssm_parameter.linuxAmi.value
-  instance_type          = var.general_config.ec2_size
-  key_name               = aws_key_pair.master-key.key_name
-  monitoring             = true
-  vpc_security_group_ids = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
-  subnet_id              = data.terraform_remote_state.vpc.outputs.subnets_id_private[1]
+#   ami                    = data.aws_ssm_parameter.linuxAmi.value
+#   instance_type          = var.general_config.ec2_size
+#   key_name               = aws_key_pair.master-key.key_name
+#   monitoring             = true
+#   vpc_security_group_ids = [data.terraform_remote_state.vpc.outputs.sec-group-elb]
+#   subnet_id              = data.terraform_remote_state.vpc.outputs.subnets_id_private[1]
 
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
-}
+#   tags = {
+#     Terraform   = "true"
+#     Environment = "dev"
+#   }
+# }
 
 
 module "ec2_instance_3" {
