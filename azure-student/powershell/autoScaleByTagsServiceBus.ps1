@@ -48,7 +48,7 @@ try {
 
                     if ($sbid.Id -eq $autoSettings.TargetResourceUri) {
 
-                        
+
 
                     }
                     
@@ -58,3 +58,7 @@ try {
             }
 
         }
+    }
+}
+    
+catch {}
