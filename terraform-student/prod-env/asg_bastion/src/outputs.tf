@@ -1,6 +1,6 @@
-# output "bastion_id" {
-#     value = module.bastion.aws_instance
-#     depends_on = [
-#       module.bastion
-#     ]
-# }
+output "bastion_sg" {
+    value = module.bastion.security_group_id
+    depends_on = [
+      module.bastion
+    ]
+}

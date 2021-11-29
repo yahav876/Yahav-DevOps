@@ -31,6 +31,9 @@ module "db-prod" {
   monitoring_role_name = "MyRDSMonitoringRole-1"
   create_monitoring_role = true
 
+  snapshot_identifier = "final-db-prod-844ef92c"
+  # snapshot_identifier = data.aws_db_snapshot.db-prod.id
+
   tags = {
     Owner       = "user"
     Environment = "dev"

@@ -34,3 +34,34 @@ data "terraform_remote_state" "alb" {
 data "aws_ssm_parameter" "linuxAmi" {
   name     = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
 }
+
+data "aws_ebs_snapshot" "all_in_one_prod" {
+  most_recent = true
+  owners      = ["self"]
+
+  filter {
+    name   = "tag:Name"
+    values = ["all in one prod"]
+  }
+}
+
+data "aws_ebs_snapshot" "website_prod" {
+  most_recent = true
+  owners      = ["self"]
+
+  filter {
+    name   = "tag:Name"
+    values = ["website prod"]
+  }
+}
+
+
+
+
+# data "aws_ebs_snapshots_ids" "all-in-one-prod" {
+
+#   filter {
+#     name = "tag:Name"
+#     values = ["all in one prod"]
+#   }  
+# }
