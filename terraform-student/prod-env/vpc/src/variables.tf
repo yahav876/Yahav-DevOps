@@ -6,7 +6,19 @@ variable "general_config" {
     }
 }
 
-variable "vpc_private_subnets" {
+variable "private_subnet_cidr" {
+    type = list
+    default = [""]
+  
+}
+
+variable "public_subnet_cidr" {
+    type = list
+    default = [""]
+  
+}
+
+variable "vpc_azs" {
     type = list
     default = [""]
   
@@ -21,4 +33,3 @@ variable "vpc_id" {
     type = string
     default = ""
 }
-

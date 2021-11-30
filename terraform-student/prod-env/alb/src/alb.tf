@@ -16,7 +16,7 @@ module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 6.0"
 
-  name = "circles-up-test"
+  name = var.general_config.lb_name
 
   load_balancer_type = "network"
 

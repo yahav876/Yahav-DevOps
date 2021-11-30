@@ -2,7 +2,7 @@ module "db-prod" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 3.0"
 
-  identifier = "db-prod"
+  identifier = var.general_config.db-prod-identifier
 
   engine            = var.general_config.engine_name
   engine_version    = var.general_config.db_engine_version_11_12
@@ -19,7 +19,7 @@ module "db-prod" {
   create_db_option_group = true
   create_db_parameter_group = true
 
-  vpc_security_group_ids = [data.terraform_remote_state.vpc.outputs.sec-group-db]
+  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-db]
 
   maintenance_window = var.general_config.maintenance_window
   backup_window      = var.general_config.backup_window
@@ -31,8 +31,10 @@ module "db-prod" {
   monitoring_role_name = "MyRDSMonitoringRole-1"
   create_monitoring_role = true
 
-  snapshot_identifier = "final-db-prod-844ef92c"
-  # snapshot_identifier = data.aws_db_snapshot.db-prod.id
+  snapshot_identifier = data.aws_db_snapshot.db-prod.id
+  skip_final_snapshot = true
+  apply_immediately = true
+
 
   tags = {
     Owner       = "user"
@@ -75,7 +77,7 @@ module "db-stage" {
   create_db_option_group = true
   create_db_parameter_group = true
 
-  vpc_security_group_ids = [data.terraform_remote_state.vpc.outputs.sec-group-db]
+  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-db]
 
   maintenance_window = var.general_config.maintenance_window
   backup_window      = var.general_config.backup_window
@@ -86,6 +88,10 @@ module "db-stage" {
   monitoring_interval = var.general_config.monitoring_interval
   monitoring_role_name = "MyRDSMonitoringRole-2"
   create_monitoring_role = true
+
+  snapshot_identifier = data.aws_db_snapshot.db-stage.id
+  skip_final_snapshot = true
+  apply_immediately = true
 
   tags = {
     Owner       = "user"
@@ -127,7 +133,7 @@ module "strapi-database" {
   create_db_option_group = true
   create_db_parameter_group = true
 
-  vpc_security_group_ids = [data.terraform_remote_state.vpc.outputs.sec-group-db]
+  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-db]
 
   maintenance_window = var.general_config.maintenance_window
   backup_window      = var.general_config.backup_window
@@ -138,6 +144,10 @@ module "strapi-database" {
   monitoring_interval = var.general_config.monitoring_interval
   monitoring_role_name = "MyRDSMonitoringRole-3"
   create_monitoring_role = true
+
+  snapshot_identifier = data.aws_db_snapshot.strapi-database.id
+  skip_final_snapshot = true
+  apply_immediately = true
 
   tags = {
     Owner       = "user"
@@ -179,7 +189,7 @@ module "strapi-database-prod" {
   create_db_option_group = true
   create_db_parameter_group = true
 
-  vpc_security_group_ids = [data.terraform_remote_state.vpc.outputs.sec-group-db]
+  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-db]
 
   maintenance_window = var.general_config.maintenance_window
   backup_window      = var.general_config.backup_window
@@ -190,6 +200,11 @@ module "strapi-database-prod" {
   monitoring_interval = var.general_config.monitoring_interval
   monitoring_role_name = "MyRDSMonitoringRole-4"
   create_monitoring_role = true
+
+  snapshot_identifier = data.aws_db_snapshot.strapi-database-prod.id
+  skip_final_snapshot = true
+  apply_immediately = true
+
 
   tags = {
     Owner       = "user"

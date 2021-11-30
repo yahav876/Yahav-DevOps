@@ -1,3 +1,8 @@
+resource "aws_key_pair" "master-key" {
+  key_name   = "terraform-circles2"
+  public_key = file("/home/yahav/.ssh/circles-test-terraform2.pub")
+}
+
 module "bastion" {
   source = "umotif-public/bastion/aws"
   version = "~> 2.1.0"
@@ -11,17 +16,12 @@ module "bastion" {
 
 
   ]
-  # private_subnets = [
-  #   data.terraform_remote_state.vpc.outputs.subnets_id_private[0],
-  #   data.terraform_remote_state.vpc.outputs.subnets_id_private[1],
-  #   data.terraform_remote_state.vpc.outputs.subnets_id_private[2],
-  #   data.terraform_remote_state.vpc.outputs.subnets_id_private[3]
-  # ]
 
-  # hosted_zone_id = "Z1IY32BQNIYX16"
-  ssh_key_name   = data.terraform_remote_state.ec2.outputs.key_pair
+  ssh_key_name   = aws_key_pair.master-key.key_name
   bastion_instance_types = [var.general_config.ec2_size_bastion]
   volume_size = 8
+
+  userdata_file_content =  templatefile("./custom-userdata.sh", {})
 
 
   tags = {
@@ -30,10 +30,15 @@ module "bastion" {
 }
 
 
-  #   data.terraform_remote_state.vpc.outputs.subnets_id_private[0],
-  #   data.terraform_remote_state.vpc.outputs.subnets_id_private[1],
-  #   data.terraform_remote_state.vpc.outputs.subnets_id_private[2],
-  #   data.terraform_remote_state.vpc.outputs.subnets_id_private[3]
+resource "aws_security_group_rule" "bastion_vpn" {
+  depends_on = [
+    module.bastion
+  ]
+  type              = "ingress"
+  from_port         = 1194
+  to_port           = 1194
+  protocol          = "udp"
+  cidr_blocks       = [data.terraform_remote_state.vpc.outputs.vpc_cidr]
+  security_group_id = module.bastion.security_group_id
+}
 
-  #     vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
-  # key_name = data.terraform_remote_state.ec2.outputs.key_pair

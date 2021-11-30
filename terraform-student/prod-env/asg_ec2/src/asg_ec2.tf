@@ -132,35 +132,20 @@ module "asg" {
       delete_on_termination = true
       description           = "eth0"
       device_index          = 0
-      security_groups       = ["sg-01377e1df4ce0413f"]
+      security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
     },
     {
       delete_on_termination = true
       description           = "eth1"
       device_index          = 1
-      security_groups       = ["sg-01377e1df4ce0413f"]
+      security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
     }
   ]
 
   placement = {
-    availability_zone = "us-east-1b"
+    availability_zone = "us-east-1a"
     # "us-east-1a"
   }
-
-  #   tag_specifications = [
-  #     {
-  #       resource_type = "instance"
-  #       tags          = { WhatAmI = "Instance" }
-  #     },
-  #     {
-  #       resource_type = "volume"
-  #       tags          = { WhatAmI = "Volume" }
-  #     },
-  #     {
-  #       resource_type = "spot-instances-request"
-  #       tags          = { WhatAmI = "SpotInstanceRequest" }
-  #     }
-  #   ]
 
   tags = [
     {
@@ -290,13 +275,13 @@ module "asg-2" {
       delete_on_termination = true
       description           = "eth0"
       device_index          = 0
-      security_groups       = ["sg-01377e1df4ce0413f"]
+      security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
     },
     {
       delete_on_termination = true
       description           = "eth1"
       device_index          = 1
-      security_groups       = ["sg-01377e1df4ce0413f"]
+      security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
     }
   ]
 
@@ -304,21 +289,6 @@ module "asg-2" {
     availability_zone = "us-east-1b"
     # "us-east-1a"
   }
-
-  #   tag_specifications = [
-  #     {
-  #       resource_type = "instance"
-  #       tags          = { WhatAmI = "Instance" }
-  #     },
-  #     {
-  #       resource_type = "volume"
-  #       tags          = { WhatAmI = "Volume" }
-  #     },
-  #     {
-  #       resource_type = "spot-instances-request"
-  #       tags          = { WhatAmI = "SpotInstanceRequest" }
-  #     }
-  #   ]
 
   tags = [
     {

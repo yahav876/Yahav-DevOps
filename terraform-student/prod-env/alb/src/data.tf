@@ -30,3 +30,37 @@ data "terraform_remote_state" "asg_bastion" {
     
    }
 }
+
+data "aws_network_interface" "elb-ip-1" {
+  # for_each = var.private_subnets_lb
+  filter {
+    name = "description"
+    values = ["*${var.general_config.lb_name}*"]
+    }
+
+  filter {
+    name = "subnet-id"
+    values = [local.private_subnet_id_1]
+  }
+
+    depends_on = [
+      module.alb
+    ]
+}
+
+data "aws_network_interface" "elb-ip-2" {
+  # for_each = var.private_subnets_lb
+  filter {
+    name = "description"
+    values = ["*${var.general_config.lb_name}*"]
+    }
+
+  filter {
+    name = "subnet-id"
+    values = [local.private_subnet_id_2]
+  }
+
+    depends_on = [
+      module.alb
+    ]
+}

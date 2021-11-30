@@ -34,4 +34,3 @@ module "records" {
   depends_on = [module.zones]
 }
 
-# # zone_id = module.zones.route53_zone_zone_id["${var.general_config.zone_1}"]

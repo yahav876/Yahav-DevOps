@@ -12,12 +12,6 @@
   
 # }
 
-output "key_pair" {
-  value = aws_key_pair.master-key.key_name
-  
-}
-
-
 # output "network_interface_prod" {
 #   depends_on = [
 #     module.ec2_instance_1

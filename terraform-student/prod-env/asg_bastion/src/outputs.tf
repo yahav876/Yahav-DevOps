@@ -4,3 +4,8 @@ output "bastion_sg" {
       module.bastion
     ]
 }
+
+
+output "key_pair" {
+  value = aws_key_pair.master-key.key_name
+}

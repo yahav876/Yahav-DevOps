@@ -20,3 +20,29 @@ output "lb_target_group" {
   
 }
 
+
+output "sec-group-ec2" {
+  value = module.sec-group-ec2.security_group_id
+  depends_on = [
+    module.alb
+  ]
+}
+
+output "sec-group-db" {
+  value = module.sec-group-db.security_group_id
+  depends_on = [
+    module.alb
+  ]
+}
+
+output "elb_ip_1" {
+  value = data.aws_network_interface.elb-ip-1.private_ip
+}
+
+output "elb_ip_2" {
+  value = data.aws_network_interface.elb-ip-2.private_ip
+}
+
+
+
+
