@@ -55,6 +55,7 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
 EOF
 
+
 # Initiate media wiki & mysql containers
 sudo docker-compose -f stack.yaml up -d
 
