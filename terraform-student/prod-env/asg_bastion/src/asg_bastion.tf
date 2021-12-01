@@ -1,3 +1,17 @@
+resource "aws_ami" "bastion" {
+  name                = "bastion"
+  virtualization_type = "hvm"
+  root_device_name    = "/dev/xvda"
+  ena_support         = true
+
+  ebs_block_device {
+    device_name = "/dev/xvda"
+    snapshot_id = data.aws_ebs_snapshot.bastion.id
+  }
+}
+
+
+
 resource "aws_key_pair" "master-key" {
   key_name   = "terraform-circles2"
   public_key = file("/home/yahav/.ssh/circles-test-terraform2.pub")
@@ -21,7 +35,9 @@ module "bastion" {
   bastion_instance_types = [var.general_config.ec2_size_bastion]
   volume_size = 8
 
-  userdata_file_content =  templatefile("./custom-userdata.sh", {})
+  ami_id = "ami-083654bd07b5da81d"
+  # ami_id = aws_ami.bastion.id
+  # userdata_file_content =  templatefile("./custom-userdata.sh", {})
 
 
   tags = {
@@ -38,7 +54,7 @@ resource "aws_security_group_rule" "bastion_vpn" {
   from_port         = 1194
   to_port           = 1194
   protocol          = "udp"
-  cidr_blocks       = [data.terraform_remote_state.vpc.outputs.vpc_cidr]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = module.bastion.security_group_id
 }
 

@@ -31,6 +31,16 @@ data "terraform_remote_state" "ec2" {
    }
 }
 
-data "aws_ssm_parameter" "linuxAmi" {
-  name     = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+
+data "aws_ebs_snapshot" "bastion" {
+  most_recent = true
+  owners      = ["self"]
+
+  filter {
+    name   = "tag:Name"
+    values = ["bastion-yahav-circles"]
+  }
 }
+# data "aws_ssm_parameter" "ubuntu-focal" {
+#     name = "/aws/service/canonical/ubuntu/server/20.04/stable/current/amd64/hvm/ebs-gp2/ami-id"
+# }

@@ -22,7 +22,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 
 # Create docker-compose stack for openvpn
-cat <<EOF > stack.yaml
+cat <<EOF > docker-compose.yaml
 version: '2'
 services:
   openvpn:
@@ -38,17 +38,32 @@ services:
 
 EOF
 
+cat <<EOF > README.md
 # Initialize the configuration files and certificates
-sudo docker-compose run --rm openvpn ovpn_genconfig -u udp://VPN.SERVERNAME.COM
+sudo docker-compose run --rm openvpn ovpn_genconfig -u udp://VPN.SERVERNAME.COM 
 sudo docker-compose run --rm openvpn ovpn_initpki
 
-# Initiate openVPN container
-sudo docker-compose -f stack.yaml up -d
+
+# Start OpenVPN server process
+sudo docker-compose up -d openvpn
+
+# Access docker logs 
+sudo docker-compose logs -f
 
 # Generate a client certificate
-export CLIENTNAME="circles-up-test"
+export CLIENTNAME="your_client_name"
 # with a passphrase (recommended)
 docker-compose run --rm openvpn easyrsa build-client-full $CLIENTNAME
-# # without a passphrase (not recommended)
-# docker-compose run --rm openvpn easyrsa build-client-full $CLIENTNAME nopass
+# without a passphrase (not recommended)
+docker-compose run --rm openvpn easyrsa build-client-full $CLIENTNAME nopass
 
+# Retrieve the client configuration with embedded certificates
+sudo docker-compose run --rm openvpn ovpn_getclient $CLIENTNAME > $CLIENTNAME.ovpn
+
+# Revoke a client certificate
+# Keep the corresponding crt, key and req files.
+sudo docker-compose run --rm openvpn ovpn_revokeclient $CLIENTNAME
+# Remove the corresponding crt, key and req files.
+sudo docker-compose run --rm openvpn ovpn_revokeclient $CLIENTNAME remove
+
+EOF
