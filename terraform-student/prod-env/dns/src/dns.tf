@@ -5,8 +5,12 @@ module "zones" {
   zones = {
 
     "${var.general_config.zone_2}" = {
-      comment = "circles-test.com"
-    }
+      comment = "${var.general_config.zone_2}"
+    },
+    "${var.general_config.zone_1}" = {
+      comment = "${var.general_config.zone_1}"
+    },
+
   }
 
   tags = {
@@ -22,9 +26,9 @@ module "records" {
 
   records = [
     {
-      name    = "circles-test"
-      type    = "A"
-      alias   = {
+      name = "circles-test"
+      type = "A"
+      alias = {
         name    = data.terraform_remote_state.alb.outputs.elb_dns_name
         zone_id = data.terraform_remote_state.alb.outputs.elb_zone_id
       }
@@ -33,4 +37,6 @@ module "records" {
 
   depends_on = [module.zones]
 }
+
+
 
