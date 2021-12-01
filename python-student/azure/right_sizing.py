@@ -123,6 +123,7 @@ with open('/home/yahav/right_sizing.csv', 'a') as file:
             # Resize the vm and export all the data into CSV.
             else:
                 vm_resize = compute_client.virtual_machines.begin_update(resource_group_name=vm.id.split('/')[4],vm_name=vm.name,parameters={'location': vm.location, 'hardware_profile':{'vm_size': right_size}})
+                # vm_del_tag = resource_list.tags.delete(tag_name='candidate')
                 vm_log = compute_client.virtual_machines.get(resource_group_name=vm.id.split('/')[4],vm_name=vm.name)
                 # Validate if the vm changed her size and print
                 if vm_log.hardware_profile.vm_size == right_size:
