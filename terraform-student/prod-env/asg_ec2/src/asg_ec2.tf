@@ -35,10 +35,12 @@ module "asg" {
   desired_capacity          = 1
   wait_for_capacity_timeout = 0
   health_check_type         = "EC2"
-  vpc_zone_identifier       = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
-  target_group_arns         = data.terraform_remote_state.alb.outputs.lb_target_group
-  force_delete              = true
-  protect_from_scale_in     = true
+  # vpc_zone_identifier       = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
+  vpc_zone_identifier   = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0],data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
+  target_group_arns     = [data.terraform_remote_state.alb.outputs.lb_target_group[0], data.terraform_remote_state.alb.outputs.lb_target_group[1], data.terraform_remote_state.alb.outputs.lb_target_group[2], data.terraform_remote_state.alb.outputs.lb_target_group[5]]
+  force_delete          = true
+  protect_from_scale_in = true
+  key_name = data.terraform_remote_state.asg_bastion.outputs.key_pair
 
   initial_lifecycle_hooks = [
     {
@@ -78,7 +80,9 @@ module "asg" {
 
   image_id = aws_ami.all-in-one-prod.id
   # image_id          = data.aws_ssm_parameter.linuxAmi.value
-  instance_type     = var.general_config.asg_ec2_size
+  instance_type = var.general_config.asg_ec2_size-allinone
+  # instance_type     = "t3a.medium"
+
   ebs_optimized     = true
   enable_monitoring = true
 
@@ -95,16 +99,17 @@ module "asg" {
         volume_size           = data.aws_ebs_snapshot.all_in_one_prod.volume_size
         volume_type           = "gp3"
       }
-      }, {
-      device_name = "/dev/sda1"
-      no_device   = 1
-      ebs = {
-        delete_on_termination = true
-        encrypted             = true
-        volume_size           = 30
-        volume_type           = "gp3"
-      }
-    }
+      },
+    #    {
+    #   device_name = "/dev/sda1"
+    #   no_device   = 1
+    #   ebs = {
+    #     delete_on_termination = true
+    #     encrypted             = true
+    #     volume_size           = 30
+    #     volume_type           = "gp3"
+    #   }
+    # }
   ]
 
   capacity_reservation_specification = {
@@ -113,7 +118,7 @@ module "asg" {
 
   cpu_options = {
     core_count       = 1
-    threads_per_core = 1
+    threads_per_core = 2
   }
 
   credit_specification = {
@@ -133,13 +138,13 @@ module "asg" {
       description           = "eth0"
       device_index          = 0
       security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
-    },
-    {
-      delete_on_termination = true
-      description           = "eth1"
-      device_index          = 1
-      security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
     }
+    # {
+    #   delete_on_termination = true
+    #   description           = "eth1"
+    #   device_index          = 1
+    #   security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
+    # }
   ]
 
   placement = {
@@ -149,13 +154,23 @@ module "asg" {
 
   tags = [
     {
-      key                 = "Environment"
-      value               = "dev"
+      key                 = "env"
+      value               = "prod"
       propagate_at_launch = true
     },
     {
-      key                 = "Project"
-      value               = "megasecret"
+      key                 = "backup-daily"
+      value               = "true"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Name"
+      value               = "all-in-one.prod"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Create_Auto_Alarms"
+      value               = "2021-11-30 11:04:25.685576"
       propagate_at_launch = true
     },
   ]
@@ -167,22 +182,25 @@ module "asg" {
 }
 
 
+
 module "asg-2" {
   source  = "terraform-aws-modules/autoscaling/aws"
   version = "~> 4.0"
 
   # Autoscaling group
-  name = "circlesup-asg-website-prod"
+  name = "web-site.prod"
 
   min_size                  = 1
   max_size                  = 2
   desired_capacity          = 1
   wait_for_capacity_timeout = 0
   health_check_type         = "EC2"
-  vpc_zone_identifier       = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
-  target_group_arns         = data.terraform_remote_state.alb.outputs.lb_target_group
-  force_delete              = true
-  protect_from_scale_in     = true
+  # vpc_zone_identifier       = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1]]
+  vpc_zone_identifier   = [data.terraform_remote_state.vpc.outputs.subnets_id_private[1],data.terraform_remote_state.vpc.outputs.subnets_id_private[0]]
+  target_group_arns     = [data.terraform_remote_state.alb.outputs.lb_target_group[5], data.terraform_remote_state.alb.outputs.lb_target_group[0], data.terraform_remote_state.alb.outputs.lb_target_group[3], data.terraform_remote_state.alb.outputs.lb_target_group[4]]
+  force_delete          = true
+  protect_from_scale_in = true
+  key_name = data.terraform_remote_state.asg_bastion.outputs.key_pair
 
   initial_lifecycle_hooks = [
     {
@@ -221,7 +239,8 @@ module "asg-2" {
   create_lt = true
 
   image_id          = aws_ami.website-prod.id
-  instance_type     = var.general_config.asg_ec2_size
+  # image_id          = "ami-05e689e027345dda7"
+  instance_type     = var.general_config.asg_ec2_size-website
   ebs_optimized     = true
   enable_monitoring = true
 
@@ -238,16 +257,17 @@ module "asg-2" {
         volume_size           = data.aws_ebs_snapshot.all_in_one_prod.volume_size
         volume_type           = "gp3"
       }
-      }, {
-      device_name = "/dev/sda1"
-      no_device   = 1
-      ebs = {
-        delete_on_termination = true
-        encrypted             = true
-        volume_size           = 30
-        volume_type           = "gp3"
-      }
-    }
+      },
+    #    {
+    #   device_name = "/dev/sda1"
+    #   no_device   = 1
+    #   ebs = {
+    #     delete_on_termination = true
+    #     encrypted             = true
+    #     volume_size           = 30
+    #     volume_type           = "gp3"
+    #   }
+    # }
   ]
 
   capacity_reservation_specification = {
@@ -256,7 +276,7 @@ module "asg-2" {
 
   cpu_options = {
     core_count       = 1
-    threads_per_core = 1
+    threads_per_core = 2
   }
 
   credit_specification = {
@@ -275,14 +295,14 @@ module "asg-2" {
       delete_on_termination = true
       description           = "eth0"
       device_index          = 0
-      security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
-    },
-    {
-      delete_on_termination = true
-      description           = "eth1"
-      device_index          = 1
-      security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
+      security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2-stage]
     }
+    # {
+    #   delete_on_termination = true
+    #   description           = "eth1"
+    #   device_index          = 1
+    #   security_groups       = [data.terraform_remote_state.alb.outputs.sec-group-ec2]
+    # }
   ]
 
   placement = {
@@ -292,13 +312,33 @@ module "asg-2" {
 
   tags = [
     {
-      key                 = "Environment"
-      value               = "dev"
+      key                 = "env"
+      value               = "production"
       propagate_at_launch = true
     },
     {
-      key                 = "Project"
-      value               = "megasecret"
+      key                 = "Name"
+      value               = "web-site.prod"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "backup-daily"
+      value               = "true"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "aws:ec2launchtemplate:id"
+      value               = "lt-0196fcd158ac0b11c"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "aws:ec2launchtemplate:version"
+      value               = "1"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Create_Auto_Alarms"
+      value               = "2021-11-30 11:05:35.961315"
       propagate_at_launch = true
     },
   ]

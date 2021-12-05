@@ -28,6 +28,22 @@ output "sec-group-ec2" {
   ]
 }
 
+output "sec-group-ec2-stage" {
+  value = module.sec-group-ec2-stage.security_group_id
+  depends_on = [
+    module.alb
+  ]
+}
+
+output "sec-group-ec2-website-stage" {
+  value = module.sec-group-ec2-website-stage.security_group_id
+}
+
+output "sec-group-ec2-allinone-stage" {
+  value = module.sec-group-ec2-allinone-stage.security_group_id
+}
+
+
 output "sec-group-db" {
   value = module.sec-group-db.security_group_id
   depends_on = [

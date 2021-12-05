@@ -33,15 +33,16 @@ module "ec2_instance_3" {
   name = "all_in_one-test"
 
   ami                    = aws_ami.all-in-one-stage.id
-  instance_type          = var.general_config.ec2_size
+  instance_type          = var.general_config.ec2_size-allinone
   key_name               = data.terraform_remote_state.asg_bastion.outputs.key_pair
   monitoring             = true
-  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-ec2]
+  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-ec2-allinone-stage]
   subnet_id              = data.terraform_remote_state.vpc.outputs.subnets_id_private[2]
 
   tags = {
-    Terraform   = "true"
-    Environment = "dev"
+    env           = "stage"
+    backup-weekly = "true"
+    Name          = "all-in-one.stage"
   }
 }
 
@@ -52,15 +53,16 @@ module "ec2_instance_4" {
   name = "website-test"
 
   ami                    = aws_ami.website-stage.id
-  instance_type          = var.general_config.ec2_size
-  key_name               =  data.terraform_remote_state.asg_bastion.outputs.key_pair
+  instance_type          = var.general_config.ec2_size-website
+  key_name               = data.terraform_remote_state.asg_bastion.outputs.key_pair
   monitoring             = true
-  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-ec2]
+  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-ec2-website-stage]
   subnet_id              = data.terraform_remote_state.vpc.outputs.subnets_id_private[3]
 
   tags = {
-    Terraform   = "true"
-    Environment = "dev"
+    backup-weekly = "true"
+    env           = "stage"
+    Name          = "web-site.stage"
   }
 }
 

@@ -1,14 +1,14 @@
-resource "aws_ami" "bastion" {
-  name                = "bastion"
-  virtualization_type = "hvm"
-  root_device_name    = "/dev/xvda"
-  ena_support         = true
+# resource "aws_ami" "bastion" {
+#   name                = "bastion"
+#   virtualization_type = "hvm"
+#   root_device_name    = "/dev/xvda"
+#   ena_support         = true
 
-  ebs_block_device {
-    device_name = "/dev/xvda"
-    snapshot_id = data.aws_ebs_snapshot.bastion.id
-  }
-}
+#   ebs_block_device {
+#     device_name = "/dev/xvda"
+#     snapshot_id = data.aws_ebs_snapshot.bastion.id
+#   }
+# }
 
 
 
