@@ -35,9 +35,9 @@ module "bastion" {
   bastion_instance_types = [var.general_config.ec2_size_bastion]
   volume_size = 8
 
-  ami_id = "ami-083654bd07b5da81d"
+  ami_id = "ami-0629230e074c580f2"
   # ami_id = aws_ami.bastion.id
-  # userdata_file_content =  templatefile("./custom-userdata.sh", {})
+  userdata_file_content =  templatefile("./custom-userdata.sh", {})
 
 
   tags = {

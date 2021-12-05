@@ -1,26 +1,26 @@
-resource "aws_ami" "all-in-one-prod" {
-  name                = "all-in-one-prod"
-  virtualization_type = "hvm"
-  root_device_name    = "/dev/xvda"
-  ena_support         = true
+# resource "aws_ami" "all-in-one-prod" {
+#   name                = "all-in-one-prod"
+#   virtualization_type = "hvm"
+#   root_device_name    = "/dev/xvda"
+#   ena_support         = true
 
-  ebs_block_device {
-    device_name = "/dev/xvda"
-    snapshot_id = data.aws_ebs_snapshot.all_in_one_prod.id
-  }
-}
+#   ebs_block_device {
+#     device_name = "/dev/xvda"
+#     snapshot_id = data.aws_ebs_snapshot.all_in_one_prod.id
+#   }
+# }
 
-resource "aws_ami" "website-prod" {
-  name                = "website-prod"
-  virtualization_type = "hvm"
-  root_device_name    = "/dev/xvda"
-  ena_support         = true
+# resource "aws_ami" "website-prod" {
+#   name                = "website-prod"
+#   virtualization_type = "hvm"
+#   root_device_name    = "/dev/xvda"
+#   ena_support         = true
 
-  ebs_block_device {
-    device_name = "/dev/xvda"
-    snapshot_id = data.aws_ebs_snapshot.website_prod.id
-  }
-}
+#   ebs_block_device {
+#     device_name = "/dev/xvda"
+#     snapshot_id = data.aws_ebs_snapshot.website_prod.id
+#   }
+# }
 
 
 module "asg" {
@@ -28,7 +28,7 @@ module "asg" {
   version = "~> 4.0"
 
   # Autoscaling group
-  name = "circlesup-asg-allinone-prod"
+  name = "asg-allinone-prod"
 
   min_size                  = 1
   max_size                  = 2
@@ -78,7 +78,7 @@ module "asg" {
   use_lt    = true
   create_lt = true
 
-  image_id = aws_ami.all-in-one-prod.id
+  image_id = data.aws_ami.allinone.image_id
   # image_id          = data.aws_ssm_parameter.linuxAmi.value
   instance_type = var.general_config.asg_ec2_size-allinone
   # instance_type     = "t3a.medium"
@@ -96,7 +96,7 @@ module "asg" {
       ebs = {
         delete_on_termination = true
         encrypted             = true
-        volume_size           = data.aws_ebs_snapshot.all_in_one_prod.volume_size
+        volume_size           = var.general_config.volume_size_all-in-one
         volume_type           = "gp3"
       }
       },
@@ -148,8 +148,8 @@ module "asg" {
   ]
 
   placement = {
-    availability_zone = "us-east-1a"
-    # "us-east-1a"
+    availability_zone = "us-east-2a"
+    # "us-east-2a"
   }
 
   tags = [
@@ -165,7 +165,7 @@ module "asg" {
     },
     {
       key                 = "Name"
-      value               = "all-in-one.prod"
+      value               = "all-in-one.prod-terraform"
       propagate_at_launch = true
     },
     {
@@ -188,7 +188,7 @@ module "asg-2" {
   version = "~> 4.0"
 
   # Autoscaling group
-  name = "web-site.prod"
+  name = "asg-website-prod"
 
   min_size                  = 1
   max_size                  = 2
@@ -238,7 +238,7 @@ module "asg-2" {
   use_lt    = true
   create_lt = true
 
-  image_id          = aws_ami.website-prod.id
+  image_id          = data.aws_ami.website.image_id
   # image_id          = "ami-05e689e027345dda7"
   instance_type     = var.general_config.asg_ec2_size-website
   ebs_optimized     = true
@@ -254,7 +254,7 @@ module "asg-2" {
       ebs = {
         delete_on_termination = true
         encrypted             = true
-        volume_size           = data.aws_ebs_snapshot.all_in_one_prod.volume_size
+        volume_size           =  var.general_config.volume_size-website
         volume_type           = "gp3"
       }
       },
@@ -306,8 +306,8 @@ module "asg-2" {
   ]
 
   placement = {
-    availability_zone = "us-east-1b"
-    # "us-east-1a"
+    availability_zone = "us-east-2b"
+    # "us-east-2a"
   }
 
   tags = [
@@ -318,7 +318,7 @@ module "asg-2" {
     },
     {
       key                 = "Name"
-      value               = "web-site.prod"
+      value               = "web-site.prod-terraform"
       propagate_at_launch = true
     },
     {

@@ -1,6 +1,6 @@
 general_config = {
 
-  region                    = "us-east-1"
+  region                    = "us-east-2"
   backend_region            = "eu-west-3"
   db_prod_size              = "db.t3.small"
   db_strapi_prod_size       = "db.t2.micro"

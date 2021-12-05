@@ -1,4 +1,5 @@
-output "snapshot_id" {
-    value = data.aws_ebs_snapshot.all_in_one_prod.id
+# output "data_ami" {
+    
+#     value = data.aws_ami.website.block_device_mappings[*].ebs["volume_size"]
   
-}
+# }

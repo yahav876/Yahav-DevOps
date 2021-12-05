@@ -53,18 +53,18 @@ sudo docker-compose logs -f
 # Generate a client certificate
 export CLIENTNAME="your_client_name"
 # with a passphrase (recommended)
-sudo docker-compose run --rm openvpn easyrsa build-client-full $CLIENTNAME
+sudo docker-compose run --rm openvpn easyrsa build-client-full "$CLIENTNAME"
 # without a passphrase (not recommended)
-sudo docker-compose run --rm openvpn easyrsa build-client-full $CLIENTNAME nopass
+sudo docker-compose run --rm openvpn easyrsa build-client-full "$CLIENTNAME" nopass
 
 # Retrieve the client configuration with embedded certificates
-sudo docker-compose run --rm openvpn ovpn_getclient $CLIENTNAME > $CLIENTNAME.ovpn
+sudo docker-compose run --rm openvpn ovpn_getclient "$CLIENTNAME" > "$CLIENTNAME".ovpn
 
 # Revoke a client certificate
 # Keep the corresponding crt, key and req files.
-sudo docker-compose run --rm openvpn ovpn_revokeclient $CLIENTNAME
+sudo docker-compose run --rm openvpn ovpn_revokeclient "$CLIENTNAME"
 # Remove the corresponding crt, key and req files.
-sudo docker-compose run --rm openvpn ovpn_revokeclient $CLIENTNAME remove
+sudo docker-compose run --rm openvpn ovpn_revokeclient "$CLIENTNAME" remove
 
 EOF
 

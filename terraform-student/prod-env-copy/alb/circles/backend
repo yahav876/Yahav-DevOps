@@ -1,5 +1,5 @@
 
-bucket = "cloudteam-tf"
+bucket = "cloudteam-tf-circles-circles"
 key    = "Terraform/circlesup/alb"
 region = "eu-west-3"
 

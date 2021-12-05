@@ -3,7 +3,7 @@ module "sec-group-ec2" {
   source = "terraform-aws-modules/security-group/aws"
 
 
-  name        = "ec2-sec-group-all-in-one-prod"
+  name        = var.sec_group.all-in-one-prod
   description = "Security group for user-service with custom ports open within VPC, and PostgreSQL publicly open"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
@@ -47,7 +47,7 @@ module "sec-group-ec2-stage" {
   source = "terraform-aws-modules/security-group/aws"
 
 
-  name        = "ec2-sec-group-website-prod"
+  name        =  var.sec_group.website-prod
   description = "Security group for user-service with custom ports open within VPC, and PostgreSQL publicly open"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
@@ -90,7 +90,7 @@ module "sec-group-ec2-website-stage" {
   source = "terraform-aws-modules/security-group/aws"
 
 
-  name        = "ec2-sec-group-website-stage"
+  name        =  var.sec_group.website-stage
   description = "Security group for user-service with custom ports open within VPC, and PostgreSQL publicly open"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
@@ -119,7 +119,7 @@ module "sec-group-ec2-allinone-stage" {
   source = "terraform-aws-modules/security-group/aws"
 
 
-  name        = "ec2-sec-group-allinone-stage"
+  name        =  var.sec_group.all-in-one-stage
   description = "Security group for user-service with custom ports open within VPC, and PostgreSQL publicly open"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
