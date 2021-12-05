@@ -1,0 +1,5 @@
+
+bucket = "cloudteam-tf"
+key    = "Terraform/circlesup/alb"
+region = "eu-west-3"
+
