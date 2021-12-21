@@ -1,0 +1,30 @@
+{
+    "mode": "All",
+    "policyRule": {
+      "if": {
+        "anyOf": [
+          {
+            "field": "tags['application']",
+            "exists": "false"
+          },
+          {
+            "field": "tags['app']",
+            "exists": "true"
+          },
+          {
+            "field": "tags['Applications']",
+            "exists": "true"
+          },
+          {
+            "field": "tags['appli']",
+            "exists": "true"
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    },
+    "parameters": {}
+  }
+  

@@ -1,0 +1,34 @@
+{
+    "mode": "All",
+    "policyRule": {
+      "if": {
+        "anyOf": [
+          {
+            "field": "tags['environment']",
+            "exists": "false"
+          },
+          {
+            "field": "tags['env']",
+            "exists": "true"
+          },
+          {
+            "field": "tags['ENV']",
+            "exists": "true"
+          },
+          {
+            "field": "tags['Env']",
+            "exists": "true"
+          },
+          {
+            "field": "tags['Enviro']",
+            "exists": "true"
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    },
+    "parameters": {}
+  }
+  
