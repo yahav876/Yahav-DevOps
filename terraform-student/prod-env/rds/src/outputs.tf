@@ -1,34 +1,38 @@
-output "db-prod-id" {
+# output "db-prod-id" {
 
-  value = module.db-prod.db_instance_id
-  depends_on = [
-    module.db-prod
-  ]
+#   value = module.db-prod.db_instance_id
+#   depends_on = [
+#     module.db-prod
+#   ]
   
-}
+# }
 
-output "db-stage-id" {
+output "db-id" {
 
-  value = module.db-stage.db_instance_id
+  value = module.db.db_instance_id
   depends_on = [
-    module.db-stage
+    module.db
   ]
-  
 }
 
 output "db-strapi-id" {
 
-  value = module.strapi-database.db_instance_id
+  value = module.strapi.db_instance_id
   depends_on = [
-    module.strapi-database
+    module.strapi
   ]
   
 }
 
-output "db-strapi-prod-id" {
+# output "db-strapi-prod-id" {
 
-  value = module.strapi-database-prod.db_instance_id
-  depends_on = [
-    module.strapi-database-prod
-  ]
-}
+#   value = module.strapi-prod.db_instance_id
+#   depends_on = [
+#     module.strapi-prod
+#   ]
+# }
+
+# output "strapi_snap" {
+#   value = data.aws_db_snapshot.strapi
+# }
+

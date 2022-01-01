@@ -1,114 +1,54 @@
-module "db-prod" {
+module "db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 3.0"
 
-  identifier = var.general_config.db-prod-identifier
+  identifier        = var.db.identifier
+  engine            = var.db.engine
+  engine_version    = var.db.engine_version
+  instance_class    = var.db.instance_class
+  allocated_storage = var.db.allocated_storage
 
-  engine            = var.general_config.engine_name
-  engine_version    = var.general_config.db_engine_version_11_12
-  instance_class    = var.general_config.db_prod_size
-  allocated_storage = var.general_config.allocated_storage
+  name     = var.db.name
+  username = var.db.username
+  password = var.db.password
+  port     = var.db.port
 
-  name     = var.general_config.db_name
-  username = var.general_config.db_username
-  password = "YourPwdShouldBeLongAndSecure!"
-  port     = var.general_config.db_port
+  iam_database_authentication_enabled = var.db.iam_database_authentication_enabled
+  create_db_option_group              = var.db.create_db_option_group
+  create_db_parameter_group           = var.db.create_db_parameter_group
 
-  iam_database_authentication_enabled = true
-
-  create_db_option_group = true
-  create_db_parameter_group = true
-
-  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-db]
-
-  maintenance_window = var.general_config.maintenance_window
-  backup_window      = var.general_config.backup_window
+  vpc_security_group_ids = [data.terraform_remote_state.lb.outputs.sec-group-db]
+  maintenance_window     = var.db.maintenance_window
+  backup_window          = var.db.backup_window
 
   # Enhanced Monitoring - see example for details on how to create the role
   # by yourself, in case you don't want to create it automatically
   # monitoring_interval in seconds , to disable specify 0.
-  monitoring_interval = var.general_config.monitoring_interval
-  monitoring_role_name = "MyRDSMonitoringRole-1"
-  create_monitoring_role = true
+  monitoring_interval    = var.db.monitoring_interval
+  monitoring_role_name   = var.db.monitoring_role_name
+  create_monitoring_role = var.db.create_monitoring_role
 
-  snapshot_identifier = data.aws_db_snapshot.db-prod.id
-  skip_final_snapshot = true
-  apply_immediately = true
-
+  snapshot_identifier = data.aws_db_snapshot.db.id
+  skip_final_snapshot = var.db.skip_final_snapshot
+  apply_immediately   = var.db.apply_immediately
+  publicly_accessible = var.db.publicly_accessible
 
   tags = {
-    Owner       = "user"
-    Environment = "dev"
+    "${var.db.first_tag_key}"  = var.db.first_tag_value
+    "${var.db.second_tag_key}" = var.db.second_tag_value
   }
 
   # DB subnet group
   subnet_ids = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1], data.terraform_remote_state.vpc.outputs.subnets_id_private[2]]
 
   # DB parameter group
-  family = var.general_config.db_parameter_group_11
+  family = var.db.family
 
   # DB option group
-  major_engine_version = var.general_config.option_engine_version_11
+  major_engine_version = var.db.major_engine_version
 
   # Database Deletion Protection
-  deletion_protection = false
-
-}
-
-
-module "db-stage" {
-  source  = "terraform-aws-modules/rds/aws"
-  version = "~> 3.0"
-
-  identifier = "db-stage"
-
-  engine            = var.general_config.engine_name
-  engine_version    = var.general_config.db_engine_version_11_12
-  instance_class    = var.general_config.db_stage_size
-  allocated_storage = var.general_config.allocated_storage
-
-  name     = var.general_config.db_name
-  username = var.general_config.db_username
-  password = "YourPwdShouldBeLongAndSecure!"
-  port     = var.general_config.db_port
-
-  iam_database_authentication_enabled = true
-
-  create_db_option_group = true
-  create_db_parameter_group = true
-
-  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-db]
-
-  maintenance_window = var.general_config.maintenance_window
-  backup_window      = var.general_config.backup_window
-
-  # Enhanced Monitoring - see example for details on how to create the role
-  # by yourself, in case you don't want to create it automatically
-  # monitoring_interval in seconds , to disable specify 0.
-  monitoring_interval = var.general_config.monitoring_interval
-  monitoring_role_name = "MyRDSMonitoringRole-2"
-  create_monitoring_role = true
-
-  snapshot_identifier = data.aws_db_snapshot.db-stage.id
-  skip_final_snapshot = true
-  apply_immediately = true
-
-  tags = {
-    Owner       = "user"
-    Environment = "dev"
-  }
-
-  # DB subnet group
-  subnet_ids = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1], data.terraform_remote_state.vpc.outputs.subnets_id_private[2]]
-
-  # DB parameter group
-  family = var.general_config.db_parameter_group_11
-
-  # DB option group
-  major_engine_version = var.general_config.option_engine_version_11
-
-  # Database Deletion Protection
-  deletion_protection = false
+  deletion_protection = var.db.deletion_protection
 
 }
 
@@ -116,111 +56,55 @@ module "strapi-database" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 3.0"
 
-  identifier = "strapi-database"
+  identifier = var.strapi.db-strapi-identifier
 
-  engine            = var.general_config.engine_name
-  engine_version    = var.general_config.db_engine_version_10_17
-  instance_class    = var.general_config.db_strapi_size
-  allocated_storage = var.general_config.allocated_storage
+  engine            = var.strapi.engine
+  engine_version    = var.strapi.engine_version
+  instance_class    = var.strapi.instance_class
+  allocated_storage = var.strapi.allocated_storage
 
-  name     = var.general_config.db_name
-  username = var.general_config.db_username
-  password = "YourPwdShouldBeLongAndSecure!"
-  port     = var.general_config.db_port
+  name     = var.strapi.name
+  username = var.strapi.username
+  password = var.strapi.password
+  port     = var.strapi.port
 
-  iam_database_authentication_enabled = true
+  iam_database_authentication_enabled = var.strapi.iam_database_authentication_enabled
 
-  create_db_option_group = true
-  create_db_parameter_group = true
+  create_db_option_group    = var.strapi.create_db_option_group
+  create_db_parameter_group = var.strapi.create_db_option_group
 
   vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-db]
 
-  maintenance_window = var.general_config.maintenance_window
-  backup_window      = var.general_config.backup_window
+  maintenance_window = var.strapi.maintenance_window
+  backup_window      = var.strapi.backup_window
 
   # Enhanced Monitoring - see example for details on how to create the role
   # by yourself, in case you don't want to create it automatically
   # monitoring_interval in seconds , to disable specify 0.
-  monitoring_interval = var.general_config.monitoring_interval
-  monitoring_role_name = "MyRDSMonitoringRole-3"
-  create_monitoring_role = true
+  monitoring_interval    = var.strapi.monitoring_interval
+  monitoring_role_name   = var.strapi.monitoring_role_name
+  create_monitoring_role = var.strapi.create_monitoring_role
 
   snapshot_identifier = data.aws_db_snapshot.strapi-database.id
-  skip_final_snapshot = true
-  apply_immediately = true
+  skip_final_snapshot = var.strapi.skip_final_snapshot
+  apply_immediately   = var.strapi.apply_immediately
+  publicly_accessible = var.strapi.publicly_accessible
 
   tags = {
-    Owner       = "user"
-    Environment = "dev"
+    "${var.strapi.first_tag_key}"  = var.strapi.first_tag_value
+    "${var.strapi.second_tag_key}" = var.strapi.second_tag_value
   }
 
   # DB subnet group
   subnet_ids = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1], data.terraform_remote_state.vpc.outputs.subnets_id_private[2]]
 
   # DB parameter group
-  family = var.general_config.db_parameter_group_10
+  family = var.strapi.db_parameter_group_10
   # DB option group
-  major_engine_version = var.general_config.option_engine_version_10
+  major_engine_version = var.strapi.option_engine_version_10
 
   # Database Deletion Protection
   deletion_protection = false
 
 }
 
-
-module "strapi-database-prod" {
-  source  = "terraform-aws-modules/rds/aws"
-  version = "~> 3.0"
-
-  identifier = "strapi-database-prod"
-
-  engine            = var.general_config.engine_name
-  engine_version    = var.general_config.db_engine_version_10_17
-  instance_class    = var.general_config.db_strapi_prod_size
-  allocated_storage = var.general_config.allocated_storage
-
-  name     = var.general_config.db_name
-  username = var.general_config.db_username
-  password = "YourPwdShouldBeLongAndSecure!"
-  port     = var.general_config.db_port
-
-  iam_database_authentication_enabled = true
-
-  create_db_option_group = true
-  create_db_parameter_group = true
-
-  vpc_security_group_ids = [data.terraform_remote_state.elb.outputs.sec-group-db]
-
-  maintenance_window = var.general_config.maintenance_window
-  backup_window      = var.general_config.backup_window
-
-  # Enhanced Monitoring - see example for details on how to create the role
-  # by yourself, in case you don't want to create it automatically
-  # monitoring_interval in seconds , to disable specify 0.
-  monitoring_interval = var.general_config.monitoring_interval
-  monitoring_role_name = "MyRDSMonitoringRole-4"
-  create_monitoring_role = true
-
-  snapshot_identifier = data.aws_db_snapshot.strapi-database-prod.id
-  skip_final_snapshot = true
-  apply_immediately = true
-
-
-  tags = {
-    Owner       = "user"
-    Environment = "dev"
-  }
-
-  # DB subnet group
-  subnet_ids = [data.terraform_remote_state.vpc.outputs.subnets_id_private[0], data.terraform_remote_state.vpc.outputs.subnets_id_private[1], data.terraform_remote_state.vpc.outputs.subnets_id_private[2]]
-
-  # DB parameter group
-  family = var.general_config.db_parameter_group_10
-
-  # DB option group
-  major_engine_version = var.general_config.option_engine_version_10
-
-  # Database Deletion Protection
-  deletion_protection = false
-
-}

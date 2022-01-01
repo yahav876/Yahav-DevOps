@@ -1,18 +1,11 @@
 variable "general_config" {
-    type = map
-    default = {
-        zone_2 = ""
-        zone_1 = ""
-    }
-}
+  type = map(any)
+  default = {
+    zone_2              = ""
+    zone_1              = ""
+    region              = ""
+    backend_region      = ""
+    backend_bucket_name = ""
 
-variable "subnets_id" {
-    type = string
-    default = ""
+  }
 }
-
-variable "vpc_id" {
-    type = string
-    default = ""
-}
-

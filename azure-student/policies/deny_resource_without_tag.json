@@ -5,7 +5,7 @@
         "anyOf": [
           {
             "field": "tags['environment']",
-            "exists": "false"
+            "exists": "true"
           },
           {
             "field": "tags['env']",

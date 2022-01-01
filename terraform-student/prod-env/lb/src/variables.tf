@@ -1,0 +1,87 @@
+variable "general_config" {
+
+  type = any
+  default = {
+    region              = ""
+    backend_region      = ""
+    backend_bucket_name = ""
+
+  }
+}
+
+variable "sec_group_allinone" {
+
+  type = any
+  default = {
+    ingress_cidr_blocks = ["0.0.0.0/0"]
+    ingress_rules       = ["https-443-tcp", "http-80-tcp", "ssh-tcp"]
+    egress_rules        = ["all-all"]
+    name                = "sec-group-allinone-qa_and_stage"
+    from_port_1         = 9000
+    to_port_1           = 9001
+    protocol_1          = "tcp"
+    from_port_2         = 9000
+    to_port_2           = 9001
+    protocol_2          = "tcp"
+  }
+}
+
+variable "sec_group_website" {
+  type = any
+  default = {
+    ingress_cidr_blocks = ["0.0.0.0/0"]
+    ingress_rules       = ["https-443-tcp", "http-80-tcp", "ssh-tcp"]
+    egress_rules        = ["all-all"]
+    name                = "sec-group-website-qa_and_stage"
+    from_port_1         = 1336
+    to_port_1           = 1337
+    protocol_1          = "tcp"
+    from_port_2         = 1336
+    to_port_2           = 1337
+    protocol_2          = "tcp"
+  }
+}
+
+variable "sec_group_db" {
+
+  type = any
+  default = {
+    name          = "rds_qa_and_stage_sg"
+    ingress_rules = ["https-443-tcp", "http-80-tcp", "ssh-tcp", "postgresql-tcp"]
+    egress_rules  = ["all-all"]
+  }
+}
+
+variable "lb_website" {
+  type = any
+  default = {
+    name               = ""
+    load_balancer_type = ""
+    backend_port_1     = ""
+    backend_port_2     = ""
+    backend_port_3     = ""
+    certificate_arn    = ""
+    port_1             = ""
+    port_2             = ""
+    tag_key            = ""
+    tag_value          = ""
+
+  }
+}
+
+variable "lb_allinone" {
+  type = any
+  default = {
+    name               = ""
+    load_balancer_type = ""
+    backend_port_1     = ""
+    backend_port_2     = ""
+    backend_port_3     = ""
+    certificate_arn    = ""
+    port_1             = ""
+    port_2             = ""
+    tag_key            = ""
+    tag_value          = ""
+
+  }
+}

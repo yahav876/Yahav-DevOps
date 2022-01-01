@@ -1,4 +1,0 @@
-bucket = "cloudteam-tf"
-key    = "Terraform/circlesup/dns"
-region = "eu-west-3"
-

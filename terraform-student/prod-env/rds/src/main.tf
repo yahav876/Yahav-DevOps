@@ -7,15 +7,12 @@ terraform {
       version = ">= 3.29.1"
       source = "hashicorp/aws"
     }
-    template = {
-        version = "2.1.2"
-      }
       null = {
-        version = "2.1.2"
+        version = ">=2.1.2"
       }
     }
 }
 provider "aws" {
-  region  = "us-east-1"
+  region  = var.general_config.region
 
 }

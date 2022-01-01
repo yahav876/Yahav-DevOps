@@ -26,7 +26,7 @@ module "records" {
 
   records = [
     {
-      name = "circles-test"
+      name = "circles-up"
       type = "A"
       alias = {
         name    = data.terraform_remote_state.alb.outputs.elb_dns_name

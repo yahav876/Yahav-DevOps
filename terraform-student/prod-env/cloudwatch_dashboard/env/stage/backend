@@ -1,0 +1,4 @@
+bucket = "cloudteam-tf-circles"
+key    = "Terraform/circlesup/cloudwatch_stage"
+region = "eu-west-3"
+

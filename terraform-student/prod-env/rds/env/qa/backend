@@ -1,0 +1,4 @@
+bucket = "cloudteam-tf-circles"
+key    = "Terraform/circlesup/rds_qa"
+region = "eu-west-3"
+
