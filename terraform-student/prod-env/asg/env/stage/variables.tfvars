@@ -1,6 +1,6 @@
 general_config = {
 
-  region           = "us-east-2"
+  region           = "us-east-1"
   backend_region   = "eu-west-3"
   lb_state         = "lb_qa_and_stage"
   backend_bucket_name = "cloudteam-tf-circles"
@@ -30,7 +30,7 @@ general_config = {
     instance_type               = "t3a.medium"
     core_count                  = 1 # Change this according to instance type!
     threads_per_core            = 2 # Change this according to instance type!
-    availability_zone = "us-east-2a"
+    availability_zone = "us-east-1a"
 
     first_tag_key   = "env"
     first_tag_value = "stage"
@@ -67,7 +67,7 @@ general_config = {
     instance_type               = "t3a.small"
     core_count                  = 1 # Change this according to instance type!
     threads_per_core            = 2 # Change this according to instance type!
-    availability_zone           = "us-east-2b"
+    availability_zone           = "us-east-1b"
 
     first_tag_key   = "env"
     first_tag_value = "stage"

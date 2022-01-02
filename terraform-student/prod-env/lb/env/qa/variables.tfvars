@@ -1,6 +1,6 @@
 general_config = {
 
-  region              = "us-east-2"
+  region              = "us-east-1"
   backend_region      = "eu-west-3"
   backend_bucket_name = "cloudteam-tf-circles"
 
@@ -49,7 +49,7 @@ lb_website = {
   load_balancer_type = "network"
   backend_port_1     = "80"
   backend_port_2     = "1337"
-  certificate_arn    = "arn:aws:acm:us-east-2:294650027016:certificate/647f5d60-824b-4b18-bbc6-18db5fb82bed"
+  certificate_arn    = "arn:aws:acm:us-east-1:294650027016:certificate/647f5d60-824b-4b18-bbc6-18db5fb82bed"
   port_1             = "80"
   port_2             = "1337"
   tag_key            = "ManagedBy"
@@ -63,7 +63,7 @@ lb_allinone = {
   load_balancer_type = "network"
   backend_port_1     = "80"
   backend_port_2     = ""
-  certificate_arn    = "arn:aws:acm:us-east-2:294650027016:certificate/647f5d60-824b-4b18-bbc6-18db5fb82bed"
+  certificate_arn    = "arn:aws:acm:us-east-1:294650027016:certificate/647f5d60-824b-4b18-bbc6-18db5fb82bed"
   port_1             = "80"
   tag_key            = "ManagedBy"
   tag_value          = "Terraform"

@@ -176,9 +176,9 @@ resource "aws_cloudwatch_dashboard" "main" {
             "properties": {
                 "view": "timeSeries",
                 "metrics": [
-                    [ "AWS/CloudFront", "4xxErrorRate", "Region", "Global", "DistributionId", "E147TFJB1AC3RR", { "region": "us-east-2" } ],
-                    [ ".", "5xxErrorRate", ".", ".", ".", ".", { "region": "us-east-2" } ],
-                    [ ".", "Requests", ".", ".", ".", ".", { "region": "us-east-2" } ]
+                    [ "AWS/CloudFront", "4xxErrorRate", "Region", "Global", "DistributionId", "E147TFJB1AC3RR", { "region": "us-east-1" } ],
+                    [ ".", "5xxErrorRate", ".", ".", ".", ".", { "region": "us-east-1" } ],
+                    [ ".", "Requests", ".", ".", ".", ".", { "region": "us-east-1" } ]
                 ],
                 "region": "${var.general_config.region}",
                 "stacked": true,
