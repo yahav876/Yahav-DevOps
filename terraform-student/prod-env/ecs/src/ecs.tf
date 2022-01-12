@@ -13,31 +13,6 @@ module "ecs" {
 
 }
 
-# resource "aws_ecs_task_definition" "service" {
-#   family                   = "test-terraform-yahav"
-#   requires_compatibilities = ["FARGATE"]
-#   network_mode             = "awsvpc"
-#   cpu                      = 1024
-#   memory                   = 2048
-
-#   execution_role_arn = "arn:aws:iam::457486133872:role/ecr-upload-images-from-ec2"
-#   container_definitions = jsonencode([
-#     {
-#       name      = "first"
-#       image     = "457486133872.dkr.ecr.us-east-1.amazonaws.com/cloudteam:latest"
-#       essential = true
-#       command   = ["touch yahav-terraform-test"]
-#       portMappings = [
-#         {
-#           containerPort = 80
-#           hostPort      = 80
-#         }
-#       ]
-#     },  
-#   ])
-# }
-
-
 resource "aws_ecs_task_definition" "test" {
   family                   = "test"
   requires_compatibilities = ["FARGATE"]
@@ -47,20 +22,19 @@ resource "aws_ecs_task_definition" "test" {
   memory = 2048
   container_definitions = jsonencode([
     {
-      name      = "first"
-      image     = "457486133872.dkr.ecr.us-east-1.amazonaws.com/cloudteam:latest"
+      name      = "go-app"
+      image     = "457486133872.dkr.ecr.us-east-1.amazonaws.com/cloudteam:v1.1"
       essential = true
-      command   = ["touch yahav-terraform-test"]
+      # command   = ["./main"]
       portMappings = [
         {
-          containerPort = 80
-          hostPort      = 80
+          containerPort = 8080
+      #     hostPort      = 8080
         }
       ]
     },  
   ])
 }
-
 
 # data "aws_iam_role" "ecs" {
 #   name = "AWSServiceRoleForECS"
@@ -71,19 +45,13 @@ resource "aws_ecs_service" "mongo" {
   cluster         = module.ecs.ecs_cluster_id
   task_definition = aws_ecs_task_definition.test.arn
   desired_count   = 1
-  # iam_role        = data.aws_iam_role.ecs.arn
   launch_type     = "FARGATE"
   depends_on = [module.ecs]
 
-  #ordered_placement_strategy {
-  #   type  = "binpack"
-  #  field = "cpu"
-  #}
-
   load_balancer {
     target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:457486133872:targetgroup/test-yahav-ecs-fragate/bf95cda1902dbb76"
-    container_name   = "first"
-    container_port   = 80
+    container_name   = "go-app"
+    container_port   = 8080
   }
 
   network_configuration {
@@ -92,8 +60,4 @@ resource "aws_ecs_service" "mongo" {
     security_groups  = ["sg-029599ae7368ffce4"]
     assign_public_ip = true
   }
-  # placement_constraints {
-  #   type       = "memberOf"
-  # expression = "attribute:ecs.availability-zone in [us-west-2a, us-west-2b]"
-  # }
 }
