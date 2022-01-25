@@ -29,6 +29,7 @@ REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document|gr
 aws ec2 associate-address --instance-id $instance_id --public-ip $allocated_eip --region $REGION
 
 
+
 # Login to ECR 
 aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 457486133872.dkr.ecr.us-east-1.amazonaws.com
 
