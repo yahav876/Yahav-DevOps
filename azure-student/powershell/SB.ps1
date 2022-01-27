@@ -2,7 +2,7 @@
 PARAM(
     [string] $SubscriptionNamePattern = '.*',
     [string] $ConnectionName = 'AzureRunAsConnection',
-    [String] $ConnectionString = "DefaultEndpointsProtocol=https;AccountName=cloudshellctigor;AccountKey=NjzBq9pCQqY0Nz5KNbi9uXIg9tYTn6tCtlZY4W3ou22O2e5CUua2Vs46zX1I+y0gbhkmU5svgL2etXdBpk/G+Q==;EndpointSuffix=core.windows.net",
+    [String] $ConnectionString = "DefaultEndpointsProtocol=https;AccountName=cloudshellctigor;AccountKey=NjzBq9pCQqY0Nz5KNbi9uXIg9tYvgL2etXdBpk/G+Q==;EndpointSuffix=core.windows.net",
     [String] $BlobContainer = "reports-test",
     # Number of days to look backwards.
     [int]    $daysChart = "14",

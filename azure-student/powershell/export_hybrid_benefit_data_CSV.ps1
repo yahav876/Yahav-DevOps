@@ -2,7 +2,7 @@
 PARAM(
     [string] $SubscriptionNamePattern = '.*',
     [string] $ConnectionName = 'AzureRunAsConnection',
-    [string] $policyAssignmentId = "/providers/Microsoft.Management/managementGroups/m1/providers/Microsoft.Authorization/policyAssignments/3e6a78ad6e40450eb5dbd3f4",
+    [string] $policyAssignmentId = "/providers/Microsoft.Management/Assignments/3d3f4",
     [string] $policyAssignmentIdsql = "",
     [String] $ConnectionString = $(Get-AutomationVariable -Name 'CONNECTION_STRING'),
     [String] $BlobContainer = $(Get-AutomationVariable -Name 'BLOB_CONTAINER')

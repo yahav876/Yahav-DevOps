@@ -1,23 +1,7 @@
-######################################################################################################################
-
-#  Copyright 2021 CloudTeam & CloudHiro Inc. or its affiliates. All Rights Reserved.                                 #
-
-#  You may not use this file except in compliance with the License.                                                  #
-
-#  https://www.cloudhiro.com/AWS/TermsOfUse.php                                                                      #
-
-#  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES                                                  #
-
-#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    #
-
-#  and limitations under the License.                                                                                #
-
-######################################################################################################################
-
 PARAM(
     [string] $SubscriptionNamePattern = '.*',
     [string] $ConnectionName = 'AzureRunAsConnection',
-    # Replace here your endswith username like = idf.il / greendreamteam.onmicrosoft.com etc.
+    # Replace here your endswith username like = .il / gonmicrosoft.com etc.
     [string] $userName = "$*cloudteam.ai"
 )
 

@@ -31,14 +31,14 @@ aws ec2 associate-address --instance-id $instance_id --public-ip $allocated_eip 
 
 
 # Login to ECR 
-aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 457486133872.dkr.ecr.us-east-1.amazonaws.com
+aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 43872.dkr.ecr.us-east-1.amazonaws.com
 
 # Create docker-compose stack for mediawiki
 cat <<EOF > stack.yaml
 version: '3'
 services:
   mediawiki:
-    image: 457486133872.dkr.ecr.us-east-1.amazonaws.com/cloudteam:latest
+    image: team:latest
     restart: always
     ports:
       - 90:90
@@ -52,7 +52,7 @@ services:
     environment:
       MYSQL_DATABASE: mediawiki-ct-db
       MYSQL_USER: cloudteam
-      MYSQL_PASSWORD: 'yahav876'
+      MYSQL_PASSWORD: 'XXXX'
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
 EOF
 
@@ -94,7 +94,7 @@ sudo docker cp /home/ubuntu/debian.cnf default_database_1:/etc/mysql/
 sudo docker exec default_database_1 mkdir /root/backup-wiki
 
 sudo cat << EOF > /home/ubuntu/crontab
-0 1 * * * mysqldump -h database --no-tablespaces -u cloudteam --default-character-set=binary mediawiki-ct-db --password=pVqNgSKm > /root/backup-wiki/wiki-mediawiki-ct-db.sql && aws s3 cp ~/backup-wiki/wiki-mediawiki-ct-db.sql s3://mediawiki-cloudteam/backup-wiki/ 
+0 1 * * * mysqldump -h database --no-tablespaces -u cloudteam --default-character-set=binary mediawiki-ct-db --password=XXXX > /root/backup-wiki/wiki-mediawiki-ct-db.sql && aws s3 cp ~/backup-wiki/wiki-mediawiki-ct-db.sql s3://mediawiki-cloudteam/backup-wiki/ 
 EOF
 
 sudo docker cp /home/ubuntu/crontab default_database_1:/etc/cron.d/crontab 

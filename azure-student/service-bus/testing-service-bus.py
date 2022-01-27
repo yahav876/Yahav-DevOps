@@ -1,8 +1,8 @@
 # import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-CONNECTION_STR = "Endpoint=sb://test-yahav.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=4k7kX7+05tXn47sIRuLNu+HQft4uLTFlXXkxyHPGI+E="
-QUEUE_NAME = "yahav-test"
+CONNECTION_STR = "Endpoint=sb://test-yahav.servicebus.windows.net/;SharedA="
+QUEUE_NAME = "-test"
 
 # def send_single_message(sender):
 #     message = ServiceBusMessage("Single Message")
