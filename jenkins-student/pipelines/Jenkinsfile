@@ -1,0 +1,185 @@
+demo_env = ["ec2":"10.0.1.60",
+            "s3_frontend_apanel":"s3://example-apanel-demo/apanel",
+            "s3_frontend_webapp":"s3://example-webapp-demo/app",
+            "s3_frontend_website":"s3://example-website-demo",
+            "cloudfront":"E31VX00QE3YKDZ",
+            "npm_build_env":"stage"]
+
+stage_env = ["ec2":"2.2.2.2",
+            "s3_frontend_apanel":"s3://example-apanel-stage/apanel",
+            "s3_frontend_webapp":"s3://example-webapp-stage/app",
+            "s3_frontend_website":"s3://example-website-stage",
+            "cloudfront":"E3CBLPESTP03QU",
+            "npm_build_env":"stage"]
+
+qa_env = ["ec2":"3.3.3.3",
+          "s3_frontend_apanel":"s3://example-apanel-qa/apanel",
+          "s3_frontend_webapp":"s3://example-webapp-qa/app",
+          "s3_frontend_website":"s3://example-website-qa",
+          "cloudfront":"EMM2xXXXXR2EQG",
+          "npm_build_env":"qa"]
+
+PUBLIC_SITE_URL = "git@bitbucket.org:example/public-site.git" // s3://example-website-demo
+ADMIN_PANEL_URL="git@bitbucket.org:example/admin-panel.git" // s3://example-apanel-demo/apanel
+WEB_APP_URL='git@bitbucket.org:example/web-app-chat.git' // s3://example-webapp-demo/app
+
+
+pipeline {
+    agent {
+        label 'jenkins_slave-1'
+    }
+    environment {
+        Key = credentials('Key')
+        Secret = credentials('Secret')
+        refresh_token = credentials('refresh_token')
+    }
+    stages {
+        stage('Delete workspace before build starts') {
+            steps {
+                echo 'Deleting workspace'
+                deleteDir()
+            }
+        }
+       stage('Git Checkout') {
+           steps {
+               // Checkout branch (must fetch [config_playbook.sh ,script.sh, ansible/])
+               git credentialsId: 'maagalim', url: 'git@bitbucket.org:example/multirepo-delivery-pipeline.git', branch: 'master'
+           }
+       }
+        stage("API Queries") {
+            steps {
+                sh 'sudo apt install -y jq'
+                sh "chmod +x -R ${env.WORKSPACE}"
+                // use only if you want update your repositories & branches lists.
+                sh "./api_files.sh ${env.Key} ${env.Secret} ${env.refresh_token}"
+            }
+        }
+        // here will get config dir with files that we will need to input ansible config file. (need handle branch name)
+        stage("Interactive_Input") {
+            steps {
+              script {
+                  insert_repositories()
+                }
+            }
+          }
+
+        // // run ansible playbook from public instance
+        // stage ('Run ansible playbook') {
+        //     steps {
+        //         script {
+        //             sh '''#!/bin/bash
+        //             pwd
+        //             ls
+        //             cd ansible
+        //             ansible-playbook playbook.yaml
+        //             '''
+        //         }
+        //     }
+        // }
+
+    }
+}
+
+
+
+def insert_repositories() {
+    // Input reposirories
+    def userInputRepository = input(
+            id: 'userInputRepository', message: 'Choose your repositories:',
+            parameters: [ choice(name: 'Environment', choices: ['QA', 'STAGE', 'DEMO'], description: ''),
+                choice(name: 'REPOSITORY_1', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_2', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_3', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_4', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_5', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_6', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_7', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_8', choices: readFile("all_repositories"), description: ''),])
+
+    // based on user choice
+    def environment_resources
+    if(userInputRepository.Environment == "QA"){
+        environment_resources = qa_env
+    }
+    if(userInputRepository.Environment == "STAGE"){
+        environment_resources = stage_env
+    }
+    if(userInputRepository.Environment == "DEMO"){
+        environment_resources = demo_env
+    }
+    // test
+    //sh "echo ${environment_resources}"
+    //sh "echo ${environment_resources["ec2"]}"
+
+
+    // input branches
+    def userInputBranch = input(
+            id: 'userInputBranch', message: 'Enter your Branch:',
+            parameters: [choice(name: userInputRepository["REPOSITORY_1"], choices: readFile("branches/${userInputRepository['REPOSITORY_1']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_2"], choices: readFile("branches/${userInputRepository['REPOSITORY_2']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_3"], choices: readFile("branches/${userInputRepository['REPOSITORY_3']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_4"], choices: readFile("branches/${userInputRepository['REPOSITORY_4']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_5"], choices: readFile("branches/${userInputRepository['REPOSITORY_5']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_6"], choices: readFile("branches/${userInputRepository['REPOSITORY_6']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_7"], choices: readFile("branches/${userInputRepository['REPOSITORY_7']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_8"], choices: readFile("branches/${userInputRepository['REPOSITORY_8']}"), description: ''),])
+    // install ansible
+    sh 'sudo apt-get update -y && sudo apt-get install npm ansible awscli -y'
+    
+    // build playbook (checkout)
+    for(int i=1; i<=8; i++) {
+        if ( userInputRepository."REPOSITORY_${i}" != "None" ) {
+            def repo = userInputRepository."REPOSITORY_${i}"
+            def branch = userInputBranch["${repo}"]
+            echo "0${i}. repository: ${repo}"
+            echo "0${i}. branch: ${branch}"            
+            
+            if (userInputRepository."REPOSITORY_${i}" == "public-site") {
+                dir("${repo}_${branch}") {
+                    git credentialsId: 'maagalim', url: "${PUBLIC_SITE_URL}", branch: "${branch}"
+                    sh 'sudo su'
+                    sh 'sudo npm install'
+                    sh "sudo npm run build:${environment_resources["npm_build_env"]}"
+                    sh "aws cloudfront create-invalidation \
+                        --distribution-id ${environment_resources["cloudfront"]} \
+                        --paths "/""
+                    sh "aws s3 cp --recursive public/ ${environment_resources["s3_frontend_website"]}"
+                }
+                continue
+            }
+            
+            if (userInputRepository."REPOSITORY_${i}" == "admin-panel") {
+                dir("${repo}_${branch}") {
+                    git credentialsId: 'maagalim', url: "${ADMIN_PANEL_URL}", branch: "${branch}"
+                    sh 'sudo su'
+                    sh 'sudo npm install'
+                    sh "sudo npm run build:${environment_resources["npm_build_env"]}"
+                    sh "aws cloudfront create-invalidation \
+                        --distribution-id ${environment_resources["cloudfront"]} \
+                        --paths "/apanel/""
+                    sh "aws s3 cp --recursive dist/ ${environment_resources["s3_frontend_apanel"]}"
+                }                
+                continue
+            }
+            
+            if (userInputRepository."REPOSITORY_${i}" == "web-app-chat") {
+                dir("${repo}_${branch}") {
+                    git credentialsId: 'maagalim', url: "${WEB_APP_URL}", branch: "${branch}"
+                    sh 'sudo su'
+                    sh 'sudo npm ci'
+                    sh "sudo npm run build_${environment_resources["npm_build_env"]}"
+                    sh "aws cloudfront create-invalidation \
+                        --distribution-id ${environment_resources["cloudfront"]} \
+                        --paths "/app/""
+                    sh "aws s3 cp --recursive dist/ ${environment_resources["s3_frontend_webapp"]}"
+                }
+                continue
+            }
+            else {
+                sh "echo '${environment_resources["ec2"]}' >> ansible/inventory"
+                sh "/bin/bash config_playbook.sh ${repo} ${branch}"
+            }
+ 
+        }
+    }
+}
