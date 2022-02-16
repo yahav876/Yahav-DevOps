@@ -1,0 +1,48 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "athena:ListDataCatalogs",
+                "athena:ListWorkGroups"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "athena:GetTableMetadata",
+                "athena:StartQueryExecution",
+                "glue:GetTables",
+                "glue:GetPartitions",
+                "athena:GetQueryResults",
+                "s3:ListBucket",
+                "athena:GetDatabase",
+                "athena:GetDataCatalog",
+                "glue:GetDatabases",
+                "athena:ListQueryExecutions",
+                "glue:GetTable",
+                "s3:PutObject",
+                "s3:GetObjectAcl",
+                "s3:GetObject",
+                "athena:GetWorkGroup",
+                "glue:GetPartition",
+                "athena:ListDatabases",
+                "s3:ListBucketMultipartUploads",
+                "s3:AbortMultipartUpload",
+                "athena:StopQueryExecution",
+                "athena:GetQueryExecution",
+                "athena:ListTableMetadata",
+                "s3:GetBucketLocation",
+                "s3:ListMultipartUploadParts"
+            ],
+            "Resource": [
+                "arn:aws:s3:::cloud-exmaple/*",
+                "arn:aws:athena:us-east-1:7498274729:workgroup/example"
+            ]
+        }
+    ]
+}
