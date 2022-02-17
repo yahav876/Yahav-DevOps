@@ -143,6 +143,9 @@ sudo docker cp /home/ubuntu/restoreDB.sh default_database_1:/root
 
 sudo docker exec default_database_1 /bin/sh -c /root/restoreDB.sh && sudo docker exec default_mediawiki_1 /bin/sh -c /root/restoreMW.sh
 
+TARGET_ID=`curl http://169.254.169.254/latest/meta-data/instance-id`
+
+aws elbv2 register-targets --target-group-arn arn:aws:elasticloadbalancing:us-east-1:43872:targetgroup/mediawiki-ct/e1d5b084 --targets Id="${TARGET_ID}" --region=us-east-1
 
 
 
