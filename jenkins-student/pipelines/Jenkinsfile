@@ -1,27 +1,27 @@
 demo_env = ["ec2":"10.0.1.60",
-            "s3_frontend_apanel":"s3://example-apanel-demo/apanel",
-            "s3_frontend_webapp":"s3://example-webapp-demo/app",
-            "s3_frontend_website":"s3://example-website-demo",
-            "cloudfront":"E31VKDZ",
+            "s3_frontend_apanel":"s3://circles-apanel-demo/apanel",
+            "s3_frontend_webapp":"s3://circles-webapp-demo/app",
+            "s3_frontend_website":"s3://circles-website-demo",
+            "cloudfront":"E31VX00QE3YKDZ",
             "npm_build_env":"stage"]
 
 stage_env = ["ec2":"2.2.2.2",
-            "s3_frontend_apanel":"s3://example-apanel-stage/apanel",
-            "s3_frontend_webapp":"s3://example-webapp-stage/app",
-            "s3_frontend_website":"s3://example-website-stage",
-            "cloudfront":"E3CP03QU",
+            "s3_frontend_apanel":"s3://circles-apanel-stage/apanel",
+            "s3_frontend_webapp":"s3://circles-webapp-stage/app",
+            "s3_frontend_website":"s3://circles-website-stage",
+            "cloudfront":"E3CBLPESTP03QU",
             "npm_build_env":"stage"]
 
 qa_env = ["ec2":"3.3.3.3",
-          "s3_frontend_apanel":"s3://example-apanel-qa/apanel",
-          "s3_frontend_webapp":"s3://example-webapp-qa/app",
-          "s3_frontend_website":"s3://example-website-qa",
+          "s3_frontend_apanel":"s3://circles-apanel-qa/apanel",
+          "s3_frontend_webapp":"s3://circles-webapp-qa/app",
+          "s3_frontend_website":"s3://circles-website-qa",
           "cloudfront":"EMM2CX68R2EQG",
           "npm_build_env":"qa"]
 
-PUBLIC_SITE_URL = "git@bitbucket.org:7chairs/public-site.git" // s3://example-website-demo
-ADMIN_PANEL_URL="git@bitbucket.org:7chairs/admin-panel.git" // s3://example-apanel-demo/apanel
-WEB_APP_URL='git@bitbucket.org:7chairs/web-app-chat.git' // s3://example-webapp-demo/app
+PUBLIC_SITE_URL = "git@bitbucket.org:7chairs2/public-site.git" // s3://circles-website-demo
+ADMIN_PANEL_URL="git@bitbucket.org:7chairs2/admin-panel.git" // s3://circles-apanel-demo/apanel
+WEB_APP_URL='git@bitbucket.org:7chairs2/web-app-chat.git' // s3://circles-webapp-demo/app
 
 
 pipeline {
@@ -29,9 +29,9 @@ pipeline {
         label 'jenkins_slave-1'
     }
     environment {
-        Key = credentials('Key')
-        Secret = credentials('Secret')
-        refresh_token = credentials('refresh_token')
+        Key = credentials('key_bitbucket')
+        Secret = credentials('secret_bitbucket')
+        refresh_token = credentials('refresh_token_bitbucket')
     }
     stages {
         stage('Delete workspace before build starts') {
@@ -43,7 +43,7 @@ pipeline {
        stage('Git Checkout') {
            steps {
                // Checkout branch (must fetch [config_playbook.sh ,script.sh, ansible/])
-               git credentialsId: 'maagalim', url: 'git@bitbucket.org:7chairs/multirepo-delivery-pipeline.git', branch: 'master'
+               git credentialsId: 'yahav', url: 'git@bitbucket.org:7chairs2/multirepo-delivery-pipeline.git', branch: 'master'
            }
        }
         stage("API Queries") {
@@ -94,7 +94,10 @@ def insert_repositories() {
                             choice(name: 'REPOSITORY_5', choices: readFile("all_repositories"), description: ''),
                             choice(name: 'REPOSITORY_6', choices: readFile("all_repositories"), description: ''),
                             choice(name: 'REPOSITORY_7', choices: readFile("all_repositories"), description: ''),
-                            choice(name: 'REPOSITORY_8', choices: readFile("all_repositories"), description: ''),])
+                            choice(name: 'REPOSITORY_8', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_9', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_10', choices: readFile("all_repositories"), description: ''),
+                            choice(name: 'REPOSITORY_11', choices: readFile("all_repositories"), description: ''),])
 
     // based on user choice
     def environment_resources
@@ -122,7 +125,10 @@ def insert_repositories() {
                             choice(name: userInputRepository["REPOSITORY_5"], choices: readFile("branches/${userInputRepository['REPOSITORY_5']}"), description: ''),
                             choice(name: userInputRepository["REPOSITORY_6"], choices: readFile("branches/${userInputRepository['REPOSITORY_6']}"), description: ''),
                             choice(name: userInputRepository["REPOSITORY_7"], choices: readFile("branches/${userInputRepository['REPOSITORY_7']}"), description: ''),
-                            choice(name: userInputRepository["REPOSITORY_8"], choices: readFile("branches/${userInputRepository['REPOSITORY_8']}"), description: ''),])
+                            choice(name: userInputRepository["REPOSITORY_8"], choices: readFile("branches/${userInputRepository['REPOSITORY_8']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_9"], choices: readFile("branches/${userInputRepository['REPOSITORY_9']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_10"], choices: readFile("branches/${userInputRepository['REPOSITORY_10']}"), description: ''),
+                            choice(name: userInputRepository["REPOSITORY_11"], choices: readFile("branches/${userInputRepository['REPOSITORY_11']}"), description: '')])
     // install ansible
     sh 'sudo apt-get update -y && sudo apt-get install npm ansible awscli -y'
     
@@ -138,7 +144,7 @@ def insert_repositories() {
                 dir("${repo}_${branch}") {
                     git credentialsId: 'yahav', url: "${PUBLIC_SITE_URL}", branch: "${branch}"
                     sh 'sudo su'
-                    sh 'sudo npm install'
+                    sh 'npm install'
                     sh "sudo npm run build:${environment_resources["npm_build_env"]}"
                     sh "aws cloudfront create-invalidation \
                         --distribution-id ${environment_resources["cloudfront"]} \
@@ -183,14 +189,3 @@ def insert_repositories() {
         }
     }
 }
-
-curl -X POST -u "FNnCQWHpQ3hdvdWC2R:xkt2F4S6NHXG9d63EpJghegQue3NmJEp" \
-  https://bitbucket.org/site/oauth2/access_token \
-  -d grant_type=refresh_token -d refresh_token=qRPqnRW2S3wGhL7SXa
-
-curl -X POST -u "FNnCQWHpQ3hdvdWC2R:xkt2F4S6NHXG9d63EpJghegQue3NmJEp" https://bitbucket.org/site/oauth2/access_token -d grant_type=authorization_code
-
-https://bitbucket.org/site/oauth2/authorize?client_id=FNnCQWHpQ3hdvdWC2R&response_type=code
-
-
-curl -X POST -u "FNnCQWHpQ3hdvdWC2R:xkt2F4S6NHXG9d63EpJghegQue3NmJEp" https://bitbucket.org/site/oauth2/access_token -d grant_type=authorization_code -d code=3NvkHGHsxbPc7vHBNT

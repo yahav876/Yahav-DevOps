@@ -5,8 +5,27 @@
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
+                "athena:GetTableMetadata",
+                "athena:ListEngineVersions",
+                "athena:GetQueryResultsStream",
                 "athena:ListDataCatalogs",
-                "athena:ListWorkGroups"
+                "athena:GetQueryResults",
+                "athena:GetDatabase",
+                "athena:GetDataCatalog",
+                "athena:ListWorkGroups",
+                "athena:GetNamedQuery",
+                "athena:GetPreparedStatement",
+                "athena:ListTagsForResource",
+                "athena:ListQueryExecutions",
+                "athena:ListNamedQueries",
+                "athena:GetWorkGroup",
+                "athena:ListDatabases",
+                "athena:GetQueryExecution",
+                "athena:BatchGetNamedQuery",
+                "athena:ListTableMetadata",
+                "athena:ListPreparedStatements",
+                "athena:BatchGetQueryExecution"
+
             ],
             "Resource": "*"
         },
@@ -14,34 +33,30 @@
             "Sid": "VisualEditor1",
             "Effect": "Allow",
             "Action": [
-                "athena:GetTableMetadata",
-                "athena:StartQueryExecution",
                 "glue:GetTables",
                 "glue:GetPartitions",
-                "athena:GetQueryResults",
-                "s3:ListBucket",
-                "athena:GetDatabase",
-                "athena:GetDataCatalog",
                 "glue:GetDatabases",
-                "athena:ListQueryExecutions",
                 "glue:GetTable",
+                "glue:GetPartition"
+            ],
+
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketLocation",
                 "s3:PutObject",
                 "s3:GetObjectAcl",
                 "s3:GetObject",
-                "athena:GetWorkGroup",
-                "glue:GetPartition",
-                "athena:ListDatabases",
-                "s3:ListBucketMultipartUploads",
-                "s3:AbortMultipartUpload",
-                "athena:StopQueryExecution",
-                "athena:GetQueryExecution",
-                "athena:ListTableMetadata",
-                "s3:GetBucketLocation",
-                "s3:ListMultipartUploadParts"
+                "s3:ListBucket"
             ],
             "Resource": [
-                "arn:aws:s3:::cloud-exmaple/*",
-                "arn:aws:athena:us-east-1:7498274729:workgroup/example"
+                "*"
+
             ]
         }
     ]
