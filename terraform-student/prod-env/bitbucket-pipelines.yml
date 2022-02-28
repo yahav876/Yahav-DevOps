@@ -1,0 +1,210 @@
+# Template Terraform to deploy to Cloud Infrastructure
+
+# This template allows you to deploy your infrastructure using Terraform to supported cloud providers.
+# The workflow allows running tests, security scans on feature branches (as well as master).
+# After merging code to master the infrastructure will be deployed to cloud according to the given terraform template.
+
+# Prerequisites: credentials according to used cloud provider.
+# For advanced cases, please, follow terraform docs https://www.terraform.io/docs/index.html.
+
+
+image: hashicorp/terraform
+
+pipelines:
+  branches:
+    master:
+        - step:
+            name: Security Scan
+            script:
+              # Run a security scan for sensitive data.
+              # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+              - pipe: atlassian/git-secrets-scan:0.5.1
+        - step:
+            name: Deploy VPC prod
+            trigger: manual 
+            script:
+              - terraform  -chdir=vpc/src/ init  -backend-config=../env/prod/backend -var-file=../env/prod/variables.tfvars -backend=true -reconfigure
+              - terraform  -chdir=vpc/src/ plan  -var-file=../env/prod/variables.tfvars
+              - terraform  -chdir=vpc/src/ apply --auto-approve  -var-file=../env/prod/variables.tfvars
+        - step:
+            name: Deploy bastion 
+            trigger: manual
+            script:
+              - terraform  -chdir=bastion/src/ init  -backend-config=../env/prod/backend -var-file=../env/prod/variables.tfvars -backend=true -reconfigure
+              - terraform  -chdir=bastion/src/ plan  -var-file=../env/prod/variables.tfvars
+              - terraform  -chdir=bastion/src/ apply --auto-approve  -var-file=../env/prod/variables.tfvars
+        - step:
+            name: Deploy load-balancer 
+            trigger: manual
+            script:
+              - terraform  -chdir=lb/src/ init  -backend-config=../env/prod/backend -var-file=../env/prod/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=lb/src/ plan  -var-file=../env/prod/variables.tfvars
+              - terraform  -chdir=lb/src/ apply --auto-approve  -var-file=../env/prod/variables.tfvars
+        - step:
+            name: Deploy auto-scalling ec2 
+            trigger: manual
+            script:
+              - terraform  -chdir=asg/src/ init  -backend-config=../env/prod/backend -var-file=../env/prod/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=asg/src/ plan  -var-file=../env/prod/variables.tfvars
+              - terraform  -chdir=asg/src/ apply --auto-approve  -var-file=../env/prod/variables.tfvars
+        - step:
+            name: Deploy rds
+            trigger: manual
+            script:
+              - terraform  -chdir=rds/src/ init  -backend-config=../env/prod/backend -var-file=../env/prod/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=rds/src/ plan  -var-file=../env/prod/variables.tfvars
+              - terraform  -chdir=rds/src/ apply --auto-approve  -var-file=../env/prod/variables.tfvars
+        - step:
+            name: Deploy cloudfront
+            trigger: manual
+            script:
+              - terraform  -chdir=cloudfront/src/ init  -backend-config=../env/prod/backend -var-file=../env/prod/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=cloudfront/src/ plan  -var-file=../env/prod/variables.tfvars
+              - terraform  -chdir=cloudfront/src/ apply --auto-approve  -var-file=../env/prod/variables.tfvars
+    stage:
+        - step:
+            name: Security Scan
+            script:
+              # Run a security scan for sensitive data.
+              # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+              - pipe: atlassian/git-secrets-scan:0.5.1
+        - step:
+            name: Deploy VPC stage
+            trigger: manual
+            script:
+              - terraform  -chdir=vpc/src/ init  -backend-config=../env/stage_qa_demo/backend -var-file=../env/stage_qa_demo/variables.tfvars -backend=true -reconfigure
+              - terraform  -chdir=vpc/src/ plan  -var-file=../env/stage_qa_demo/variables.tfvars
+              - terraform  -chdir=vpc/src/ apply --auto-approve  -var-file=../env/stage_qa_demo/variables.tfvars
+        - step:
+            name: Deploy bastion 
+            trigger: manual
+            script:
+              - terraform  -chdir=bastion/src/ init  -backend-config=../env/stage_qa_demo/backend -var-file=../env/stage_qa_demo/variables.tfvars -backend=true -reconfigure
+              - terraform  -chdir=bastion/src/ plan  -var-file=../env/stage_qa_demo/variables.tfvars
+              - terraform  -chdir=bastion/src/ apply --auto-approve  -var-file=../env/stage_qa_demo/variables.tfvars
+        - step:
+            name: Deploy load-balancer 
+            trigger: manual
+            script:
+              - terraform  -chdir=lb/src/ init  -backend-config=../env/stage/backend -var-file=../env/stage/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=lb/src/ plan  -var-file=../env/stage/variables.tfvars
+              - terraform  -chdir=lb/src/ apply --auto-approve  -var-file=../env/stage/variables.tfvars
+        - step:
+            name: Deploy auto-scalling ec2 
+            trigger: manual
+            script:
+              - terraform  -chdir=asg/src/ init  -backend-config=../env/stage/backend -var-file=../env/stage/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=asg/src/ plan  -var-file=../env/stage/variables.tfvars
+              - terraform  -chdir=asg/src/ apply --auto-approve  -var-file=../env/stage/variables.tfvars
+        - step:
+            name: Deploy rds
+            trigger: manual
+            script:
+              - terraform  -chdir=rds/src/ init  -backend-config=../env/stage/backend -var-file=../env/stage/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=rds/src/ plan  -var-file=../env/stage/variables.tfvars
+              - terraform  -chdir=rds/src/ apply --auto-approve  -var-file=../env/stage/variables.tfvars
+        - step:
+            name: Deploy cloudfront
+            trigger: manual
+            script:
+              - terraform  -chdir=cloudfront/src/ init  -backend-config=../env/stage/backend -var-file=../env/stage/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=cloudfront/src/ plan  -var-file=../env/stage/variables.tfvars
+              - terraform  -chdir=cloudfront/src/ apply --auto-approve  -var-file=../env/stage/variables.tfvars
+    qa:
+        - step:
+            name: Security Scan
+            script:
+              # Run a security scan for sensitive data.
+              # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+              - pipe: atlassian/git-secrets-scan:0.5.1
+        - step:
+            name: Deploy VPC stage
+            trigger: manual
+            script:
+              - terraform  -chdir=vpc/src/ init  -backend-config=../env/stage_qa_demo/backend -var-file=../env/stage_qa_demo/variables.tfvars -backend=true -reconfigure
+              - terraform  -chdir=vpc/src/ plan  -var-file=../env/stage_qa_demo/variables.tfvars
+              - terraform  -chdir=vpc/src/ apply --auto-approve  -var-file=../env/stage_qa_demo/variables.tfvars
+        - step:
+            name: Deploy bastion 
+            trigger: manual
+            script:
+              - terraform  -chdir=bastion/src/ init  -backend-config=../env/stage_qa_demo/backend -var-file=../env/stage_qa_demo/variables.tfvars -backend=true -reconfigure
+              - terraform  -chdir=bastion/src/ plan  -var-file=../env/stage_qa_demo/variables.tfvars
+              - terraform  -chdir=bastion/src/ apply --auto-approve  -var-file=../env/stage_qa_demo/variables.tfvars
+        - step:
+            name: Deploy load-balancer 
+            trigger: manual
+            script:
+              - terraform  -chdir=lb/src/ init  -backend-config=../env/qa/backend -var-file=../env/qa/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=lb/src/ plan  -var-file=../env/qa/variables.tfvars
+              - terraform  -chdir=lb/src/ apply --auto-approve  -var-file=../env/qa/variables.tfvars
+        - step:
+            name: Deploy auto-scalling ec2 
+            trigger: manual
+            script:
+              - terraform  -chdir=asg/src/ init  -backend-config=../env/qa/backend -var-file=../env/qa/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=asg/src/ plan  -var-file=../env/qa/variables.tfvars
+              - terraform  -chdir=asg/src/ apply --auto-approve  -var-file=../env/qa/variables.tfvars
+        - step:
+            name: Deploy rds
+            trigger: manual
+            script:
+              - terraform  -chdir=rds/src/ init  -backend-config=../env/qa/backend -var-file=../env/qa/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=rds/src/ plan  -var-file=../env/qa/variables.tfvars
+              - terraform  -chdir=rds/src/ apply --auto-approve  -var-file=../env/qa/variables.tfvars
+        - step:
+            name: Deploy cloudfront
+            trigger: manual
+            script:
+              - terraform  -chdir=cloudfront/src/ init  -backend-config=../env/qa/backend -var-file=../env/qa/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=cloudfront/src/ plan  -var-file=../env/qa/variables.tfvars
+              - terraform  -chdir=cloudfront/src/ apply --auto-approve  -var-file=../env/qa/variables.tfvars
+    demo:
+        - step:
+            name: Security Scan
+            script:
+              # Run a security scan for sensitive data.
+              # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+              - pipe: atlassian/git-secrets-scan:0.5.1
+        - step:
+            name: Deploy VPC stage
+            trigger: manual
+            script:
+              - terraform  -chdir=vpc/src/ init  -backend-config=../env/stage_qa_demo/backend -var-file=../env/stage_qa_demo/variables.tfvars -backend=true -reconfigure
+              - terraform  -chdir=vpc/src/ plan  -var-file=../env/stage_qa_demo/variables.tfvars
+              - terraform  -chdir=vpc/src/ apply --auto-approve  -var-file=../env/stage_qa_demo/variables.tfvars
+        - step:
+            name: Deploy bastion 
+            trigger: manual
+            script:
+              - terraform  -chdir=bastion/src/ init  -backend-config=../env/stage_qa_demo/backend -var-file=../env/stage_qa_demo/variables.tfvars -backend=true -reconfigure
+              - terraform  -chdir=bastion/src/ plan  -var-file=../env/stage_qa_demo/variables.tfvars
+              - terraform  -chdir=bastion/src/ apply --auto-approve  -var-file=../env/stage_qa_demo/variables.tfvars
+        - step:
+            name: Deploy load-balancer 
+            trigger: manual
+            script:
+              - terraform  -chdir=lb/src/ init  -backend-config=../env/demo/backend -var-file=../env/demo/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=lb/src/ plan  -var-file=../env/demo/variables.tfvars
+              - terraform  -chdir=lb/src/ apply --auto-approve  -var-file=../env/demo/variables.tfvars
+        - step:
+            name: Deploy auto-scalling ec2 
+            trigger: manual
+            script:
+              - terraform  -chdir=asg/src/ init  -backend-config=../env/demo/backend -var-file=../env/demo/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=asg/src/ plan  -var-file=../env/demo/variables.tfvars
+              - terraform  -chdir=asg/src/ apply --auto-approve  -var-file=../env/demo/variables.tfvars
+        - step:
+            name: Deploy rds
+            trigger: manual
+            script:
+              - terraform  -chdir=rds/src/ init  -backend-config=../env/demo/backend -var-file=../env/demo/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=rds/src/ plan  -var-file=../env/demo/variables.tfvars
+              - terraform  -chdir=rds/src/ apply --auto-approve  -var-file=../env/demo/variables.tfvars
+        - step:
+            name: Deploy cloudfront
+            trigger: manual
+            script:
+              - terraform  -chdir=cloudfront/src/ init  -backend-config=../env/demo/backend -var-file=../env/demo/variables.tfvars -backend=true -reconfigure  
+              - terraform  -chdir=cloudfront/src/ plan  -var-file=../env/demo/variables.tfvars
+              - terraform  -chdir=cloudfront/src/ apply --auto-approve  -var-file=../env/demo/variables.tfvars

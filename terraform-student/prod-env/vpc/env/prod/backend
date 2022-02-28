@@ -1,0 +1,4 @@
+bucket = "cloudteam-tf-circles"
+key    = "Terraform/circlesup/vpc_prod"
+region = "eu-west-3"
+

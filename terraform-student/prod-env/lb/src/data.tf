@@ -4,7 +4,7 @@ data "terraform_remote_state" "vpc" {
   config = {
     bucket = "cloudteam-tf-circles"
     region = "${var.general_config.backend_region}"
-    key    = "Terraform/circlesup/vpc"
+    key    = "Terraform/circlesup/vpc_prod"
 
   }
 }
@@ -15,7 +15,17 @@ data "terraform_remote_state" "asg_bastion" {
   config = {
     bucket = "cloudteam-tf-circles"
     region = "${var.general_config.backend_region}"
-    key    = "Terraform/circlesup/asg_bastion"
+    key    = "Terraform/circlesup/asg_bastion_prod"
+  }
+}
+
+data "terraform_remote_state" "jenkins" {
+
+  backend = "s3"
+  config = {
+    bucket = "cloudteam-tf-circles"
+    region = "${var.general_config.backend_region}"
+    key    = "Terraform/circlesup/jenkins"
   }
 }
 

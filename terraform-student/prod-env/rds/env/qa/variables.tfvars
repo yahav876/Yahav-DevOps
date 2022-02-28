@@ -1,29 +1,31 @@
 general_config = {
 
-  region         = ""
-  lb_state       = ""
-  backend_region = ""
+  region         = "us-east-2"
+  lb_state       = "lb_qa_and_stage"
+  backend_region = "eu-west-3"
+  bastion_state  = "asg_bastion"
 
 }
 
 db = {
 
   lb_state                            = "lb_qa_and_stage"
-  instance_class                      = "db.t3.micro"
-  engine_version                      = "11.12"
-  engine                              = "postgres"
+  bastion_state                       = "asg_bastion"
+  instance_class                      = "db.t3.medium"
+  engine_version                      = "13.4"
+  engine                              = "aurora-postgresql"
   allocated_storage                   = "20"
   name                                = "chat"
   username                            = "postgres"
   port                                = "5432"
   maintenance_window                  = "Sun:00:00-Sun:03:00"
   backup_window                       = "03:00-06:00"
-  family                              = "postgres11"
-  major_engine_version                = "11"
+  family                              = "aurora-postgresql13"
+  major_engine_version                = "13"
   monitoring_interval                 = "30"
   identifier                          = "db-stage"
-  db_instance_identifier              = "db-stage"
-  password                            = "WIpnn"
+  db_instance_identifier              = "db-aurora-qa"
+  password                            = "WIpn4oJgcHCkerw5xW8n"
   iam_database_authentication_enabled = true
   create_db_option_group              = true
   create_db_parameter_group           = true
@@ -37,26 +39,38 @@ db = {
   second_tag_key                      = "managedBy"
   second_tag_value                    = "terraform"
   deletion_protection                 = false
+
+  create_random_password          = false
+  storage_encrypted               = true
+  apply_immediately               = true
+  monitoring_interval             = 10
+  db_parameter_group_name         = "default"
+  db_cluster_parameter_group_name = "default"
+  enabled_cloudwatch_logs_exports = ["postgresql"]
+  publicly_accessible             = true
+
+  db_cluster_identifier           = "db-aurora-qa"
+
 }
 
 strapi = {
 
   lb_state                            = "lb_qa_and_stage"
-  instance_class                      = "db.t2.micro"
-  engine_version                      = "10.17"
-  engine                              = "postgres"
+  instance_class                      = "db.t3.medium"
+  engine_version                      = "13.4"
+  engine                              = "aurora-postgresql"
   allocated_storage                   = "20"
   name                                = "strapi"
   username                            = "postgres"
   port                                = "5432"
   maintenance_window                  = "Sun:00:00-Sun:03:00"
   backup_window                       = "03:00-06:00"
-  family                              = "postgres10"
-  major_engine_version                = "10"
+  family                              = "aurora-postgresql13"
+  major_engine_version                = "13"
   monitoring_interval                 = "30"
   identifier                          = "strapi-stage"
-  db_instance_identifier              = "strapi-stage"
-  password                            = "rn5bdd3yZ"
+  db_instance_identifier              = "strapi-aurora-qa"
+  password                            = "rn5bucZGNxmdFzYdd3yZ"
   iam_database_authentication_enabled = true
   create_db_option_group              = true
   create_db_parameter_group           = true
@@ -71,5 +85,19 @@ strapi = {
   second_tag_value                    = "terraform"
   deletion_protection                 = false
 
+  create_random_password = false
+
+  storage_encrypted               = true
+  apply_immediately               = true
+  monitoring_interval             = 10
+  db_parameter_group_name         = "default"
+  db_cluster_parameter_group_name = "default"
+  enabled_cloudwatch_logs_exports = ["postgresql"]
+  publicly_accessible             = true
+  db_cluster_identifier           = "strapi-aurora-qa"
+
+
+
 }
+
 

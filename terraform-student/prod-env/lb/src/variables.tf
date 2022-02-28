@@ -13,32 +13,32 @@ variable "sec_group_allinone" {
 
   type = any
   default = {
-    ingress_cidr_blocks = ["0.0.0.0/0"]
-    ingress_rules       = ["https-443-tcp", "http-80-tcp", "ssh-tcp"]
-    egress_rules        = ["all-all"]
-    name                = "sec-group-allinone-qa_and_stage"
-    from_port_1         = 9000
-    to_port_1           = 9001
-    protocol_1          = "tcp"
-    from_port_2         = 9000
-    to_port_2           = 9001
-    protocol_2          = "tcp"
+    ingress_cidr_blocks = ""
+    ingress_rules       = ""
+    egress_rules        = ""
+    name                = ""
+    from_port_1         = ""
+    to_port_1           = ""
+    protocol_1          = ""
+    from_port_2         = ""
+    to_port_2           = ""
+    protocol_2          = ""
   }
 }
 
 variable "sec_group_website" {
   type = any
   default = {
-    ingress_cidr_blocks = ["0.0.0.0/0"]
-    ingress_rules       = ["https-443-tcp", "http-80-tcp", "ssh-tcp"]
-    egress_rules        = ["all-all"]
-    name                = "sec-group-website-qa_and_stage"
-    from_port_1         = 1336
-    to_port_1           = 1337
-    protocol_1          = "tcp"
-    from_port_2         = 1336
-    to_port_2           = 1337
-    protocol_2          = "tcp"
+    ingress_cidr_blocks = ""
+    ingress_rules       = ""
+    egress_rules        = ""
+    name                = ""
+    from_port_1         = ""
+    to_port_1           = ""
+    protocol_1          = ""
+    from_port_2         = ""
+    to_port_2           = ""
+    protocol_2          = ""
   }
 }
 
@@ -46,9 +46,9 @@ variable "sec_group_db" {
 
   type = any
   default = {
-    name          = "rds_qa_and_stage_sg"
-    ingress_rules = ["https-443-tcp", "http-80-tcp", "ssh-tcp", "postgresql-tcp"]
-    egress_rules  = ["all-all"]
+    name          = ""
+    ingress_rules = ""
+    egress_rules  = ""
   }
 }
 
@@ -63,6 +63,7 @@ variable "lb_website" {
     certificate_arn    = ""
     port_1             = ""
     port_2             = ""
+    port_3             = ""
     tag_key            = ""
     tag_value          = ""
 
@@ -77,11 +78,15 @@ variable "lb_allinone" {
     backend_port_1     = ""
     backend_port_2     = ""
     backend_port_3     = ""
-    certificate_arn    = ""
-    port_1             = ""
-    port_2             = ""
-    tag_key            = ""
-    tag_value          = ""
+    backend_port_4     = ""
+
+    certificate_arn = ""
+    port_1          = ""
+    port_2          = ""
+    port_3          = ""
+    port_4          = ""
+    tag_key         = ""
+    tag_value       = ""
 
   }
 }

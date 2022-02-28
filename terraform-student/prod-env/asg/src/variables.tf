@@ -22,12 +22,14 @@ variable "allinone_asg" {
     wait_for_capacity_timeout = ""
     force_delete              = "" # Bool 
     protect_from_scale_in     = "" # Bool 
+    iam_instance_profile      = ""
 
     # Launch-Template
     lt_name                = ""
     update_default_version = "" # Bool
     ebs_optimized          = "" # Bool 
     enable_monitoring      = "" # Bool
+    private_ip_address     = ""
 
     delete_on_termination = ""
     encrypted             = ""
@@ -38,6 +40,8 @@ variable "allinone_asg" {
     core_count        = "" # Change this according to instance type!
     threads_per_core  = "" # Change this according to instance type!
     availability_zone = ""
+
+    filter-tags-allinone = ""
 
     first_tag_key   = ""
     first_tag_value = ""
@@ -53,7 +57,7 @@ variable "allinone_asg" {
 
 variable "website_asg" {
 
-  type = map(any)
+  type = any
   default = {
 
     # Auto-Scalling
@@ -76,6 +80,11 @@ variable "website_asg" {
     core_count             = "" # Change this according to instance type!
     threads_per_core       = "" # Change this according to instance type!
     availability_zone      = ""
+    private_ip_address     = ""
+    iam_instance_profile   = ""
+
+    filter-tags-website = ""
+
 
     first_tag_key   = ""
     first_tag_value = ""
@@ -100,16 +109,18 @@ variable "vpc_id" {
   default = ""
 }
 
+
+
 variable "filter-tags-website" {
   type = map(any)
   default = {
-    "Name" = "web-site.prod"
+    "Name" = ""
   }
 }
 
 variable "filter-tags-allinone" {
   type = map(any)
   default = {
-    "Name" = "all-in-one.prod"
+    "Name" = ""
   }
 }

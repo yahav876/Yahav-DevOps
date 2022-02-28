@@ -1,5 +1,5 @@
 
 bucket = "cloudteam-tf-circles"
-key    = "Terraform/circlesup/lb_qa_and_stage"
+key    = "Terraform/circlesup/lb_stage"
 region = "eu-west-3"
 

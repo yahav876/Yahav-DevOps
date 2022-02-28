@@ -4,11 +4,12 @@ variable "general_config" {
     region         = ""
     lb_state       = ""
     backend_region = ""
+    bastion_state  = ""
   }
 }
 
 variable "db" {
-  type = map(any)
+  type = any
   default = {
     region                         = ""
     lb_state                       = ""
@@ -40,12 +41,23 @@ variable "db" {
     db-stage-identifier-snap       = ""
     db-strapi-identifier-snap      = ""
     db-strapi-prod-identifier-snap = ""
+
+    instance_class                  = ""
+    storage_encrypted               = ""
+    apply_immediately               = ""
+    monitoring_interval             = ""
+    db_parameter_group_name         = ""
+    db_cluster_parameter_group_name = ""
+    enabled_cloudwatch_logs_exports = ""
+
+    db_cluster_identifier = ""
+
 
   }
 }
 
 variable "strapi" {
-  type = map(any)
+  type = any
   default = {
     region                         = ""
     lb_state                       = ""
@@ -77,6 +89,17 @@ variable "strapi" {
     db-stage-identifier-snap       = ""
     db-strapi-identifier-snap      = ""
     db-strapi-prod-identifier-snap = ""
+
+    instance_class                  = ""
+    storage_encrypted               = ""
+    apply_immediately               = ""
+    monitoring_interval             = ""
+    db_parameter_group_name         = ""
+    db_cluster_parameter_group_name = ""
+    enabled_cloudwatch_logs_exports = ""
+
+    db_cluster_identifier = ""
+
 
   }
 }
@@ -89,4 +112,18 @@ variable "subnets_id" {
 variable "vpc_id" {
   type    = string
   default = ""
+}
+
+variable "filter-tags-db" {
+  type = map(any)
+  default = {
+    "Name" = ""
+  }
+}
+
+variable "filter-tags-strapi" {
+  type = map(any)
+  default = {
+    "Name" = ""
+  }
 }

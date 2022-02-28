@@ -17,16 +17,23 @@ module "sec-group-allinone" {
       to_port     = var.sec_group_allinone.to_port_1
       protocol    = var.sec_group_allinone.protocol_1
       description = "User-service ports"
-      cidr_blocks = "${data.aws_network_interface.elb-ip-allinone-1.private_ip}/32"
-    },
-    {
-      from_port   = var.sec_group_allinone.from_port_2
-      to_port     = var.sec_group_allinone.to_port_2
-      protocol    = var.sec_group_allinone.protocol_2
-      description = "User-service ports"
-      cidr_blocks = "${data.aws_network_interface.elb-ip-allinone-2.private_ip}/32"
+      cidr_blocks = "0.0.0.0/0"
+      # cidr_blocks = "${data.aws_network_interface.elb-ip-allinone-1.private_ip}/32"
     },
   ]
+  computed_ingress_with_source_security_group_id = [
+    {
+      rule                     = "ssh-tcp"
+      source_security_group_id = data.terraform_remote_state.asg_bastion.outputs.bastion_sg
+    },
+    {
+      rule                     = "all-all"
+      source_security_group_id = data.terraform_remote_state.jenkins.outputs.security_group_id
+
+    },
+  ]
+  number_of_computed_ingress_with_source_security_group_id = 2
+
 }
 
 
@@ -58,6 +65,22 @@ module "sec-group-website" {
       cidr_blocks = "${data.aws_network_interface.elb-ip-2.private_ip}/32"
     },
   ]
+  computed_ingress_with_source_security_group_id = [
+    {
+      rule                     = "ssh-tcp"
+      source_security_group_id = data.terraform_remote_state.asg_bastion.outputs.bastion_sg
+
+    },
+    {
+      rule                     = "all-all"
+      source_security_group_id = data.terraform_remote_state.jenkins.outputs.security_group_id
+
+    },
+
+  ]
+  number_of_computed_ingress_with_source_security_group_id = 2
+
+
 }
 
 

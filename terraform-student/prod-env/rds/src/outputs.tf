@@ -1,15 +1,6 @@
-# output "db-prod-id" {
-
-#   value = module.db-prod.db_instance_id
-#   depends_on = [
-#     module.db-prod
-#   ]
-  
-# }
-
 output "db-id" {
 
-  value = module.db.db_instance_id
+  value = module.db.cluster_instances
   depends_on = [
     module.db
   ]
@@ -17,22 +8,18 @@ output "db-id" {
 
 output "db-strapi-id" {
 
-  value = module.strapi.db_instance_id
+  value = module.strapi-database.cluster_instances
   depends_on = [
-    module.strapi
+    module.strapi-database
   ]
-  
 }
 
-# output "db-strapi-prod-id" {
 
-#   value = module.strapi-prod.db_instance_id
-#   depends_on = [
-#     module.strapi-prod
-#   ]
-# }
+output "snap-db" {
+  value = data.aws_db_cluster_snapshot.latest_db_snapshot.id
+}
 
-# output "strapi_snap" {
-#   value = data.aws_db_snapshot.strapi
-# }
+output "snap-starpi" {
+  value = data.aws_db_cluster_snapshot.latest_strapi_snapshot.id
+}
 

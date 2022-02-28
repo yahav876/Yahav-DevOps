@@ -1,6 +1,6 @@
 general_config = {
 
-  region         = "us-east-1"
+  region         = "us-east-2"
   dashboard_name = "qa-env"
   allinone_name  = "asg-all-in-one-qa" # Change it according the instance name.
   website_name   = "asg-website-qa"    # Change it according the instance name.

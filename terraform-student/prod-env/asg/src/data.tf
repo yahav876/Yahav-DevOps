@@ -4,7 +4,7 @@ data "terraform_remote_state" "vpc" {
   config = {
     bucket = "${var.general_config.backend_bucket_name}"
     region = "${var.general_config.backend_region}"
-    key    = "Terraform/circlesup/vpc"
+    key    = "Terraform/circlesup/vpc_prod"
 
   }
 }
@@ -15,7 +15,7 @@ data "terraform_remote_state" "asg_bastion" {
   config = {
     bucket = "${var.general_config.backend_bucket_name}"
     region = "${var.general_config.backend_region}"
-    key    = "Terraform/circlesup/asg_bastion" # make var for state files per env.
+    key    = "Terraform/circlesup/asg_bastion_prod" # make var for state files per env.
 
   }
 }
@@ -31,35 +31,36 @@ data "terraform_remote_state" "alb" {
   }
 }
 
-# data "aws_ami" "website" {
-#   most_recent = true
-#   owners      = ["self"]
 
-#   dynamic "filter" {
-#     for_each = var.filter-tags-website
-#     iterator = tag
+data "aws_ami" "website" {
+  most_recent = true
+  owners      = ["self"]
 
-#     content {
-#       name   = "tag:${tag.key}"
-#       values = ["${tag.value}"]
-#     }
-#   }
-# }
+  dynamic "filter" {
+    for_each = var.filter-tags-website
+    iterator = tag
 
-# data "aws_ami" "allinone" {
-#   most_recent = true
-#   owners      = ["self"]
+    content {
+      name   = "tag:${tag.key}"
+      values = ["${tag.value}"]
+    }
+  }
+}
 
-#   dynamic "filter" {
-#     for_each = var.filter-tags-allinone
-#     iterator = tag
+data "aws_ami" "allinone" {
+  most_recent = true
+  owners      = ["self"]
 
-#     content {
-#       name   = "tag:${tag.key}"
-#       values = ["${tag.value}"]
-#     }
-#   }
-# }
+  dynamic "filter" {
+    for_each = var.filter-tags-allinone
+    iterator = tag
+
+    content {
+      name   = "tag:${tag.key}"
+      values = ["${tag.value}"]
+    }
+  }
+}
 
 
 

@@ -8,7 +8,7 @@ terraform {
       source = "hashicorp/aws"
     }
       null = {
-        version = ">=2.1.2"
+        version = ">= 2.1.2"
       }
     }
 }

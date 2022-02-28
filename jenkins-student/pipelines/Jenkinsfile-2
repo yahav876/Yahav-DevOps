@@ -1,0 +1,159 @@
+demo_env = ["ec2": "10.0.1.156",
+            "ec2-2": "10.0.2.63",
+            "s3_frontend_apanel":"s3://example-apanel-demo/apanel",
+            "s3_frontend_webapp":"s3://example-webapp-demo/app",
+            "s3_frontend_website":"s3://example-website-demo",
+            "cloudfront":"E31VX00QE3YKDZ",
+            "npm_build_env":"stage"]
+
+stage_env = ["ec2": "10.0.2.176",
+            "ec2-2": "10.0.2.249",
+            "s3_frontend_apanel":"s3://example-apanel-stage/apanel",
+            "s3_frontend_webapp":"s3://example-webapp-stage/app",
+            "s3_frontend_website":"s3://example-website-stage",
+            "cloudfront":"E3CBLPESTP03QU",
+            "npm_build_env":"stage"]
+
+qa_env = ["ec2": "10.0.2.176",
+          "ec2-2": "10.0.2.249",
+          "s3_frontend_apanel":"s3://example-apanel-qa/apanel",
+          "s3_frontend_webapp":"s3://example-webapp-qa/app",
+          "s3_frontend_website":"s3://example-website-qa",
+          "cloudfront":"XXX",
+          "npm_build_env":"qa"]
+
+def environment_resources
+    if (ENVIRONMENT == "QA"){
+        environment_resources = qa_env
+    }
+    if (ENVIRONMENT == "STAGE"){
+        environment_resources = stage_env
+    }
+    if (ENVIRONMENT == "DEMO"){
+        environment_resources = demo_env
+    }
+
+pipeline {
+    
+    options {
+        parallelsAlwaysFailFast()
+        timeout(time: 30, unit: 'MINUTES')
+        timestamps()
+    }
+
+    agent {
+        label "slave-1"
+    }
+    
+    parameters {
+        choice(name: "ENVIRONMENT", choices: ["QA", "DEMO", "DESIGN", "STAGE"], description: "Choose environment to deploy")
+        
+        listGitBranches branchFilter: '.*', credentialsId: 'maagalim', defaultValue: 'develop', name: 'admin_panel_branch', quickFilterEnabled: true, remoteURL: 'git@bitbucket.org:example/admin-panel.git', selectedValue: 'DEFAULT', sortMode: 'ASCENDING_SMART', tagFilter: '*', type: 'PT_BRANCH'
+        booleanParam(name: "deploy_admin_panel", defaultValue: false, description: "")
+        
+        listGitBranches branchFilter: '.*', credentialsId: 'maagalim', defaultValue: 'develop', name: 'webapp_branch', quickFilterEnabled: true, remoteURL: 'git@bitbucket.org:example/web-app-chat.git', selectedValue: 'DEFAULT', sortMode: 'ASCENDING_SMART', tagFilter: '*', type: 'PT_BRANCH'
+        booleanParam(name: "deploy_webapp", defaultValue: false, description: "")
+        
+        listGitBranches branchFilter: '.*', credentialsId: 'maagalim', defaultValue: 'develop', name: 'video_room_branch', quickFilterEnabled: true, remoteURL: 'git@bitbucket.org:example/web-video.git', selectedValue: 'DEFAULT', sortMode: 'ASCENDING_SMART', tagFilter: '*', type: 'PT_BRANCH'
+        booleanParam(name: "deploy_video_room", defaultValue: false, description: "")
+        
+        listGitBranches branchFilter: '.*', credentialsId: 'maagalim', defaultValue: 'develop', name: 'website_branch', quickFilterEnabled: true, remoteURL: 'git@bitbucket.org:example/public-site.git', selectedValue: 'DEFAULT', sortMode: 'ASCENDING_SMART', tagFilter: '*', type: 'PT_BRANCH'
+        booleanParam(name: "deploy_website", defaultValue: false, description: "")
+        
+        listGitBranches branchFilter: '.*', credentialsId: 'maagalim', defaultValue: 'develop', name: 'core_branch', quickFilterEnabled: true, remoteURL: 'git@bitbucket.org:example/app-backend.git', selectedValue: 'DEFAULT', sortMode: 'ASCENDING_SMART', tagFilter: '*', type: 'PT_BRANCH'
+        booleanParam(name: "deploy_core", defaultValue: false, description: "")
+        
+        listGitBranches branchFilter: '.*', credentialsId: 'maagalim', defaultValue: 'develop', name: 'chat_branch', quickFilterEnabled: true, remoteURL: 'git@bitbucket.org:example/message-server.git', selectedValue: 'DEFAULT', sortMode: 'ASCENDING_SMART', tagFilter: '*', type: 'PT_BRANCH'
+        booleanParam(name: "deploy_chat", defaultValue: false, description: "")
+        
+        listGitBranches branchFilter: '.*', credentialsId: 'maagalim', defaultValue: 'develop', name: 'meeting_analyzer_branch', quickFilterEnabled: true, remoteURL: 'git@bitbucket.org:example/meeting-analyzer.git', selectedValue: 'DEFAULT', sortMode: 'ASCENDING_SMART', tagFilter: '*', type: 'PT_BRANCH'
+        booleanParam(name: "deploy_meeting_analyzer", defaultValue: false, description: "")
+    }
+    
+    stages {
+        
+        stage("Checkout") {
+            steps {
+                cleanWs()
+                script {
+                    // remove refs/heads/
+                    admin_panel_branch=admin_panel_branch.replace("refs/heads/","")
+                    webapp_branch=webapp_branch.replace("refs/heads/","")
+                    video_room_branch=video_room_branch.replace("refs/heads/","")
+                    website_branch=website_branch.replace("refs/heads/","")
+                    core_branch=core_branch.replace("refs/heads/","")
+                    chat_branch=chat_branch.replace("refs/heads/","")
+                    meeting_analyzer_branch=meeting_analyzer_branch.replace("refs/heads/","")
+
+                    if (deploy_admin_panel == "true") {
+                        checkout([$class: 'GitSCM', branches: [[name: "${admin_panel_branch}"]], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'admin-panel']], userRemoteConfigs: [[credentialsId: 'maagalim', url: 'git@bitbucket.org:example/admin-panel.git']]])
+                    }
+
+                    if (webapp_branch == "true") {
+                        checkout([$class: 'GitSCM', branches: [[name: "${webapp_branch}"]], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'admin-panel']], userRemoteConfigs: [[credentialsId: 'maagalim', url: 'git@bitbucket.org:example/admin-panel.git']]])
+                    }
+
+                    if (video_room_branch == "true") {
+                        checkout([$class: 'GitSCM', branches: [[name: "${video_room_branch}"]], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'admin-panel']], userRemoteConfigs: [[credentialsId: 'maagalim', url: 'git@bitbucket.org:example/admin-panel.git']]])
+                    }
+
+                    if (website_branch == "true") {
+                        checkout([$class: 'GitSCM', branches: [[name: "${website_branch}"]], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'admin-panel']], userRemoteConfigs: [[credentialsId: 'maagalim', url: 'git@bitbucket.org:example/admin-panel.git']]])
+                    }
+
+                    if (core_branch == "true") {
+                        checkout([$class: 'GitSCM', branches: [[name: "${core_branch}"]], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'admin-panel']], userRemoteConfigs: [[credentialsId: 'maagalim', url: 'git@bitbucket.org:example/admin-panel.git']]])
+                    }
+
+                    if (chat_branch == "true") {
+                        checkout([$class: 'GitSCM', branches: [[name: "${chat_branch}"]], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'admin-panel']], userRemoteConfigs: [[credentialsId: 'maagalim', url: 'git@bitbucket.org:example/admin-panel.git']]])
+                    }
+
+                    if (meeting_analyzer_branch == "true") {
+                        checkout([$class: 'GitSCM', branches: [[name: "${meeting_analyzer_branch}"]], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'admin-panel']], userRemoteConfigs: [[credentialsId: 'maagalim', url: 'git@bitbucket.org:example/admin-panel.git']]])
+                    }
+                }
+            }
+        }
+        
+        stage("Build") {
+            parallel {
+                stage("admin-panel") {
+                    when { environment name: 'deploy_admin_panel', value: 'true'}
+                    steps {
+                        script {
+                            echo "Building admin_panel"
+                            dir ("admin-panel") {
+                                sh 'npm install'
+                                sh "npm run build:${environment_resources["npm_build_env"]}"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage("Deploy") {
+            parallel {
+                stage("admin-panel") {
+                    when { environment name: 'deploy_admin_panel', value: 'true'}
+                    steps {
+                        script {
+                            if (deploy_admin_panel == "true") {
+                                echo "Deploying admin_panel"
+                                if (deploy_admin_panel == "true") {
+                                    dir ("admin-panel") {
+                                        sh "aws cloudfront create-invalidation \
+                                            --distribution-id ${environment_resources["cloudfront"]} \
+                                            --paths '/apanel/'"
+                                        sh "aws s3 cp --recursive dist/ ${environment_resources["s3_frontend_apanel"]}"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

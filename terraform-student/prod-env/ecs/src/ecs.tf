@@ -13,27 +13,53 @@ module "ecs" {
 
 }
 
+# resource "aws_ecs_task_definition" "test" {
+#   family                   = "test"
+#   requires_compatibilities = ["FARGATE"]
+#   network_mode             = "awsvpc"
+#   execution_role_arn       = "arn:aws:iam::457486133872:role/ecs-fargate-test-yahav"
+#   cpu    = 1024
+#   memory = 2048
+#   container_definitions = jsonencode([
+#     {
+#       name      = "go-app"
+#       image     = "457486133872.dkr.ecr.us-east-1.amazonaws.com/cloudteam:ecs-task.v1"
+#       essential = true
+#       # command   = ["./main"]
+#       portMappings = [
+#         {
+#           containerPort = 8080
+#       #     hostPort      = 8080
+#         }
+#       ]
+#     },  
+#   ])
+# }
+
 resource "aws_ecs_task_definition" "test" {
   family                   = "test"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
+  cpu                      = 1024
+  memory                   = 2048
+  task_role_arn            = "arn:aws:iam::457486133872:role/ecs-fargate-test-yahav"
   execution_role_arn       = "arn:aws:iam::457486133872:role/ecs-fargate-test-yahav"
-  cpu    = 1024
-  memory = 2048
-  container_definitions = jsonencode([
-    {
-      name      = "go-app"
-      image     = "457486133872.dkr.ecr.us-east-1.amazonaws.com/cloudteam:v1.1"
-      essential = true
-      # command   = ["./main"]
-      portMappings = [
-        {
-          containerPort = 8080
-      #     hostPort      = 8080
-        }
+  container_definitions    = <<TASK_DEFINITION
+[
+  {
+    "name": "go-app",
+    "image": "457486133872.dkr.ecr.us-east-1.amazonaws.com/cloudteam:ecs-task.v2",
+    "cpu": 1024,
+    "memory": 2048,
+    "essential": true,
+        "portMappings": [
+      {
+        "containerPort": 8080
+      }
       ]
-    },  
-  ])
+  }
+]
+TASK_DEFINITION
 }
 
 # data "aws_iam_role" "ecs" {
