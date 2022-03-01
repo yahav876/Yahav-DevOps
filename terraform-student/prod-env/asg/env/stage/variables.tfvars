@@ -31,7 +31,7 @@ allinone_asg = {
   core_count             = 1 # Change this according to instance type!
   threads_per_core       = 2 # Change this according to instance type!
   availability_zone      = "us-east-2a"
-  iam_instance_profile   = "arn:aws:iam::294650027016:instance-profile/ec2-access-s3-cf"
+  iam_instance_profile   = "arn:aws:iam::1112223334444:instance-profile/ec2-access-s3-cf"
 
 
   first_tag_key   = "env"
@@ -70,7 +70,7 @@ website_asg = {
   core_count             = 1 # Change this according to instance type!
   threads_per_core       = 2 # Change this according to instance type!
   availability_zone      = "us-east-2b"
-  iam_instance_profile   = "arn:aws:iam::294650027016:instance-profile/ec2-access-s3-cf"
+  iam_instance_profile   = "arn:aws:iam::1112223334444:instance-profile/ec2-access-s3-cf"
 
 
   first_tag_key   = "env"

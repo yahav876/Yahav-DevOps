@@ -16,7 +16,7 @@ cf = {
   retain_on_delete    = false
   wait_for_deployment = false
 
-  acm_certificate_arn      = "arn:aws:acm:us-east-1:294650027016:certificate/023b69c9-e86a-4f78-932a-d4304a6c8de2"
+  acm_certificate_arn      = "arn:aws:acm:us-east-1:1112223334444:certificate/023b69c9-e86a-4f78-932a-d4304a6c8de2"
   ssl_support_method       = "sni-only"
   minimum_protocol_version = "TLSv1.2_2021"
 

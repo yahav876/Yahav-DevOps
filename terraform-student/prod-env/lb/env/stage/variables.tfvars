@@ -49,7 +49,7 @@ lb_website = {
   backend_port_1     = "80"
   backend_port_2     = "1337"
   backend_port_3     = "22"
-  certificate_arn    = "arn:aws:acm:us-east-2:294650027016:certificate/b456a653-841f-47f6-9b14-30ac148bb71e"
+  certificate_arn    = "arn:aws:acm:us-east-2:1112223334444:certificate/b456a653-841f-47f6-9b14-30ac148bb71e"
   port_1             = "80"
   port_2             = "1337"
   port_3             = "8080"
@@ -68,7 +68,7 @@ lb_allinone = {
   backend_port_3     = "9000"
   backend_port_4     = "9001"
 
-  certificate_arn = "arn:aws:acm:us-east-2:294650027016:certificate/de4adac9-90c9-41c5-900c-9717e11a182c"
+  certificate_arn = "arn:aws:acm:us-east-2:1112223334444:certificate/de4adac9-90c9-41c5-900c-9717e11a182c"
   port_1          = "9001"
   port_2          = "22"
   port_3          = "9000"

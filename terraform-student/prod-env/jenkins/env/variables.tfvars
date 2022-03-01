@@ -17,7 +17,7 @@ jenkins_asg = {
   wait_for_capacity_timeout = 0
   force_delete              = true # Bool 
   protect_from_scale_in     = true # Bool 
-  iam_instance_profile      = "arn:aws:iam::294650027016:instance-profile/ec2-access-s3-cf"
+  iam_instance_profile      = "arn:aws:iam::1112223334444:instance-profile/ec2-access-s3-cf"
 
   # Launch-Template
   lt_name                = "circles-lt-jenkins"
@@ -55,7 +55,7 @@ jenkins_asg_slaves = {
   wait_for_capacity_timeout = 0
   force_delete              = true # Bool 
   protect_from_scale_in     = true # Bool 
-  iam_instance_profile      = "arn:aws:iam::294650027016:instance-profile/ec2-access-s3-cf"
+  iam_instance_profile      = "arn:aws:iam::1112223334444:instance-profile/ec2-access-s3-cf"
   associate_public_ip_address = true # Bool
 
   # Launch-Template
@@ -91,7 +91,7 @@ lb_jenkins = {
   backend_port_1     = "8080"
   backend_port_2     = "1337"
   backend_port_3     = "22"
-  certificate_arn    = "arn:aws:acm:us-east-2:294650027016:certificate/5ceef26f-a74e-46cc-8d62-d8f7dacde7f1"
+  certificate_arn    = "arn:aws:acm:us-east-2:1112223334444:certificate/5ceef26f-a74e-46cc-8d62-d8f7dacde7f1"
   port_1             = "8080"
   port_2             = "1337"
   port_3             = "8080"

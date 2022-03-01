@@ -17,7 +17,7 @@ allinone_asg = {
   wait_for_capacity_timeout = 0
   force_delete              = true # Bool 
   protect_from_scale_in     = true # Bool 
-  iam_instance_profile      = "arn:aws:iam::294650027016:instance-profile/ec2-access-s3-cf"
+  iam_instance_profile      = "arn:aws:iam::1112223334444:instance-profile/ec2-access-s3-cf"
 
   # Launch-Template
   lt_name                = "circles-lt-asg-demo"
@@ -71,7 +71,7 @@ website_asg = {
   threads_per_core       = 2 # Change this according to instance type!
   availability_zone      = "us-east-2b"
   private_ip_address     = "10.0.2.87"
-  iam_instance_profile   = "arn:aws:iam::294650027016:instance-profile/ec2-access-s3-cf"
+  iam_instance_profile   = "arn:aws:iam::1112223334444:instance-profile/ec2-access-s3-cf"
 
 
 
