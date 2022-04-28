@@ -1,0 +1,17 @@
+---
+- hosts: basics-account
+  become: true
+  vars:
+    ansible_ssh_private_key_file: "~/.ssh/OverseasAnsiblePrivate.key"
+  tasks:
+    - name: replace line
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^PasswordAuthentication no"
+        line: "PasswordAuthentication yes"
+        backrefs: yes
+
+    - name: Restart sshd service
+      service:
+        name: sshd
+        state: restarted

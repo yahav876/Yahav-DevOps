@@ -1,0 +1,16 @@
+[basics-account]
+
+nginx1 ansible_ssh_host=172.30.32.176 ansible_user=clouduser
+nginx2 ansible_ssh_host=172.30.40.106 ansible_user=clouduser
+node1 ansible_ssh_host=172.30.35.54 ansible_user=clouduser
+node2 ansible_ssh_host=172.30.62.104 ansible_user=clouduser
+node3 ansible_ssh_host=172.30.47.197 ansible_user=clouduser
+node4 ansible_ssh_host=172.30.45.157 ansible_user=clouduser
+node5 ansible_ssh_host=172.30.44.88 ansible_user=clouduser
+node6 ansible_ssh_host=172.30.52.92 ansible_user=clouduser
+apigateway1 ansible_ssh_host=172.30.51.253 ansible_user=clouduser
+apigateway2 ansible_ssh_host=172.30.102.253 ansible_user=clouduser
+apigateway3 ansible_ssh_host=172.30.106.0 ansible_user=clouduser
+
+
+

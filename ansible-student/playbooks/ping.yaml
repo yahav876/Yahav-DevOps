@@ -1,6 +1,6 @@
 ---
- - hosts: all
+ - hosts: basics-account
    tasks:
    - name: pingigng all the servers
-     action: ping
+     action: ls -la /home
 
