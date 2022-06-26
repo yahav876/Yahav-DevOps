@@ -1,0 +1,4 @@
+bucket = "vidaa-israel-terraform"
+key    = "Terraform/vidaa/iam_user_s3_partners"
+region = "us-east-1"
+
