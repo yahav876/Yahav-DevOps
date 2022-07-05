@@ -1,0 +1,46 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor20",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::wurl-partner"
+            ]
+        },
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObjectAcl",
+                "s3:GetObject",
+                "s3:AbortMultipartUpload",
+                "s3:PutObjectAcl"
+            ],
+            "Resource": [
+                "arn:aws:s3:::wurl-partner/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::wurl-partner/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Deny",
+            "Action": "s3:Delete*",
+            "Resource": [
+                "arn:aws:s3:::wurl-partner"
+            ]
+        }
+    ]
+}
