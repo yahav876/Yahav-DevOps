@@ -1,4 +1,4 @@
 bucket = "vidaa-israel-terraform"
-key    = "Terraform/vidaa/iam_user_s3_partners"
+key    = "Terraform/vidaa/"${var.general_config.s3_bucket_name}"
 region = "us-east-1"
 

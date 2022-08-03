@@ -7,25 +7,38 @@ from unittest import result
 from urllib import response
 import boto3
 import itertools
-from datetime import date
+import datetime
 
-ec2_client = boto3.client('ec2')
-regions = [region['RegionName']
-            for region in ec2_client.describe_regions()['Regions']]
+ec2_client = boto3.client('ec2' , region_name="us-west-2")
+# regions = [region['RegionName']
+#             for region in ec2_client.describe_regions()['Regions']]
 
-for region in regions:
-    ec2 = boto3.client('ec2', region_name=region)
+# for region in regions:
+#     ec2 = boto3.client('ec2', region_name=region)
 # Get only running instances
-    volumes = ec2.describe_volumes(
-        Filters=[{'Name': 'status',
-                'Values': ['available']}])
 
-    for v in volumes['Volumes']:
+snapdate = '2022-01-01'
+snapshots = ec2_client.describe_snapshots(
+    Filters=[{'Name': 'owner-id',
+            'Values': ['675549661734']}],OwnerIds=["self"])
+
+
+# print(snapshots)
+# count = 0
+for s in snapshots['Snapshots']:
+    print(s["SnapshotId"])
+
+    # snap_date = datetime.datetime.strftime(s['StartTime'], '%Y-%m-%d')
+    # if snapdate > snap_date:
+        # print(s["SnapshotId"])
+    # count = count + s["VolumeSize"] 
+    # print[s]
+# print(count)
 
         # volID = v['VolumeId']
         # print(v['VolumeId'])
-        print("Deleting un-atacched ebs volume: {}".format(v['VolumeId']))
-        delete = ec2.delete_volume(VolumeId=v['VolumeId'])
+        # print("Deleting un-atacched ebs volume: {}".format(v['VolumeId']))
+        # delete = ec2.delete_volume(VolumeId=v['VolumeId'])
         # snapshots = ec2.create_snapshot(
         #     VolumeId=volID,
         #     TagSpecifications=[
