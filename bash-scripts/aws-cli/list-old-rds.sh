@@ -23,5 +23,3 @@ for p in "${PROFILES[@]}"
     echo $OUTPUT2
     done
 done
-
-
