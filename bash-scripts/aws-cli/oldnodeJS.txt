@@ -1,0 +1,15 @@
+nodeJS v12 lambda functions in 2019:
+
+us-east-1
+arn:aws:lambda:us-east-1:675549661734:function:api_rsa_sign:$LATEST arn:aws:lambda:us-east-1:675549661734:function:api_rsa_sign:1
+
+nodeJS v12 lambda functions in 2017:
+
+eu-west-1
+arn:aws:lambda:eu-west-1:550980034760:function:hisenseSmartHomeSkillAdapter-EU-Ireland:$LATEST arn:aws:lambda:eu-west-1:550980034760:function:SitHisenseSmartHome-EU-Ireland:$LATEST
+
+us-east-1
+arn:aws:lambda:us-east-1:550980034760:function:hisense-smarthome-skill-adapter:$LATEST arn:aws:lambda:us-east-1:550980034760:function:SitSmartHomeSkillfortest:$LATEST
+
+us-west-2
+arn:aws:lambda:us-west-2:550980034760:function:SitHisenseMCS-FE-Oregon:$LATEST arn:aws:lambda:us-west-2:550980034760:function:sit-hisense-smarthome-skill-adapter-for-test:$LATEST arn:aws:lambda:us-west-2:550980034760:function:hisenseSmartHomeSkillAdapter-FE-Oregon:$LATEST
