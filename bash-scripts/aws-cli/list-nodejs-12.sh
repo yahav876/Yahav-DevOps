@@ -9,7 +9,7 @@ declare -a REGIONS=("eu-north-1" "ap-south-1" "eu-west-3" "eu-west-2" "eu-west-1
 # Iterate through all profiles and regions
 for p in "${PROFILES[@]}"
     do
-    echo "Searching Python 3.6 lambda functions in ${p}..."
+    echo "Searching NodeJs v12 lambda functions in ${p}..."
     for r in "${REGIONS[@]}"
     do
     echo $r
