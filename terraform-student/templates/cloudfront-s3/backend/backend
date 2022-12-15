@@ -1,0 +1,4 @@
+bucket = "vidaa-israel-terraform"
+key    = "Terraform/vidaa/cloudfront-s3-cdn"
+region = "us-east-1"
+
