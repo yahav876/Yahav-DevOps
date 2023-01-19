@@ -2,7 +2,10 @@
 from urllib import response
 from xml.etree.ElementTree import Comment
 import boto3
+from logging import getLogger
 
+
+logger = getLogger('route53_change')
 
 route53 = boto3.client('route53')
 elb = boto3.client('elbv2')
@@ -15,11 +18,11 @@ def elbs(zone_id="Z0115161285UW0N1PKIU2"):
     # print(list_elb['LoadBalancers'])
     list_records = route53.list_resource_record_sets(
         HostedZoneId=zone_id,
-        MaxItems="300",
-        StartRecordName='param-ui-oc.vidaahub.com.vidaaclub.com.',
-        StartRecordType='CNAME'
+        MaxItems="300"
+        # StartRecordName='param-ui-oc.vidaahub.com.vidaaclub.com.',
+        # StartRecordType='CNAME'
         )
-    print(list_records)
+    # print(list_records)
     
     # Iterate all CNAME records and check if the ELB exist to replace it for an Alias.
     for record in list_records['ResourceRecordSets']:
@@ -50,6 +53,8 @@ def elbs(zone_id="Z0115161285UW0N1PKIU2"):
                         }
 
                     )
+                    if not delete_record:
+                        logger.error("Delete record failed %s", record)
                     # Create Alias record
                     create_record = route53.change_resource_record_sets(
                         HostedZoneId=zone_id,
@@ -74,6 +79,8 @@ def elbs(zone_id="Z0115161285UW0N1PKIU2"):
                         }
 
                     )
+                    if not create_record:
+                        logger.error("Delete record failed %s", record)
 
 
 
