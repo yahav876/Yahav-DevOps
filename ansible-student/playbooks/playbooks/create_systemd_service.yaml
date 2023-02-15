@@ -1,0 +1,42 @@
+- hosts: all
+  gather_facts: yes
+  become: true
+  tasks:
+    - name: Install falcon-agent as a systemd service
+      copy:
+        dest: /usr/lib/systemd/system/falcon-agent.service
+        content: |
+          [Unit]
+          Description=Falcon agent
+          After=network.target
+          [Service]
+          User=root
+          ExecStart=/home/work/open-falcon/agent/falcon-agent -c /home/work/open-falcon/agent/cfg.json start
+          [Install]
+          WantedBy=multi-user.target
+      when: ansible_facts['pkg_mgr'] == "yum"
+    - name: Reload systemctl daemon and start agent
+      become: true
+      when: ansible_facts['pkg_mgr'] == "yum"
+      systemd:
+        state: stopped
+        daemon_reload: yes
+        enabled: no
+        name: falcon-agent.service
+    - name: Start agent
+      become: true
+      command: /home/work/open-falcon/agent/control start
+      when: ansible_facts['pkg_mgr'] == "yum" #and ansible_facts['service_mgr'] == "systemd"
+    - name: Enable ntpd service
+      when: ansible_facts['pkg_mgr'] == "yum"
+      systemd: distribution
+        state: restarted
+        enabled: yes
+        name: ntpd.service
+    - name: Reload systemctl daemon and start agent
+      when: ansible_facts['pkg_mgr'] == "yum"
+      systemd:
+        state: stopped
+        daemon_reload: yes
+        enabled: yes
+        name: falcon-agent.service

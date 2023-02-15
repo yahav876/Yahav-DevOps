@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Zoom</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: rgb(155, 209, 211);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body class="text-primary">
+    <div class="container" style="text-align:center; margin:auto;">
+        <h1 class="text-center" >Zoom Generator</h1>
+        <div  class="bg-white border rounded border-primary m-auto mt-5 border-opacity-75 border-3 " style="width: 70%; height: 75vh;">
+            <div class="container mt-5 ">
+                <h4>קישור לפתיחה :</h4>
+                <p><a class="text-primary" target="_blank" id="link"></a></p>  
+                <h4 class="mt-1">סיסמאת מארח :</h4>
+                <p id="pass"></p>  
+                <h4> התחברתם ל :</h4>
+                <p id="email"></p>  
+            </div>
+            
+            <button onclick="get()" class="btn btn-success my-5"><b>GENERATE</b></button>
+            
+            <div class="container mt-2" style="width: 75%;">
+                <h2 >הסבר כניסה:</h2>
+                <p class="text-end"><br> 1) יש ללחוץ על הכפתור "GENERATE"<br>
+                    2) להיכנס לקישור שקיבלתם לפתיחת הפגישה<br>
+                    3) ללחוץ על כפתור "משתתפים" בזום ולאחר מכן יופיע כפתור  "claim host" <br>
+                    4) להקיש את סיסמאת המארח שקיבלתם <br>
+                    5) לשלוח הזמנה חדשה לקבוצת הסטודנטים
+                </p>
+            </div>
+            
+        </div>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+
+
+</body>
+
+</html>
