@@ -11,7 +11,7 @@ sg_original_ids = [
 "sg-0e2288d11ccbb41e9",
 "sg-0f65b1a3969abd868"
 ]
-sg_new_id = ["sg-0b39a6e251ee8b7ee"]
+sg_new_id = ["sg-04af5051a56ef061a "]
 
 instance_id = "i-071519e6205b79a62"
 
