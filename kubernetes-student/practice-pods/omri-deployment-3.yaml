@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proto-web-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: proto_web_client
+  template:
+    metadata:
+      labels:
+        app: proto_web_client
+    spec:
+      containers:
+        - name: proto-web-client
+          image: 696822383789.dkr.ecr.us-east-1.amazonaws.com/manage_proto:proto_web_client
+          workingDir: /proto_web_client
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 1
+              memory: 2G
+            limits:
+              cpu: 2
+              memory: 2G
+          env:
+            - name: PORT
+              value: "8800"
+            - name: NODE_ENV
+              value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proto-web-client-service
+spec:
+  selector:
+    app: proto_web_client
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+  type: NodePort

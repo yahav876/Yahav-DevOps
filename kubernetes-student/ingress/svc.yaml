@@ -1,18 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-operated
-  namespace: default
+  name: argocd-server-service
+  namespace: argocd
 # status:
 #   loadBalancer: {}
 spec:
   ports:
     - name: http-web
       protocol: TCP
-      port: 7788
-      targetPort: http-web
+      port: 80
+      targetPort: 8080
   selector:
-    app: testing-app
+    app.kubernetes.io/name: argocd-server
     
   type: ClusterIP
 

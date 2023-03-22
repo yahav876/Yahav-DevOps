@@ -20,4 +20,3 @@ for t in response['TargetGroups']:
             ]
         )
     
-    

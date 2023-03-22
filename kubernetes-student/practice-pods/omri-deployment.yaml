@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manage-proto-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: manage_proto
+  template:
+    metadata:
+      labels:
+        app: manage_proto
+    spec:
+      containers:
+        - name: manage-proto
+          image: 696822383789.dkr.ecr.us-east-1.amazonaws.com/manage_proto:latest
+          workingDir: /manage_proto
+          ports:
+            - containerPort: 8800
+          resources:
+            requests:
+              cpu: 1
+              memory: 2G
+            limits:
+              cpu: 2
+              memory: 2G
+          env:
+            - name: PORT
+              value: "8800"
+            - name: NODE_ENV
+              value: "production"       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: manage-proto-service
+spec:
+  selector:
+    app: manage_proto
+  ports:
+    - name: http
+      port: 30001
+      targetPort: 8800
+  type: NodePort

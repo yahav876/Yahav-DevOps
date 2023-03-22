@@ -1,18 +1,20 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: demo3
-  namespace: monitor
+  name: manage-proto
+  namespace: vidaa-internal
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
-  ingressClassName: kong
+  ingressClassName: nginx
   rules:
-    - host: "prometheus.vidaa-pg.com"
+    - host: "manage-proto.vidaa-pg.com"
       http:
         paths:
           - pathType: Prefix
             path: "/"
             backend:
               service:
-                name: prometheus-operated
+                name: manage-proto-service
                 port:
                   name: http-web
