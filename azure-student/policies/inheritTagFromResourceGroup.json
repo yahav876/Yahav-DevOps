@@ -4,26 +4,26 @@
     "tagName": {
       "type": "String",
       "metadata": {
-        "displayName": "Tag Name",
+        "displayName": "Environment",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "owner"
+      "defaultValue": "Test"
     },
     "tagName2": {
       "type": "String",
       "metadata": {
-        "displayName": "Tag Name",
+        "displayName": "Owner",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "owner email"
+      "defaultValue": "Neil.Shi"
     },
     "tagName3": {
       "type": "String",
       "metadata": {
-        "displayName": "Tag Name",
+        "displayName": "Service",
         "description": "Name of the tag, such as 'environment'"
       },
-      "defaultValue": "finops email"
+      "defaultValue": "VIDAA-Voice"
     },
     "tagName4": {
       "type": "String",
