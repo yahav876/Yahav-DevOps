@@ -1,20 +1,22 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: manage-proto
-  namespace: vidaa-internal
-  annotations:
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  name: grafana
+  namespace: monitor
+  annotations: 
+    # nginx.ingress.kubernetes.io/backend-protocol: HTTPS
 spec:
   ingressClassName: nginx
   rules:
-    - host: "manage-proto.vidaa-pg.com"
+    - host: grafana.vidaa-pg.com
       http:
         paths:
           - pathType: Prefix
             path: "/"
             backend:
               service:
-                name: manage-proto-service
+                name: monitor-grafana
                 port:
-                  name: http-web
+                  # name: http-web
+                  number: 80
+                  

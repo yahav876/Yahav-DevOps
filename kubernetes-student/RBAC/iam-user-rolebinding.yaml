@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developers
+  namespace: argocd
+subjects:
+  - kind: Group
+    name: developers
+    namespace: argocd
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: eks-developers
+  apiGroup: rbac.authorization.k8s.io

@@ -21,3 +21,10 @@ spec:
     automated:
       selfHeal: true
       prune: true
+
+
+
+  policy.default: role:readonly
+  policy.csv: |
+    p, dominik, applications, *, */*, allow
+    p, dominik, clusters, get, *, allow
