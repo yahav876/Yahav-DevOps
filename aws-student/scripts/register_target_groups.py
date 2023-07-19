@@ -14,7 +14,7 @@ for t in response['TargetGroups']:
             TargetGroupArn=t['TargetGroupArn'],
             Targets=[
                 {
-                'Id': 'i-042aa2302b9893199',
+                'Id': 'i-0d22d151fa9cc8995',
                 'Port': t['Port']
                 }
             ]

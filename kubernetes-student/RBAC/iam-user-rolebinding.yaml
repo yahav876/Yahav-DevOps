@@ -2,11 +2,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: developers
-  namespace: argocd
+  namespace: vidaa-internal
 subjects:
   - kind: Group
     name: developers
-    namespace: argocd
+    namespace: vidaa-internal
     apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role

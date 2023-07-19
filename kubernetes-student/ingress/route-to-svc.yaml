@@ -1,22 +1,23 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: grafana
-  namespace: monitor
+  name: appcenter-prod
+  namespace: devx
   annotations: 
-    # nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
   rules:
-    - host: grafana.vidaa-pg.com
+    - host: appcenter.vidaaportal.com
       http:
         paths:
           - pathType: Prefix
             path: "/"
             backend:
               service:
-                name: monitor-grafana
+                name: appcenter-prod-service
                 port:
-                  # name: http-web
-                  number: 80
+                  name: ac-prod-port
+                  # number: 80
                   
