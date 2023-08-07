@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  namespace: vidaa-internal
+  namespace: argocd
   name: eks-developers
 rules:
   - apiGroups:
@@ -41,3 +41,14 @@ rules:
     - patch
     - delete
     - deletecollection
+
+
+  # <property>
+  #   <name>yarn.nodemanager.localizer.cache.cleanup.interval-ms</name>
+  #   <value>300000</value>
+  # </property>
+
+  # <property>
+  #   <name>yarn.nodemanager.localizer.cache.target-size-mb</name>
+  #   <value>4120</value>
+  # </property>
