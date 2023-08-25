@@ -8,8 +8,8 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   repositories: |
-    - name: appcenter
-      url: git@github.com:vidaatest/appcenter-cfg
+    - name: azure_applications
+      url: git@github.com:vidaaazure/k8s-applications-azure
       sshPrivateKeySecret:
         name: private-repo-creds
         key: sshPrivateKey
@@ -23,7 +23,7 @@ metadata:
     argocd.argoproj.io/secret-type: repository
 stringData:
   type: git
-  url: git@github.com:vidaatest/appcenter-cfg.git
+  url: git@github.com:vidaaazure/k8s-applications-azure.git
   sshPrivateKey: |
     -----BEGIN OPENSSH PRIVATE KEY-----
     b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn

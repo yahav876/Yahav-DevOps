@@ -1,51 +1,11 @@
 {
-  "apiVersion": "v1",
-  "kind": "Service",
-  "metadata": {
-    "annotations": {
-      "service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout": "60",
-      "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
-      "service.beta.kubernetes.io/aws-load-balancer-ssl-cert": "arn:aws:acm:us-east-1:696822383789:certificate/809d544b-8530-4b0e-88f5-26e7f38a867c",
-      "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "https",
-      "service.beta.kubernetes.io/aws-load-balancer-type": "nlb"
-    },
-    "labels": {
-      "app.kubernetes.io/component": "controller",
-      "app.kubernetes.io/instance": "ingress-nginx",
-      "app.kubernetes.io/name": "ingress-nginx",
-      "app.kubernetes.io/part-of": "ingress-nginx",
-      "app.kubernetes.io/version": "1.6.4"
-    },
-    "name": "ingress-nginx-controller",
-    "namespace": "ingress-nginx"
-  },
-  "spec": {
-    "externalTrafficPolicy": "Local",
-    "ipFamilies": [
-      "IPv4"
-    ],
-    "ipFamilyPolicy": "SingleStack",
-    "ports": [
-      {
-        "appProtocol": "http",
-        "name": "http",
-        "port": 80,
-        "protocol": "TCP",
-        "targetPort": "tohttps"
-      },
-      {
-        "appProtocol": "https",
-        "name": "https",
-        "port": 443,
-        "protocol": "TCP",
-        "targetPort": "http"
-      }
-    ],
-    "selector": {
-      "app.kubernetes.io/component": "controller",
-      "app.kubernetes.io/instance": "ingress-nginx",
-      "app.kubernetes.io/name": "ingress-nginx"
-    },
-    "type": "LoadBalancer"
-  }
+    "cloud":"AzurePublicCloud",
+    "tenantId": "ebcf5c7c-f8a3-4b95-a5d8-b20dfc2fefe5",
+    "subscriptionId": "7d337cf3-2fdb-42ff-aaa3-d39c0752e44b",
+    "resourceGroup": "RG-VIDAA-VOICE-PROD-EU",
+    "location": "northeurope",
+    "cloudProviderBackoff": false,
+    "useManagedIdentityExtension": true,
+    "userAssignedIdentityID": "6f08d64c-fab8-4cb3-bf13-a8beac663c7d",
+    "useInstanceMetadata": true
 }
