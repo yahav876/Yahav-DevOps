@@ -1,0 +1,18 @@
+plugin: azure.azcollection.azure_rm
+#plugin: azure_rm_networkinterface_info
+include_vm_resource_groups:
+  - RG-vidaa-voice-prod-eu
+  - RG-vidaa-voice-prod-na
+hostvar_expressions:
+  # use a private address where a public one isn't assigned
+  ansible_host: (private_ipv4_addresses) | first
+plain_host_names: yes
+
+keyed_groups:
+# places each host in a group named 'tag_(tag name)_(tag value)' for each tag on a VM.
+- prefix: Tag
+  key: tags.Owner | default('none')
+- prefix: azure_loc
+  key: location
+- prefix: tag_k8sworker
+  key: tags.k8sworker | default('none')

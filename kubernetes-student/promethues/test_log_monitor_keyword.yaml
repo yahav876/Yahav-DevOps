@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kube-prometheus-stack
+    meta.helm.sh/release-namespace: monitoring
+    prometheus-operator-validated: "true"
+  labels:
+    app: kube-prometheus-stack
+    app.kubernetes.io/instance: kube-prometheus-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 49.0.0
+    chart: kube-prometheus-stack-49.0.0
+    heritage: Helm
+    release: kube-prometheus-stack
+  name: kube-prometheus-stack-log.monitor.keywords.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: logs_keywords
+    rules:
+    - alert: NoneTypeExceededThreshold
+      expr: sum_over_time(test_name_2{error_message="test_label"}[5m]) > 1
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "NoneType occurred more than once"
+        description: "The word 'NoneType' occurred more than once in the logs."

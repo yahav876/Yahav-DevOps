@@ -1,0 +1,66 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1624282234750,
+  "links": [],
+  "panels": [
+    {
+      "content": "<h2>Monitoring Dashboards</h2>\n<ul>\n  <li><a href=\"/d/4yyL6dBMk/elasticsearch?orgId=1\">ElasticSearch</a></li>\n  <li><a href=\"/d/jwPKIsniz/kafka?orgId=1\">Kafka</a></li>\n</ul>\n\n<h2>Reporting Dashboards</h2>\n<ul>\n  <li><a href=\"/d/b8c16aef-6ad0-456b-9d66-4a4059a4d79a/mysql-db?orgId=1&refresh=5m\">MySQL</a></li>\n  <li><a href=\"/d/xDLNRKUWz/redis-dashboard?orgId=1&refresh=5m\">Redis</a></li>\n</ul>",
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "mode": "html",
+      "options": {
+        "content": "<h2>Monitoring Dashboards</h2>\n<ul>\n  <li><a href=\"/d/random-uid-1/dashboard-1\">Dashboard 1</a></li>\n  <li><a href=\"/d/random-uid-2/dashboard-2\">Dashboard 2</a></li>\n</ul>\n\n<h2>Reporting Dashboards</h2>\n<ul>\n  <li><a href=\"/d/random-uid-3/dashboard-3\">Dashboard 3</a></li>\n  <li><a href=\"/d/random-uid-4/dashboard-4\">Dashboard 4</a></li>\n</ul>",
+        "mode": "html"
+      },
+      "pluginVersion": "7.5.5",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Home Dashboard",
+  "uid": "random-uid-home",
+  "version": 1
+}
+
+
+

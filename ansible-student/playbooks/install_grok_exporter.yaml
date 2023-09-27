@@ -1,0 +1,29 @@
+- name: Download and Extract Grok Exporter
+  hosts: k8s_true
+  become: yes  # Use sudo to run commands as root
+
+  tasks:
+    - name: Ensure /root/grok_exporter directory exists
+      file:
+        path: /root/grok_exporter
+        state: directory
+
+    - name: Download Grok Exporter zip file
+      get_url:
+        url: https://github.com/fstab/grok_exporter/releases/download/v1.0.0.RC5/grok_exporter-1.0.0.RC5.linux-amd64.zip
+        dest: /tmp/grok_exporter.zip
+        mode: '0644'
+
+    - name: Extract Grok Exporter zip file
+      unarchive:
+        src: /tmp/grok_exporter.zip
+        dest: /root/grok_exporter
+        remote_src: yes
+        extra_opts: --strip-components=1
+      notify: Restart Grok Exporter
+
+  handlers:
+    - name: Restart Grok Exporter
+      service:
+        name: grok_exporter
+        state: restarted
