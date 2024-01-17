@@ -18,9 +18,6 @@ Here i will share with you some of my knowledge about the Tools i have learned.
 - AWS
 - Azure
 
-# Licence
-
-LinuxAcademy.com
 
 # Contact
 
