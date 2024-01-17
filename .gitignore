@@ -16,3 +16,4 @@ bin/
 pyvenv.cfg
 python-student/django-vue/client/django_tasks_client/node_modules
 kubernetes-student/github-argo/ssh-config-map.yaml
+kubernetes-student/github-argo/applicationset-cluster-deploy.yaml
