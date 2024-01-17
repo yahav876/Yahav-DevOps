@@ -12,14 +12,14 @@ elb = boto3.client('elbv2')
 cf = boto3.client('cloudfront')
 
 # Replace the hosted zone ID 
-def elbs(zone_id="Z0115161285UW0N1PKIU2"):
+def elbs(zone_id="XXXXXX"):
 
     list_elb = elb.describe_load_balancers()
     # print(list_elb['LoadBalancers'])
     list_records = route53.list_resource_record_sets(
         HostedZoneId=zone_id,
         MaxItems="300"
-        # StartRecordName='param-ui-oc.vidaahub.com.vidaaclub.com.',
+        # StartRecordName='param-ui-oc.vi.com.vi.com.',
         # StartRecordType='CNAME'
         )
     # print(list_records)
@@ -84,7 +84,7 @@ def elbs(zone_id="Z0115161285UW0N1PKIU2"):
 
 
 
-def cloudfront(zone_id="Z0115161285UW0N1PKIU2"):
+def cloudfront(zone_id="XXXXX"):
 
     list_cf= cf.list_distributions()
     list_records = route53.list_resource_record_sets(
@@ -152,7 +152,4 @@ def cloudfront(zone_id="Z0115161285UW0N1PKIU2"):
 if __name__ == '__main__':
     elbs()
     cloudfront()
-
-
-# 'NextRecordName': 'param-ui-oc.vidaahub.com.', 'NextRecordType': 'CNAME',
 

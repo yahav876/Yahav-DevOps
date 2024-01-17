@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-04-29T08:27:04Z"
+  generation: 1
+  name: pay-globalcouponop-svc
+  namespace: basics-tenant-hisensepay
+  resourceVersion: "725541744"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-hisensepay/poddisruptionbudgets/pay-globalcouponop-svc
+  uid: ad894dcc-a8c4-11eb-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: pay-globalcouponop-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-09-14T07:27:29Z"
+  generation: 1
+  name: appstore-web-op-nginx-svc
+  namespace: appstore-tenant-appstore
+  resourceVersion: "688637113"
+  selfLink: /apis/policy/v1beta1/namespaces/appstore-tenant-appstore/poddisruptionbudgets/appstore-web-op-nginx-svc
+  uid: 380a6371-152d-11ec-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: appstore-web-op-nginx-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

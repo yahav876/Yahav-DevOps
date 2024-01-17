@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-01-17T10:02:55Z"
+  generation: 1
+  name: njbp-oss-lpsop-svc
+  namespace: superapp-tenant-njbp-oss
+  resourceVersion: "613299460"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-oss/poddisruptionbudgets/njbp-oss-lpsop-svc
+  uid: a46338de-777c-11ec-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-oss-lpsop-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"heapster","namespace":"kube-system"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"heapster"}}}}
+  creationTimestamp: "2021-03-11T03:35:04Z"
+  generation: 1
+  name: heapster
+  namespace: kube-system
+  resourceVersion: "666368818"
+  selfLink: /apis/policy/v1beta1/namespaces/kube-system/poddisruptionbudgets/heapster
+  uid: c4a15298-821a-11eb-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: heapster
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

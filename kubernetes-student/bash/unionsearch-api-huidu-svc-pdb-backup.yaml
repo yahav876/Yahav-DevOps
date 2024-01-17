@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-10-12T01:24:08Z"
+  generation: 1
+  name: unionsearch-api-huidu-svc
+  namespace: bigdata-tenant-unionsearch
+  resourceVersion: "860240425"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-unionsearch/poddisruptionbudgets/unionsearch-api-huidu-svc
+  uid: 919eae16-49cc-11ed-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: unionsearch-api-huidu-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

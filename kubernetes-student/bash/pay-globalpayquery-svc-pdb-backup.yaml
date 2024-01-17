@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-04-29T08:37:33Z"
+  generation: 1
+  name: pay-globalpayquery-svc
+  namespace: basics-tenant-hisensepay
+  resourceVersion: "689246727"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-hisensepay/poddisruptionbudgets/pay-globalpayquery-svc
+  uid: 24813823-a8c6-11eb-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: pay-globalpayquery-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

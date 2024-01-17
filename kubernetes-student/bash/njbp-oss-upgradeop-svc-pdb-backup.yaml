@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-02-22T09:19:35Z"
+  generation: 1
+  name: njbp-oss-upgradeop-svc
+  namespace: superapp-tenant-njbp-oss
+  resourceVersion: "898314990"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-oss/poddisruptionbudgets/njbp-oss-upgradeop-svc
+  uid: 063d4f5f-b292-11ed-989c-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-oss-upgradeop-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

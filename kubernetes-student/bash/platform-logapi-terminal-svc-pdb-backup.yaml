@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-03-01T06:43:16Z"
+  generation: 1
+  name: platform-logapi-terminal-svc
+  namespace: bigdata-tenant-platform
+  resourceVersion: "726140186"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-platform/poddisruptionbudgets/platform-logapi-terminal-svc
+  uid: 58908925-b7fc-11ed-989c-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: platform-logapi-terminal-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

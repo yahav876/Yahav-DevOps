@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-11-16T02:03:13Z"
+  generation: 1
+  name: vidaa-canary-platform-front-svc
+  namespace: vidaavoice-tenant-vidaa-canary
+  resourceVersion: "757989100"
+  selfLink: /apis/policy/v1beta1/namespaces/vidaavoice-tenant-vidaa-canary/poddisruptionbudgets/vidaa-canary-platform-front-svc
+  uid: d40734d6-6552-11ed-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: vidaa-canary-platform-front-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

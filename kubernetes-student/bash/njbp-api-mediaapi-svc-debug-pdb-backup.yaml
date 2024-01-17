@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-07-04T09:57:53Z"
+  generation: 1
+  name: njbp-api-mediaapi-svc-debug
+  namespace: superapp-tenant-njbp-api
+  resourceVersion: "892516322"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-api/poddisruptionbudgets/njbp-api-mediaapi-svc-debug
+  uid: 3e6b49cc-1a51-11ee-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-api-mediaapi-svc-debug
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

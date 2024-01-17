@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-03-20T11:58:21Z"
+  generation: 1
+  name: vidaa-log-flume-ng-svc
+  namespace: vidaavoice-tenant-vidaa-log
+  resourceVersion: "824895012"
+  selfLink: /apis/policy/v1beta1/namespaces/vidaavoice-tenant-vidaa-log/poddisruptionbudgets/vidaa-log-flume-ng-svc
+  uid: 82e0b4a8-c716-11ed-989c-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: vidaa-log-flume-ng-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

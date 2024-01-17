@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-11-17T07:35:19Z"
+  generation: 1
+  name: basicservice-opconsole-svc
+  namespace: basics-tenant-basicservice
+  resourceVersion: "527444252"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-basicservice/poddisruptionbudgets/basicservice-opconsole-svc
+  uid: ea64fd88-4778-11ec-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: basicservice-opconsole-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

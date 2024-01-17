@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Get all namespaces
+namespaces=$(kubectl get ns -o jsonpath="{.items[*].metadata.name}")
+
+echo "Checking PodDisruptionBudgets for deployments in each namespace..."
+
+# Flag to indicate a failure in processing the PDB
+pdbFailure=false
+
+# Iterate over each namespace
+for namespace in $namespaces; do
+    # Check if there was a failure in processing the PDB
+    if [ "$pdbFailure" = true ]; then
+        break
+    fi
+
+    # Get all deployments in the current namespace
+    deployments=$(kubectl get deployments -n $namespace -o jsonpath="{.items[*].metadata.name}")
+
+    # Iterate over each deployment in the current namespace
+    for deployment in $deployments; do
+        # Get the replica count of the deployment
+        replicaCount=$(kubectl get deployment $deployment -n $namespace --output=jsonpath={.spec.replicas})
+
+        # Check if the deployment has a PodDisruptionBudget
+        if kubectl get poddisruptionbudget -n $namespace | grep -q $deployment; then
+            # Get the maxUnavailable value from the PodDisruptionBudget
+            maxUnavailable=$(kubectl get poddisruptionbudget $deployment -n $namespace --output=jsonpath={.spec.maxUnavailable})
+
+            # Check if the replica count is 1 and maxUnavailable is also 1
+            if [[ $replicaCount -eq 1 ]] && [[ "$maxUnavailable" == "1" ]]; then
+                echo "Deployment $deployment in namespace $namespace has 1 replica and a PDB with maxUnavailable=1. Re-creating PDB with maxUnavailable=0..."
+
+                # Backup the existing PDB
+                kubectl get poddisruptionbudget $deployment -n $namespace -o yaml > "$deployment-pdb-backup.yaml"
+                echo "Backup of PDB $deployment created."
+
+                # Delete the existing PDB
+                kubectl delete poddisruptionbudget $deployment -n $namespace
+                echo "Existing PDB $deployment deleted."
+
+                # Modify the backup file to set maxUnavailable to 0
+                sed -i '' '/maxUnavailable:/s/maxUnavailable: [0-9]*/maxUnavailable: 0/' "$deployment-pdb-backup.yaml"
+
+                # Recreate the PDB from the modified backup file
+                if ! kubectl apply -f "$deployment-pdb-backup.yaml"; then
+                    echo "Error: Failed to recreate PDB $deployment with maxUnavailable=0."
+                    pdbFailure=true
+                    break
+                else
+                    echo "New PDB $deployment with maxUnavailable=0 created."
+                fi
+            fi
+        fi
+    done
+
+    # If there was a failure, break the outer loop
+    if [ "$pdbFailure" = true ]; then
+        break
+    fi
+done
+

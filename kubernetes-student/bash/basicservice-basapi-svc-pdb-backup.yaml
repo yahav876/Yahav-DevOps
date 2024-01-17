@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-11-17T07:03:54Z"
+  generation: 1
+  name: basicservice-basapi-svc
+  namespace: basics-tenant-basicservice
+  resourceVersion: "527429010"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-basicservice/poddisruptionbudgets/basicservice-basapi-svc
+  uid: 86c2a682-4774-11ec-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: basicservice-basapi-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"njbp-mam-amsopapi-svc","namespace":"superapp-tenant-njbp-mam"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"njbp-mam-amsopapi-svc"}}}}
+  creationTimestamp: "2021-03-11T03:35:05Z"
+  generation: 1
+  name: njbp-mam-amsopapi-svc
+  namespace: superapp-tenant-njbp-mam
+  resourceVersion: "908661057"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-mam/poddisruptionbudgets/njbp-mam-amsopapi-svc
+  uid: c568630f-821a-11eb-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-mam-amsopapi-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

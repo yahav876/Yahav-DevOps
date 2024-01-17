@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-07-18T12:07:18Z"
+  generation: 1
+  name: vidaa-promotion-pmsopapi-svc
+  namespace: vidaavoice-tenant-vidaa-activity
+  resourceVersion: "891721157"
+  selfLink: /apis/policy/v1beta1/namespaces/vidaavoice-tenant-vidaa-activity/poddisruptionbudgets/vidaa-promotion-pmsopapi-svc
+  uid: a4973c80-2563-11ee-989c-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: vidaa-promotion-pmsopapi-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"userpackage-upops-svc","namespace":"basics-tenant-userpackage"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"userpackage-upops-svc"}}}}
+  creationTimestamp: "2021-03-11T03:35:02Z"
+  generation: 1
+  name: userpackage-upops-svc
+  namespace: basics-tenant-userpackage
+  resourceVersion: "841697016"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-userpackage/poddisruptionbudgets/userpackage-upops-svc
+  uid: c3b4fd2b-821a-11eb-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: userpackage-upops-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

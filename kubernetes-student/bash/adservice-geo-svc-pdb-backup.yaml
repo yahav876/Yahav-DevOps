@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-11-22T09:59:18Z"
+  generation: 1
+  name: adservice-geo-svc
+  namespace: ad-tenant-adservice
+  resourceVersion: "916035978"
+  selfLink: /apis/policy/v1beta1/namespaces/ad-tenant-adservice/poddisruptionbudgets/adservice-geo-svc
+  uid: cd7bfa2e-891d-11ee-989c-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+     matchLabels:
+       deployment.harmonycloud.cn/selector: adservice-geo-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

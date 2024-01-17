@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-04-27T02:49:52Z"
+  generation: 1
+  name: njbp-mam-assetferry-online-svc
+  namespace: superapp-tenant-njbp-mam
+  resourceVersion: "918268460"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-mam/poddisruptionbudgets/njbp-mam-assetferry-online-svc
+  uid: b618fca7-c5d4-11ec-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-mam-assetferry-online-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

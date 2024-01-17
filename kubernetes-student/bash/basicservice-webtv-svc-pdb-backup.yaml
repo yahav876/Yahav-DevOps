@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-11-17T06:56:45Z"
+  generation: 1
+  name: basicservice-webtv-svc
+  namespace: basics-tenant-basicservice
+  resourceVersion: "824085553"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-basicservice/poddisruptionbudgets/basicservice-webtv-svc
+  uid: 8735874e-4773-11ec-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: basicservice-webtv-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

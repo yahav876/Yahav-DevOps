@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-11-22T06:44:04Z"
+  generation: 1
+  name: objstore-ass-svc
+  namespace: basics-tenant-objstore
+  resourceVersion: "825657203"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-objstore/poddisruptionbudgets/objstore-ass-svc
+  uid: 955c5ee9-4b5f-11ec-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: objstore-ass-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

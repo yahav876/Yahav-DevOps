@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: alertmanager-nodeport
+  namespace: monitoring
+  labels:
+    operated-alertmanager: 'true'
+spec:
+  selector:
+    app.kubernetes.io/name: alertmanager
+  type: NodePort
+  ports:
+    - port: 9093
+      name: alert
+      nodePort: 30903

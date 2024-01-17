@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"dump-controller","namespace":"kube-system"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"dump-controller"}}}}
+  creationTimestamp: "2021-03-11T03:35:04Z"
+  generation: 1
+  name: dump-controller
+  namespace: kube-system
+  resourceVersion: "666368867"
+  selfLink: /apis/policy/v1beta1/namespaces/kube-system/poddisruptionbudgets/dump-controller
+  uid: c49e628c-821a-11eb-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: dump-controller
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

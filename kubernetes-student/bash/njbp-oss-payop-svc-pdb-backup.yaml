@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-03-09T04:45:46Z"
+  generation: 1
+  name: njbp-oss-payop-svc
+  namespace: superapp-tenant-njbp-oss
+  resourceVersion: "689250435"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-oss/poddisruptionbudgets/njbp-oss-payop-svc
+  uid: c8efeb14-9f63-11ec-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-oss-payop-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

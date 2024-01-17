@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-10-22T02:03:45Z"
+  generation: 1
+  name: webapp-nginx-svc
+  namespace: emerging-tenant-devkit
+  resourceVersion: "726532133"
+  selfLink: /apis/policy/v1beta1/namespaces/emerging-tenant-devkit/poddisruptionbudgets/webapp-nginx-svc
+  uid: 49f469db-32dc-11ec-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: webapp-nginx-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

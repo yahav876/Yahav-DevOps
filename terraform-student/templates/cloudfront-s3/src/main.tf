@@ -18,7 +18,7 @@ resource "aws_cloudfront_origin_access_control" "example" {
 module "cdn" {
   source = "terraform-aws-modules/cloudfront/aws"
 
-  aliases = ["yahav-test.vidaahub.com"]
+  aliases = ["yahav-test.vi.com"]
 
   comment             = "My awesome CloudFront managed by terraform"
   enabled             = true
@@ -83,7 +83,7 @@ module "cdn" {
 #   ]
 
   viewer_certificate = {
-    acm_certificate_arn = "arn:aws:acm:us-east-1:675549661734:certificate/cad4dc01-0086-4b3c-a20f-c3809da8c4e4"
+    acm_certificate_arn = "arn:aws:acm:us-east-1:c:certificate/cad4dc01-0086-4b3c-a20f-c3809da8c4e4"
     ssl_support_method  = "sni-only"
   }
 }

@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-05-24T05:36:50Z"
+  generation: 1
+  name: message-mobilepush-svc
+  namespace: basics-tenant-message
+  resourceVersion: "692241552"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-message/poddisruptionbudgets/message-mobilepush-svc
+  uid: 82da13f8-db23-11ec-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: message-mobilepush-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-03-16T02:54:16Z"
+  generation: 1
+  name: unionsearch-api-test-svc
+  namespace: bigdata-tenant-unionsearch
+  resourceVersion: "860243503"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-unionsearch/poddisruptionbudgets/unionsearch-api-test-svc
+  uid: d76923b3-c3a5-11ed-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: unionsearch-api-test-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

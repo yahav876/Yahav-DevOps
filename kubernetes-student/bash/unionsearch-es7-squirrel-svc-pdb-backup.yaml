@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-09-21T06:14:26Z"
+  generation: 1
+  name: unionsearch-es7-squirrel-svc
+  namespace: bigdata-tenant-unionsearch
+  resourceVersion: "785171203"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-unionsearch/poddisruptionbudgets/unionsearch-es7-squirrel-svc
+  uid: a4c0ddd4-3974-11ed-84c8-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: unionsearch-es7-squirrel-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

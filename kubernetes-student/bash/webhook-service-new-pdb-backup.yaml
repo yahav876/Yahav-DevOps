@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-08-16T11:19:48Z"
+  generation: 1
+  name: webhook-service-new
+  namespace: kube-system
+  resourceVersion: "836979443"
+  selfLink: /apis/policy/v1beta1/namespaces/kube-system/poddisruptionbudgets/webhook-service-new
+  uid: cf9afbfa-3c26-11ee-84c8-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: webhook-service-new
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

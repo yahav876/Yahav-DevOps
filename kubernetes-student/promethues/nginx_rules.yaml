@@ -1,0 +1,57 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kube-prometheus-stack
+    meta.helm.sh/release-namespace: monitoring
+    prometheus-operator-validated: "true"
+  labels:
+    app: kube-prometheus-stack
+    app.kubernetes.io/instance: kube-prometheus-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 49.0.0
+    chart: kube-prometheus-stack-49.0.0
+    heritage: Helm
+    release: kube-prometheus-stack
+  name: kube-prometheus-stack-nginx-fluentd.rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: NginxMetricsAlerts
+      rules:
+        - alert: HighResponseTime500ms
+          expr: sum(nginx_response_time_seconds_sum) by (pod, deployment) / sum(nginx_response_time_seconds_count) by (pod, deployment) > 0.5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High response time observed in pod {{ $labels.pod }} of deployment {{ $labels.deployment }}"
+            description: "Average response time is above 500ms for the past 5 minutes in pod {{ $labels.pod }} of deployment {{ $labels.deployment }}."
+
+        - alert: HighResponseTime1000ms
+          expr: sum(nginx_response_time_seconds_sum) by (pod, deployment) / sum(nginx_response_time_seconds_count) by (pod, deployment) > 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Very high response time observed in pod {{ $labels.pod }} of deployment {{ $labels.deployment }}"
+            description: "Average response time is above 1000ms for the past 5 minutes in pod {{ $labels.pod }} of deployment {{ $labels.deployment }}."
+
+        - alert: LowSuccessRate
+          expr: sum(rate(nginx_statuscode_total{status=~"200|101"}[5m])) by (pod, deployment) / sum(rate(nginx_statuscode_total[5m])) by (pod, deployment) * 100 < 90
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Low success rate observed in pod {{ $labels.pod }} of deployment {{ $labels.deployment }}"
+            description: "Success rate (status code 200) is below 90% for the past 5 minutes in pod {{ $labels.pod }} of deployment {{ $labels.deployment }}."
+
+        - alert: HighErrorRate
+          expr: (sum(rate(nginx_statuscode_total{status=~"4..|5.."}[5m])) by (pod, deployment) / sum(rate(nginx_statuscode_total[5m])) by (pod, deployment)) * 100 > 5
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High error rate observed in pod {{ $labels.pod }} of deployment {{ $labels.deployment }}"
+            description: "Error rate (status codes 4xx or 5xx) is above 5% for the past 5 minutes in pod {{ $labels.pod }} of deployment {{ $labels.deployment }}."

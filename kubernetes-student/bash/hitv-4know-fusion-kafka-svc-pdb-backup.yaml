@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-08-04T06:25:51Z"
+  generation: 1
+  name: hitv-4know-fusion-kafka-svc
+  namespace: superapp-tenant-fourknow
+  resourceVersion: "553745838"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-fourknow/poddisruptionbudgets/hitv-4know-fusion-kafka-svc
+  uid: 49766c42-13be-11ed-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: hitv-4know-fusion-kafka-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-11-17T02:39:49Z"
+  generation: 1
+  name: njbp-mam-assetuniversialgrabber-overseas-svc
+  namespace: superapp-tenant-njbp-mam
+  resourceVersion: "897368361"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-mam/poddisruptionbudgets/njbp-mam-assetuniversialgrabber-overseas-svc
+  uid: a25edf01-474f-11ec-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-mam-assetuniversialgrabber-overseas-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

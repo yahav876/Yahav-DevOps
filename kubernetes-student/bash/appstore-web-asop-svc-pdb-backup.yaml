@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-09-14T07:08:12Z"
+  generation: 1
+  name: appstore-web-asop-svc
+  namespace: appstore-tenant-appstore
+  resourceVersion: "527438267"
+  selfLink: /apis/policy/v1beta1/namespaces/appstore-tenant-appstore/poddisruptionbudgets/appstore-web-asop-svc
+  uid: 85fe07df-152a-11ec-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: appstore-web-asop-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

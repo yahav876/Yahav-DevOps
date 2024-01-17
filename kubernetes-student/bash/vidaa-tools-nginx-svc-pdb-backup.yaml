@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-08-01T09:49:22Z"
+  generation: 1
+  name: vidaa-tools-nginx-svc
+  namespace: vidaavoice-tenant-vidaa-tools
+  resourceVersion: "824936097"
+  selfLink: /apis/policy/v1beta1/namespaces/vidaavoice-tenant-vidaa-tools/poddisruptionbudgets/vidaa-tools-nginx-svc
+  uid: b161a0d6-3050-11ee-84c8-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: vidaa-tools-nginx-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

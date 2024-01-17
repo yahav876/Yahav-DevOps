@@ -18,23 +18,40 @@ metadata:
   namespace: monitoring
 spec:
   groups:
-  - name: KafkaExporter
+  - name: kafka-critical
     rules:
-
-      - alert: KafkaTopicsReplicas
-        expr: 'sum(kafka_topic_partition_in_sync_replica) by (topic) < 3'
-        for: 0m
+      - alert: KafkaConsumerGroupLagHigh
+        expr: abs(kafka_consumergroup_lag_sum) > 10000
+        for: 5m
         labels:
           severity: critical
         annotations:
-          summary: Kafka topics replicas (instance {{ $labels.instance }})
-          description: "Kafka topic in-sync partition\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          summary: "High lag in Kafka consumer groups (instance {{ $labels.consumergroup }})"
+          description: "Consumer group lag is over 10k for 5 minutes (current value: {{ $value }})."
 
-      - alert: KafkaConsumersGroup
-        expr: 'sum(kafka_consumergroup_lag) by (consumergroup) > 50'
+      - alert: KafkaBrokerDown
+        expr: up{job="kafka_exporter"} == 0
         for: 1m
         labels:
           severity: critical
         annotations:
-          summary: Kafka consumers group (instance {{ $labels.instance }})
-          description: "Kafka consumers group\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          summary: "Kafka Broker is down (instance {{ $labels.instance }})"
+          description: "A Kafka broker has been down for more than 1 minute."
+
+      - alert: KafkaUnderReplicatedPartitions
+        expr: kafka_topic_partition_under_replicated_partition > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Topic {{ $labels.topic }}: Kafka under replicated partitions (instance {{ $labels.instance }})"
+          description: "There are under replicated partitions for 5 minutes (current value: {{ $value }})."
+
+      - alert: KafkaOfflinePartitionsCount
+        expr: kafka_topic_partition_leader_is_preferred{job="kafka_exporter"} == 0 and kafka_topic_partition_leader{job="kafka_exporter"} > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Topic {{ $labels.topic }}: Kafka has offline partitions (instance {{ $labels.instance }})"
+          description: "There are offline partitions detected for 5 minutes (current value: {{ $value }})."

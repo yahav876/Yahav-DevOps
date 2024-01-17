@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-07-12T07:35:17Z"
+  generation: 1
+  name: hitv-4know-op-nginx-svc
+  namespace: superapp-tenant-fourknow
+  resourceVersion: "689555663"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-fourknow/poddisruptionbudgets/hitv-4know-op-nginx-svc
+  uid: b436650b-e2e3-11eb-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: hitv-4know-op-nginx-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

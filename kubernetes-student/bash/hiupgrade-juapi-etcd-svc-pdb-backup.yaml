@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-02-22T08:28:06Z"
+  generation: 1
+  name: hiupgrade-juapi-etcd-svc
+  namespace: basics-tenant-hiupgrade
+  resourceVersion: "726530459"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-hiupgrade/poddisruptionbudgets/hiupgrade-juapi-etcd-svc
+  uid: d4f076dc-b28a-11ed-84c8-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: hiupgrade-juapi-etcd-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-12-19T07:51:29Z"
+  generation: 1
+  name: oma-vidaaappgallery-svc
+  namespace: mobile-tenant-oma
+  resourceVersion: "842508731"
+  selfLink: /apis/policy/v1beta1/namespaces/mobile-tenant-oma/poddisruptionbudgets/oma-vidaaappgallery-svc
+  uid: f275e717-7f71-11ed-989c-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: oma-vidaaappgallery-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

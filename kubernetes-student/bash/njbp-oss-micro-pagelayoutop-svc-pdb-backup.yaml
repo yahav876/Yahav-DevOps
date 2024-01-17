@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"njbp-oss-micro-pagelayoutop-svc","namespace":"superapp-tenant-njbp-oss"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"njbp-oss-micro-pagelayoutop-svc"}}}}
+  creationTimestamp: "2021-03-11T03:35:06Z"
+  generation: 1
+  name: njbp-oss-micro-pagelayoutop-svc
+  namespace: superapp-tenant-njbp-oss
+  resourceVersion: "892523676"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-oss/poddisruptionbudgets/njbp-oss-micro-pagelayoutop-svc
+  uid: c5a1c8ee-821a-11eb-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-oss-micro-pagelayoutop-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-09-21T06:11:08Z"
+  generation: 1
+  name: unionsearch-es7-connector-svc
+  namespace: bigdata-tenant-unionsearch
+  resourceVersion: "724574609"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-unionsearch/poddisruptionbudgets/unionsearch-es7-connector-svc
+  uid: 2eb5e541-3974-11ed-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: unionsearch-es7-connector-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-04-22T06:21:34Z"
+  generation: 1
+  name: njbp-mam-conductor-svc
+  namespace: superapp-tenant-njbp-mam
+  resourceVersion: "534122419"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-mam/poddisruptionbudgets/njbp-mam-conductor-svc
+  uid: fcbf12bd-a332-11eb-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-mam-conductor-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

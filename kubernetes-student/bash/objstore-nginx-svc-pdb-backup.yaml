@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-11-22T06:45:38Z"
+  generation: 1
+  name: objstore-nginx-svc
+  namespace: basics-tenant-objstore
+  resourceVersion: "635247784"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-objstore/poddisruptionbudgets/objstore-nginx-svc
+  uid: cdb2b182-4b5f-11ec-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: objstore-nginx-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

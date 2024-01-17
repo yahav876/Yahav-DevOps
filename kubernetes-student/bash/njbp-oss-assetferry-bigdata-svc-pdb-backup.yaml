@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-04-26T06:50:17Z"
+  generation: 1
+  name: njbp-oss-assetferry-bigdata-svc
+  namespace: superapp-tenant-njbp-oss
+  resourceVersion: "640138554"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-oss/poddisruptionbudgets/njbp-oss-assetferry-bigdata-svc
+  uid: a8e52253-a65b-11eb-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-oss-assetferry-bigdata-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

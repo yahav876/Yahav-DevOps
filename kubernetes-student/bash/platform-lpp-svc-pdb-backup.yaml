@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-03-01T06:46:07Z"
+  generation: 1
+  name: platform-lpp-svc
+  namespace: bigdata-tenant-platform
+  resourceVersion: "704612799"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-platform/poddisruptionbudgets/platform-lpp-svc
+  uid: bec77ed9-b7fc-11ed-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: platform-lpp-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

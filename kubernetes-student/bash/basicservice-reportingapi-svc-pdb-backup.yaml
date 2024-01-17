@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-10-26T09:53:22Z"
+  generation: 1
+  name: basicservice-reportingapi-svc
+  namespace: basics-tenant-basicservice
+  resourceVersion: "894225209"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-basicservice/poddisruptionbudgets/basicservice-reportingapi-svc
+  uid: 7fd99842-73e5-11ee-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: basicservice-reportingapi-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

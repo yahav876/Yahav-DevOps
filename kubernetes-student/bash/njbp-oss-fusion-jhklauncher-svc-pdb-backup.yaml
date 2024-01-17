@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-04-26T06:37:57Z"
+  generation: 1
+  name: njbp-oss-fusion-jhklauncher-svc
+  namespace: superapp-tenant-njbp-oss
+  resourceVersion: "554532467"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-oss/poddisruptionbudgets/njbp-oss-fusion-jhklauncher-svc
+  uid: f01a62d2-a659-11eb-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-oss-fusion-jhklauncher-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

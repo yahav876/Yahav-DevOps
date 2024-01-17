@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"monitor-center-nginx","namespace":"kube-system"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"monitor-center-nginx"}}}}
+  creationTimestamp: "2021-03-11T03:35:04Z"
+  generation: 1
+  name: monitor-center-nginx
+  namespace: kube-system
+  resourceVersion: "666368784"
+  selfLink: /apis/policy/v1beta1/namespaces/kube-system/poddisruptionbudgets/monitor-center-nginx
+  uid: c4a4474f-821a-11eb-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: monitor-center-nginx
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

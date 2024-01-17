@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-03-01T07:38:08Z"
+  generation: 1
+  name: platform-logserver-svc-v2
+  namespace: bigdata-tenant-platform
+  resourceVersion: "704641945"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-platform/poddisruptionbudgets/platform-logserver-svc-v2
+  uid: 02894c22-b804-11ed-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: platform-logserver-svc-v2
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

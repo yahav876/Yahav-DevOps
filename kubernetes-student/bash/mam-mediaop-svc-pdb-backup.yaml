@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"mam-mediaop-svc","namespace":"superapp-tenant-mam"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"mam-mediaop-svc"}}}}
+  creationTimestamp: "2021-03-11T03:35:05Z"
+  generation: 1
+  name: mam-mediaop-svc
+  namespace: superapp-tenant-mam
+  resourceVersion: "535214446"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-mam/poddisruptionbudgets/mam-mediaop-svc
+  uid: c5186f69-821a-11eb-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: mam-mediaop-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

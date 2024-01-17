@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-11-03T01:34:58Z"
+  generation: 1
+  name: recsys-flow-svc
+  namespace: bigdata-tenant-recsys
+  resourceVersion: "910346255"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-recsys/poddisruptionbudgets/recsys-flow-svc
+  uid: ba741764-5b17-11ed-957a-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: recsys-flow-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

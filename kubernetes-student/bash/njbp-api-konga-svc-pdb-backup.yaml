@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"njbp-api-konga-svc","namespace":"superapp-tenant-njbp-api"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"njbp-api-konga-svc"}}}}
+  creationTimestamp: "2021-03-11T03:35:05Z"
+  generation: 1
+  name: njbp-api-konga-svc
+  namespace: superapp-tenant-njbp-api
+  resourceVersion: "689558369"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-njbp-api/poddisruptionbudgets/njbp-api-konga-svc
+  uid: c5443a7c-821a-11eb-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: njbp-api-konga-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

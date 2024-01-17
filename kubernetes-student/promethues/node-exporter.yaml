@@ -1,0 +1,139 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kube-prometheus-stack
+    meta.helm.sh/release-namespace: monitoring
+    prometheus-operator-validated: "true"
+  generation: 3
+  labels:
+    app: kube-prometheus-stack
+    app.kubernetes.io/instance: kube-prometheus-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 49.0.0
+    chart: kube-prometheus-stack-49.0.0
+    heritage: Helm
+    release: kube-prometheus-stack
+  name: kube-prometheus-stack-node-exporter.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: node-exporter.rules
+    rules:
+    - expr: |-
+        count without (cpu, mode) (
+          node_cpu_seconds_total{mode="idle"}
+        )
+      record: instance:node_num_cpu:sum
+    - expr: |-
+        1 - avg without (cpu) (
+          sum without (mode) (rate(node_cpu_seconds_total{ mode=~"idle|iowait|steal"}[5m]))
+        )
+      record: instance:node_cpu_utilisation:rate5m
+    - expr: |-
+        (
+          node_load1
+        /
+          instance:node_num_cpu:sum
+        )
+      record: instance:node_load1_per_cpu:ratio
+    - expr: |-
+        1 - (
+          (
+            node_memory_MemAvailable_bytes
+            or
+            (
+              node_memory_Buffers_bytes
+              +
+              node_memory_Cached_bytes
+              +
+              node_memory_MemFree_bytes
+              +
+              node_memory_Slab_bytes
+            )
+          )
+        /
+          node_memory_MemTotal_bytes
+        )
+      record: instance:node_memory_utilisation:ratio
+    - expr: rate(node_vmstat_pgmajfault[5m])
+      record: instance:node_vmstat_pgmajfault:rate5m
+    - expr: rate(node_disk_io_time_seconds_total{ device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}[5m])
+      record: instance_device:node_disk_io_time_seconds:rate5m
+    - expr: rate(node_disk_io_time_weighted_seconds_total{ device=~"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)"}[5m])
+      record: instance_device:node_disk_io_time_weighted_seconds:rate5m
+    - expr: |-
+        sum without (device) (
+          rate(node_network_receive_bytes_total{ device!="lo"}[5m])
+        )
+      record: instance:node_network_receive_bytes_excluding_lo:rate5m
+    - expr: |-
+        sum without (device) (
+          rate(node_network_transmit_bytes_total{ device!="lo"}[5m])
+        )
+      record: instance:node_network_transmit_bytes_excluding_lo:rate5m
+    - expr: |-
+        sum without (device) (
+          rate(node_network_receive_drop_total{ device!="lo"}[5m])
+        )
+      record: instance:node_network_receive_drop_excluding_lo:rate5m
+    - expr: |-
+        sum without (device) (
+          rate(node_network_transmit_drop_total{ device!="lo"}[5m])
+        )
+      record: instance:node_network_transmit_drop_excluding_lo:rate5m
+
+    - alert: HighCPULoad
+      expr: instance:node_load1_per_cpu:ratio > 1.5
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+          summary: High CPU Load
+          description: "CPU load per core is higher than 1.5 for more than 5 minutes."
+
+    - alert: HighMemoryUtilization
+      expr: instance:node_memory_utilisation:ratio > 0.8
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: High Memory Utilization
+        description: "Node memory utilization is above 80% for more than 10 minutes."
+
+    - alert: HighDiskIOTime
+      expr: instance_device:node_disk_io_time_seconds:rate5m > 100
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High Disk IO Time
+        description: "Disk IO time is higher than 100 seconds rate over the last 5 minutes."
+
+    - alert: HighDiskIOTimeWeighted
+      expr: instance_device:node_disk_io_time_weighted_seconds:rate5m > 120
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High Weighted Disk IO Time
+        description: "Weighted disk IO time is higher than 120 seconds rate over the last 5 minutes."
+
+    - alert: HighNetworkReceiveRate
+      expr: instance:node_network_receive_bytes_excluding_lo:rate5m > 500000000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High Network Receive Rate
+        description: "Network receive rate excluding localhost is above 500MB/s for more than 5 minutes."
+
+    - alert: HighNetworkTransmitRate
+      expr: instance:node_network_transmit_bytes_excluding_lo:rate5m > 500000000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High Network Transmit Rate
+        description: "Network transmit rate excluding localhost is above 500MB/s for more than 5 minutes."

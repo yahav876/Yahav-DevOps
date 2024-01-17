@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-11-22T02:14:17Z"
+  generation: 1
+  name: recsys-feature-svc
+  namespace: bigdata-tenant-recsys
+  resourceVersion: "699083264"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-recsys/poddisruptionbudgets/recsys-feature-svc
+  uid: e526a8c1-4b39-11ec-ae42-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: recsys-feature-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

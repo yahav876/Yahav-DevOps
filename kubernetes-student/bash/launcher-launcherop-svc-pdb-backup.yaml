@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2022-06-14T05:47:15Z"
+  generation: 1
+  name: launcher-launcherop-svc
+  namespace: superapp-tenant-launcher
+  resourceVersion: "819522865"
+  selfLink: /apis/policy/v1beta1/namespaces/superapp-tenant-launcher/poddisruptionbudgets/launcher-launcherop-svc
+  uid: 7213adec-eba5-11ec-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: launcher-launcherop-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

@@ -1,0 +1,24 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"policy/v1beta1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"name":"airflow-worker-svc","namespace":"bigdata-tenant-platform"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"deployment.harmonycloud.cn/selector":"airflow-worker-svc"}}}}
+  creationTimestamp: "2021-03-11T03:35:03Z"
+  generation: 1
+  name: airflow-worker-svc
+  namespace: bigdata-tenant-platform
+  resourceVersion: "920777447"
+  selfLink: /apis/policy/v1beta1/namespaces/bigdata-tenant-platform/poddisruptionbudgets/airflow-worker-svc
+  uid: c3d5e85f-821a-11eb-8e71-06780865b9d4
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: airflow-worker-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

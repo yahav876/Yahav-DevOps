@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-07-22T01:50:01Z"
+  generation: 1
+  name: hiupgrade-op-nginx-svc
+  namespace: basics-tenant-hiupgrade
+  resourceVersion: "688635598"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-hiupgrade/poddisruptionbudgets/hiupgrade-op-nginx-svc
+  uid: 20cab270-ea8f-11eb-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: hiupgrade-op-nginx-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

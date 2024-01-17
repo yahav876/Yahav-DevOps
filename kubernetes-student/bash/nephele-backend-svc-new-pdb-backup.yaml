@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2023-08-16T11:06:03Z"
+  generation: 1
+  name: nephele-backend-svc-new
+  namespace: kube-system
+  resourceVersion: "882931856"
+  selfLink: /apis/policy/v1beta1/namespaces/kube-system/poddisruptionbudgets/nephele-backend-svc-new
+  uid: e3ad3c9c-3c24-11ee-989c-02b93e1335fa
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: nephele-backend-svc-new
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1

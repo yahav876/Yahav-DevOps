@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  creationTimestamp: "2021-11-17T07:38:05Z"
+  generation: 1
+  name: basicservice-mss-svc
+  namespace: basics-tenant-basicservice
+  resourceVersion: "699090644"
+  selfLink: /apis/policy/v1beta1/namespaces/basics-tenant-basicservice/poddisruptionbudgets/basicservice-mss-svc
+  uid: 4d352f92-4779-11ec-a797-0a86de9de728
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      deployment.harmonycloud.cn/selector: basicservice-mss-svc
+status:
+  currentHealthy: 1
+  desiredHealthy: 0
+  disruptionsAllowed: 1
+  expectedPods: 1
+  observedGeneration: 1
