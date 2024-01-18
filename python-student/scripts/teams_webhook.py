@@ -54,7 +54,7 @@ json_data = {
     }]
 }
 
-webhook = "https://vidaausa.webhook.office.com/webhookb2/bd5db70f-3334-496f-9400-38844f3a96d5@ebcf5c7c-f8a3-4b95-a5d8-b20dfc2fefe5/IncomingWebhook/24b7bc8018d740ce8fe00a24994fe099/694ccd5f-1676-413e-9f93-0cf947a1fe38"
+webhook = "https://vidaausa.webhook.d99/694ccd5f-1676-413e-9f93-0cf947a1fe38"
 send = requests.post(webhook, json=json_data)
 
 
